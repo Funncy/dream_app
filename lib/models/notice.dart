@@ -3,33 +3,42 @@ import 'package:dream/models/core.dart';
 import 'package:flutter/foundation.dart';
 
 class NoticeModel extends Core {
-  String uid;
-  String content;
-  List<String> images;
-  List<NoticeCommentModel> comments;
-  List<FavoriteModel> favorites;
+  final String did;
+  final String uid;
+  final String content;
+  final List<String> images;
+  final int comments;
+  final int favorites;
 
   NoticeModel(
-      {@required this.uid,
+      {@required this.did,
+      @required this.uid,
       @required this.content,
       @required this.images,
-      this.comments,
-      this.favorites});
+      @required this.comments,
+      @required this.favorites});
 
   factory NoticeModel.fromFirestroe(DocumentSnapshot doc) {
     var json = doc.data();
 
     return NoticeModel(
-        uid: json['uid'],
-        content: json['content'],
-        // subType Error Solution
-        images: json['images']?.cast<String>());
+      did: doc.id,
+      uid: json['uid'],
+      content: json['content'],
+      // subType Error Solution
+      images: json['images']?.cast<String>(),
+      comments: json['comments'],
+      favorites: json['favorites'],
+    );
   }
 
   Map<String, dynamic> toJson() => {
+        'did': uid,
         'uid': uid,
         'content': content,
         'images': images,
+        'comments': comments,
+        'favorites': favorites,
       };
 }
 

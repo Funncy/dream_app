@@ -50,10 +50,6 @@ class _NoticeScreenState extends State<NoticeScreen> {
     return ListView.builder(
         itemCount: noticeList.length,
         itemBuilder: (context, index) {
-          if (noticeList[index].comments.length != 0) {
-            print("Notices ${noticeList[index].comments[0].content}");
-            print("Reply ${noticeList[index].comments[0].replys[0].content}");
-          }
           return noticeCard(noticeList[index]);
         });
   }
@@ -104,13 +100,20 @@ class _NoticeScreenState extends State<NoticeScreen> {
               child: Row(
                 children: [
                   Row(
-                    children: [Icon(Icons.ac_unit), Text("좋아요 3")],
+                    children: [
+                      Icon(Icons.ac_unit),
+                      Text("좋아요 ${notice.favorites ?? ""}")
+                    ],
                   ),
                   SizedBox(
                     width: 30,
                   ),
                   Row(
-                    children: [Icon(Icons.ac_unit), Text('댓글 2')],
+                    children: [
+                      Icon(Icons.ac_unit),
+                      Text(
+                          '댓글 ${notice.comments == null ? '쓰기' : notice.comments}')
+                    ],
                   )
                 ],
               ),
