@@ -1,5 +1,5 @@
 import 'package:dream/models/notice.dart';
 
 abstract class NoticeRepository {
-  Future<List<NoticeModel>> getNotices();
+  Future<List<NoticeModel>> getNoticeList();
 }

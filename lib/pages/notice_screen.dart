@@ -16,7 +16,7 @@ class _NoticeScreenState extends State<NoticeScreen> {
 
   @override
   void initState() {
-    noticeViewmodel.getNotices();
+    noticeViewmodel.getNoticeList();
     super.initState();
   }
 

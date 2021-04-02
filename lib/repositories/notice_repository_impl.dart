@@ -12,7 +12,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
   }
 
   @override
-  Future<List<NoticeModel>> getNotices() async {
+  Future<List<NoticeModel>> getNoticeList() async {
     List<NoticeModel> notices = [];
 
     try {

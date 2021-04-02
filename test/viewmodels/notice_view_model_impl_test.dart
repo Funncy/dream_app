@@ -25,37 +25,39 @@ void main() {
     NoticeModel(uid: '123', content: 'test3', images: ['test']),
   ];
 
-  test('공지사항 가져오기 - 성공', () async {
-    //arrange
-    when(mockNoticeRepository.getNotices()).thenAnswer((_) async => noticeList);
-    //act
-    await noticeViewModel.getNotices();
-    //assert
-    expect(noticeViewModel.notices, noticeList);
-    expect(noticeViewModel.getScreenStatus(), Status.loaded);
-    verify(mockNoticeRepository.getNotices()).called(1);
-  });
+  group('공지사항', () {
+    test('공지사항 가져오기 - 성공', () async {
+      //arrange
+      when(mockNoticeRepository.getNoticeList())
+          .thenAnswer((_) async => noticeList);
+      //act
+      await noticeViewModel.getNoticeList();
+      //assert
+      expect(noticeViewModel.notices, noticeList);
+      expect(noticeViewModel.getScreenStatus(), Status.loaded);
+      verify(mockNoticeRepository.getNoticeList()).called(1);
+    });
 
-  test('공지사항 가져오기 - 에러', () async {
-    //arrange
-    when(mockNoticeRepository.getNotices())
-        .thenThrow(ErrorModel(message: 'Firebase Error'));
-    //act
-    await noticeViewModel.getNotices();
-    //assert
-    expect(noticeViewModel.notices.length, 0);
-    expect(noticeViewModel.getScreenStatus(), Status.error);
-    verify(mockNoticeRepository.getNotices()).called(1);
-  });
-
-  test('공지사항 가져오기 - Empty', () async {
-    //arrange
-    when(mockNoticeRepository.getNotices()).thenAnswer((_) async => []);
-    //act
-    await noticeViewModel.getNotices();
-    //assert
-    expect(noticeViewModel.notices.length, 0);
-    expect(noticeViewModel.getScreenStatus(), Status.empty);
-    verify(mockNoticeRepository.getNotices()).called(1);
+    test('공지사항 가져오기 - 에러', () async {
+      //arrange
+      when(mockNoticeRepository.getNoticeList())
+          .thenThrow(ErrorModel(message: 'Firebase Error'));
+      //act
+      await noticeViewModel.getNoticeList();
+      //assert
+      expect(noticeViewModel.notices.length, 0);
+      expect(noticeViewModel.getScreenStatus(), Status.error);
+      verify(mockNoticeRepository.getNoticeList()).called(1);
+    });
+    test('공지사항 가져오기 - Empty', () async {
+      //arrange
+      when(mockNoticeRepository.getNoticeList()).thenAnswer((_) async => []);
+      //act
+      await noticeViewModel.getNoticeList();
+      //assert
+      expect(noticeViewModel.notices.length, 0);
+      expect(noticeViewModel.getScreenStatus(), Status.empty);
+      verify(mockNoticeRepository.getNoticeList()).called(1);
+    });
   });
 }
