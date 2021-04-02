@@ -1,7 +1,8 @@
 import 'package:dream/bindings/notice_bindings.dart';
 import 'package:dream/pages/error_screen.dart';
 import 'package:dream/pages/loading_screen.dart';
-import 'package:dream/pages/notice_screen.dart';
+import 'package:dream/pages/notice/notice_screen.dart';
+import 'package:dream/utils/time_util.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,8 +15,10 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
+    TimeUtil.setLocalMessages();
     return GetMaterialApp(
       title: '두드리시오',
       theme: ThemeData(
