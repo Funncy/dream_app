@@ -1,6 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dream/models/notice.dart';
-import 'package:dream/repositories/notice_repository_impl.dart';
+import 'package:dream/pages/common/empty_widget.dart';
+import 'package:dream/pages/common/error_message_widget.dart';
+import 'package:dream/pages/common/loading_widget.dart';
+import 'package:dream/pages/common/screen_status_widget.dart';
 import 'package:dream/viewmodels/notice_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -29,29 +31,30 @@ class _NoticeScreenState extends State<NoticeScreen> {
       body: Container(
         child: Obx(() {
           var screenStatus = noticeViewmodel.getScreenStatus();
-          var notices = noticeViewmodel.notices;
+          var noticeList = noticeViewmodel.notices;
 
-          if (notices.length == 0) {
-            // TODO: Empty , Error 구분
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
-          return ListView.builder(
-              itemCount: notices.length,
-              itemBuilder: (context, index) {
-                if (notices[index].comments.length != 0) {
-                  print("Notices ${notices[index].comments[0].content}");
-                  print(
-                      "Reply ${notices[index].comments[0].replys[0].content}");
-                }
-                return ListTile(
-                  title: Text(notices[index].content),
-                );
-              });
+          return ScreenStatusWidget(
+              body: noticeListWidget(noticeList),
+              error: ErrorMessageWidget(errorMessage: 'test'),
+              loading: LoadingWidget(),
+              empty: EmptyWidget(),
+              screenStatus: screenStatus);
         }),
       ),
     );
+  }
+
+  Widget noticeListWidget(List<NoticeModel> noticeList) {
+    return ListView.builder(
+        itemCount: noticeList.length,
+        itemBuilder: (context, index) {
+          if (noticeList[index].comments.length != 0) {
+            print("Notices ${noticeList[index].comments[0].content}");
+            print("Reply ${noticeList[index].comments[0].replys[0].content}");
+          }
+          return ListTile(
+            title: Text(noticeList[index].content),
+          );
+        });
   }
 }
