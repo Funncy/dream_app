@@ -111,8 +111,7 @@ class _NoticeScreenState extends State<NoticeScreen> {
                   Row(
                     children: [
                       Icon(Icons.ac_unit),
-                      Text(
-                          '댓글 ${notice.comments == null ? '쓰기' : notice.comments}')
+                      Text('댓글 ${notice.comments < 1 ? '쓰기' : notice.comments}')
                     ],
                   )
                 ],
