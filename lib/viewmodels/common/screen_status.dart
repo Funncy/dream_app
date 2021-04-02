@@ -1,6 +1,5 @@
+import 'package:dream/core/screen_status/status_enum.dart';
 import 'package:get/get.dart';
-
-enum Status { initial, loading, loaded, empty, error }
 
 class ScreenStatus {
   Rx<Status> _status = Status.initial.obs;

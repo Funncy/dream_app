@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dream/error/error_model.dart';
+import 'package:dream/core/error/error_model.dart';
+import 'package:dream/core/screen_status/status_enum.dart';
 import 'package:dream/models/notice.dart';
 import 'package:dream/repositories/notice_repository_impl.dart';
 import 'package:dream/viewmodels/notice_view_model.dart';

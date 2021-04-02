@@ -28,6 +28,7 @@ class _NoticeScreenState extends State<NoticeScreen> {
       ),
       body: Container(
         child: Obx(() {
+          var screenStatus = noticeViewmodel.getScreenStatus();
           var notices = noticeViewmodel.notices;
 
           if (notices.length == 0) {
