@@ -1,3 +1,4 @@
+import 'package:dream/bindings/notice_bindings.dart';
 import 'package:dream/pages/error_screen.dart';
 import 'package:dream/pages/loading_screen.dart';
 import 'package:dream/pages/notice_screen.dart';
@@ -22,7 +23,10 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       initialRoute: '/',
-      getPages: [GetPage(name: '/', page: () => NoticeScreen())],
+      getPages: [
+        GetPage(
+            name: '/', page: () => NoticeScreen(), binding: NoticeBindings())
+      ],
     );
   }
 }

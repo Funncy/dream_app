@@ -12,11 +12,11 @@ class NoticeScreen extends StatefulWidget {
 }
 
 class _NoticeScreenState extends State<NoticeScreen> {
-  final controller = Get.put(NoticeViewModel());
+  final noticeViewmodel = Get.find<NoticeViewModel>();
 
   @override
   void initState() {
-    controller.getNotices();
+    noticeViewmodel.getNotices();
     super.initState();
   }
 
@@ -28,7 +28,7 @@ class _NoticeScreenState extends State<NoticeScreen> {
       ),
       body: Container(
         child: Obx(() {
-          var notices = controller.notices;
+          var notices = noticeViewmodel.notices;
 
           if (notices.length == 0) {
             // TODO: Empty , Error 구분

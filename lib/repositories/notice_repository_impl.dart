@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dream/models/notice.dart';
 import 'package:dream/repositories/notice_repository.dart';
+import 'package:flutter/foundation.dart';
 
 class NoticeRepositoryImpl extends NoticeRepository {
   FirebaseFirestore _firebaseFirestore;
 
-  NoticeRepositoryImpl(FirebaseFirestore firebaseFirestore) {
+  NoticeRepositoryImpl({@required FirebaseFirestore firebaseFirestore}) {
     _firebaseFirestore = firebaseFirestore;
   }
 
