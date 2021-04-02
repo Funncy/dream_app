@@ -1,6 +1,4 @@
 import 'package:dream/bindings/notice_bindings.dart';
-import 'package:dream/pages/error_screen.dart';
-import 'package:dream/pages/loading_screen.dart';
 import 'package:dream/pages/notice/notice_screen.dart';
 import 'package:dream/utils/time_util.dart';
 import 'package:firebase_core/firebase_core.dart';
