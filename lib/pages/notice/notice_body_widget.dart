@@ -15,12 +15,12 @@ import 'package:timeago/timeago.dart' as timeago;
 
 import 'components/image_spliter.dart';
 
-class NoticeScreen extends StatefulWidget {
+class NoticeBodyWidget extends StatefulWidget {
   @override
-  _NoticeScreenState createState() => _NoticeScreenState();
+  _NoticeBodyWidgetState createState() => _NoticeBodyWidgetState();
 }
 
-class _NoticeScreenState extends State<NoticeScreen> {
+class _NoticeBodyWidgetState extends State<NoticeBodyWidget> {
   final noticeViewmodel = Get.find<NoticeViewModel>();
 
   @override
@@ -31,28 +31,23 @@ class _NoticeScreenState extends State<NoticeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("공지사항"),
-      ),
-      body: Container(
-        color: Colors.black12,
-        child: Obx(() {
-          var screenStatus = noticeViewmodel.getScreenStatus();
-          var noticeList = noticeViewmodel.notices;
+    return Container(
+      color: Colors.black12,
+      child: Obx(() {
+        var screenStatus = noticeViewmodel.getScreenStatus();
+        var noticeList = noticeViewmodel.notices;
 
-          return ScreenStatusWidget(
-              body: ListView.builder(
-                  itemCount: noticeList.length,
-                  itemBuilder: (context, index) {
-                    return NoticeCard(notice: noticeList[index]);
-                  }),
-              error: ErrorMessageWidget(errorMessage: 'test'),
-              loading: LoadingWidget(),
-              empty: EmptyWidget(),
-              screenStatus: screenStatus);
-        }),
-      ),
+        return ScreenStatusWidget(
+            body: ListView.builder(
+                itemCount: noticeList.length,
+                itemBuilder: (context, index) {
+                  return NoticeCard(notice: noticeList[index]);
+                }),
+            error: ErrorMessageWidget(errorMessage: 'test'),
+            loading: LoadingWidget(),
+            empty: EmptyWidget(),
+            screenStatus: screenStatus);
+      }),
     );
   }
 }

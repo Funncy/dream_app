@@ -62,7 +62,11 @@ class NoticeCard extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.ac_unit),
+                      //TODO: 내가 눌렀는지에 따라 이미지 변경해야함.
+                      Icon(
+                        Icons.favorite_border,
+                        color: Colors.black,
+                      ),
                       SizedBox(
                         width: 5,
                       ),
@@ -75,7 +79,7 @@ class NoticeCard extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      Icon(Icons.ac_unit),
+                      Icon(Icons.messenger_outline_rounded),
                       SizedBox(
                         width: 5,
                       ),
