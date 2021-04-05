@@ -6,7 +6,7 @@ class NoticeModel extends Core {
   final String did;
   final String uid;
   final String content;
-  final List<String> images;
+  final List<String> images = [];
   final int comments;
   final int favorites;
 
@@ -14,7 +14,6 @@ class NoticeModel extends Core {
     @required this.did,
     @required this.uid,
     @required this.content,
-    @required this.images,
     @required this.comments,
     @required this.favorites,
   });
@@ -27,7 +26,6 @@ class NoticeModel extends Core {
       uid: json['uid'],
       content: json['content'],
       // subType Error Solution
-      images: json['images']?.cast<String>(),
       comments: json['comments'],
       favorites: json['favorites'],
     );

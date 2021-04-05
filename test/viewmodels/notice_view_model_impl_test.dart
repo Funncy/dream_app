@@ -22,26 +22,11 @@ void main() {
   //test 데이터
   final noticeList = [
     NoticeModel(
-        did: '123',
-        uid: '123',
-        content: 'test1',
-        images: ['test'],
-        comments: 0,
-        favorites: 0),
+        did: '123', uid: '123', content: 'test1', comments: 0, favorites: 0),
     NoticeModel(
-        did: '123',
-        uid: '123',
-        content: 'test2',
-        images: ['test'],
-        comments: 0,
-        favorites: 0),
+        did: '123', uid: '123', content: 'test2', comments: 0, favorites: 0),
     NoticeModel(
-        did: '123',
-        uid: '123',
-        content: 'test3',
-        images: ['test'],
-        comments: 0,
-        favorites: 0),
+        did: '123', uid: '123', content: 'test3', comments: 0, favorites: 0),
   ];
 
   group('공지사항', () {

@@ -56,6 +56,95 @@ class _NoticeScreenState extends State<NoticeScreen> {
         });
   }
 
+  Widget noticeImages(List<String> images) {
+    if (images.length == 1) {
+      //단일 이미지
+      return Container(
+        child: Image.network(
+          images[0],
+          fit: BoxFit.cover,
+        ),
+      );
+    } else if (images.length == 2) {
+      //2장
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+              child: Image.network(
+            images[0],
+            fit: BoxFit.cover,
+          )),
+          SizedBox(
+            width: 8,
+          ),
+          Expanded(
+              child: Image.network(
+            images[0],
+            fit: BoxFit.cover,
+          ))
+        ],
+      );
+    } else if (images.length > 2) {
+      //3장 이상
+      return Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        Expanded(
+            child: Image.network(
+          images[0],
+          fit: BoxFit.cover,
+        )),
+        SizedBox(
+          width: 8,
+        ),
+        Expanded(
+            child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+                child: Image.network(
+              images[0],
+              fit: BoxFit.cover,
+            )),
+            SizedBox(
+              height: 5,
+            ),
+            if (images.length == 3)
+              Expanded(
+                  child: Image.network(
+                images[0],
+                fit: BoxFit.cover,
+              )),
+            if (images.length > 3)
+              Expanded(
+                  child: Stack(children: [
+                Positioned.fill(
+                  child: Container(
+                    child: Image.network(
+                      images[0],
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                Positioned.fill(
+                    child: Container(
+                  decoration: BoxDecoration(color: Colors.black54),
+                  child: Center(
+                    child: Text(
+                      "${images.length - 2}+",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ))
+              ])),
+          ],
+        ))
+      ]);
+    }
+  }
+
   Widget noticeCard(NoticeModel notice) {
     var size = MediaQuery.of(context).size;
     //시간 로드
@@ -82,14 +171,14 @@ class _NoticeScreenState extends State<NoticeScreen> {
                   //3. 3개 이상 -> 3칸으로 쪼개서
                   //4. 4개 이상 -> 3칸으로 쪼개고 마지막 칸에 추가적인 이미지 숫자
                   //이미지는 클릭하면 좌우 스크롤 하는 화면
+                  SizedBox(
+                    height: 8,
+                  ),
                   Container(
                     width: size.width,
                     //TODO: 나중에 스크린 유틸로 사이즈 변경하기
                     height: 250,
-                    child: Image.asset(
-                      'assets/images/test-img.jpeg',
-                      fit: BoxFit.cover,
-                    ),
+                    child: noticeImages(notice.images),
                   ),
                 ],
               ),
