@@ -71,8 +71,9 @@ class _NoticeScreenState extends State<NoticeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(date),
-                  Text(notice.content),
+                  Text(date, style: Theme.of(context).textTheme.subtitle1),
+                  Text(notice.content,
+                      style: Theme.of(context).textTheme.bodyText1),
                   //TODO:추후 이미지 여러개면 쪼개서 보여줘야함.
                   //1. 1개 이미지 -> 전체
                   //2. 2개 이미지 -> 반 나눠서
@@ -102,7 +103,11 @@ class _NoticeScreenState extends State<NoticeScreen> {
                   Row(
                     children: [
                       Icon(Icons.ac_unit),
-                      Text("좋아요 ${notice.favorites ?? ""}")
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Text("좋아요 ${notice.favorites ?? ""}",
+                          style: Theme.of(context).textTheme.bodyText2)
                     ],
                   ),
                   SizedBox(
@@ -111,7 +116,11 @@ class _NoticeScreenState extends State<NoticeScreen> {
                   Row(
                     children: [
                       Icon(Icons.ac_unit),
-                      Text('댓글 ${notice.comments < 1 ? '쓰기' : notice.comments}')
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Text('댓글 ${notice.comments < 1 ? '쓰기' : notice.comments}',
+                          style: Theme.of(context).textTheme.bodyText2)
                     ],
                   )
                 ],
