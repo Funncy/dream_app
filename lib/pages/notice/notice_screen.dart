@@ -131,7 +131,7 @@ class _NoticeScreenState extends State<NoticeScreen> {
                   decoration: BoxDecoration(color: Colors.black54),
                   child: Center(
                     child: Text(
-                      "${images.length - 2}+",
+                      "+${images.length - 2}",
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 30,
