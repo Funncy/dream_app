@@ -1,3 +1,4 @@
+import 'package:dream/constants.dart';
 import 'package:dream/pages/notice/notice_body_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -13,13 +14,17 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Dream App"),
+        title: Text(
+          "두드리시오",
+          style: Constants.titleStyle,
+        ),
+        backgroundColor: Constants.backgroundColor,
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
-        selectedItemColor: Colors.black87,
-        unselectedItemColor: Colors.black26,
+        backgroundColor: Constants.backgroundColor,
+        selectedItemColor: Constants.iconSelectedColor,
+        unselectedItemColor: Constants.iconColor,
         currentIndex: _selectedIndex,
         onTap: (int index) {
           setState(() {

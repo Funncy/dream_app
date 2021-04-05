@@ -1,3 +1,4 @@
+import 'package:dream/constants.dart';
 import 'package:dream/models/notice.dart';
 import 'package:dream/utils/time_util.dart';
 import 'package:flutter/material.dart';
@@ -66,7 +67,7 @@ class NoticeCard extends StatelessWidget {
                       //TODO: 내가 눌렀는지에 따라 이미지 변경해야함.
                       Icon(
                         Icons.favorite_border,
-                        color: Colors.black,
+                        color: Constants.favoriteAndCommentColor,
                       ),
                       SizedBox(
                         width: 5.w,
@@ -80,7 +81,8 @@ class NoticeCard extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      Icon(Icons.messenger_outline_rounded),
+                      Icon(Icons.messenger_outline_rounded,
+                          color: Constants.favoriteAndCommentColor),
                       SizedBox(
                         width: 5.w,
                       ),
