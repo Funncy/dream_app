@@ -10,18 +10,19 @@ class NoticeModel extends Core {
   final int comments;
   final int favorites;
 
-  NoticeModel(
-      {@required this.did,
-      @required this.uid,
-      @required this.content,
-      @required this.images,
-      @required this.comments,
-      @required this.favorites});
+  NoticeModel({
+    @required this.did,
+    @required this.uid,
+    @required this.content,
+    @required this.images,
+    @required this.comments,
+    @required this.favorites,
+  });
 
   factory NoticeModel.fromFirestroe(DocumentSnapshot doc) {
     var json = doc.data();
 
-    return NoticeModel(
+    var model = NoticeModel(
       did: doc.id,
       uid: json['uid'],
       content: json['content'],
@@ -30,6 +31,10 @@ class NoticeModel extends Core {
       comments: json['comments'],
       favorites: json['favorites'],
     );
+    // print((json['createdAt'] as Timestamp).toDate().toString());
+    model.createdAt = (json['createdAt'] as Timestamp)?.toDate() ?? null;
+    model.updatedAt = (json['updatedAt'] as Timestamp)?.toDate() ?? null;
+    return model;
   }
 
   Map<String, dynamic> toJson() => {

@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart';
 
 class TimeUtil {
@@ -10,6 +11,18 @@ class TimeUtil {
     return format(date,
         locale: 'ko', // for test.
         allowFromNow: true);
+  }
+
+  static String getDateString(DateTime date) {
+    var nowDate = DateTime.now();
+    String result = '';
+    if (nowDate.difference(date).inDays > 7) {
+      var formatter = new DateFormat('yyyy-MM-dd');
+      result = formatter.format(date);
+    } else {
+      result = format(date, locale: 'ko');
+    }
+    return result;
   }
 }
 
