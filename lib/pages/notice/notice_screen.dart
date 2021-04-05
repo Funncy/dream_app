@@ -3,6 +3,7 @@ import 'package:dream/pages/common/empty_widget.dart';
 import 'package:dream/pages/common/error_message_widget.dart';
 import 'package:dream/pages/common/loading_widget.dart';
 import 'package:dream/pages/common/screen_status_widget.dart';
+import 'package:dream/pages/notice/image_slider_screen.dart';
 import 'package:dream/utils/time_util.dart';
 import 'package:dream/viewmodels/notice_view_model.dart';
 import 'package:flutter/material.dart';
@@ -174,11 +175,18 @@ class _NoticeScreenState extends State<NoticeScreen> {
                   SizedBox(
                     height: 8,
                   ),
-                  Container(
-                    width: size.width,
-                    //TODO: 나중에 스크린 유틸로 사이즈 변경하기
-                    height: 250,
-                    child: noticeImages(notice.images),
+                  GestureDetector(
+                    onTap: () {
+                      Get.to(ImageSliderScreen(
+                        imageUrlList: notice.images,
+                      ));
+                    },
+                    child: Container(
+                      width: size.width,
+                      //TODO: 나중에 스크린 유틸로 사이즈 변경하기
+                      height: 250,
+                      child: noticeImages(notice.images),
+                    ),
                   ),
                 ],
               ),
