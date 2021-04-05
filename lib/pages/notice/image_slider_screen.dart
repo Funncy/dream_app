@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ImageSliderScreen extends StatefulWidget {
   final List<String> imageUrlList;
@@ -45,7 +46,7 @@ class _ImageSliderScreenState extends State<ImageSliderScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(bottom: 70.0),
+              padding: EdgeInsets.only(bottom: 70.h),
               child: Align(
                 alignment: Alignment.bottomCenter,
                 child: Row(
@@ -69,8 +70,8 @@ class _ImageSliderScreenState extends State<ImageSliderScreen> {
               ),
             ),
             Positioned(
-                top: 50,
-                right: 50,
+                top: 40.h,
+                right: 40.w,
                 child: InkWell(
                   child: Text(
                     "X",

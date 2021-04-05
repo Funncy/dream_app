@@ -1,9 +1,11 @@
 import 'package:dream/bindings/notice_bindings.dart';
-import 'package:dream/pages/notice/notice_screen.dart';
+import 'package:dream/pages/bottom_navigation/main_screen.dart';
+import 'package:dream/pages/notice/notice_body_widget.dart';
 import 'package:dream/utils/time_util.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 void main() async {
@@ -19,22 +21,28 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TimeUtil.setLocalMessages();
-    return GetMaterialApp(
-      title: '두드리시오',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-        textTheme: TextTheme(
-            headline1: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            subtitle1: TextStyle(fontSize: 15, color: Colors.black54),
-            bodyText1: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
-            bodyText2: TextStyle(fontSize: 16)),
+    return ScreenUtilInit(
+      designSize: Size(360, 690),
+      allowFontScaling: false,
+      builder: () => GetMaterialApp(
+        title: '두드리시오',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+          textTheme: TextTheme(
+              headline1:
+                  TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold),
+              subtitle1: TextStyle(fontSize: 13.ssp, color: Colors.black54),
+              bodyText1:
+                  TextStyle(fontSize: 15.ssp, fontWeight: FontWeight.normal),
+              bodyText2: TextStyle(fontSize: 14.sp)),
+        ),
+        initialRoute: '/',
+        getPages: [
+          GetPage(
+              name: '/', page: () => MainScreen(), binding: NoticeBindings())
+        ],
       ),
-      initialRoute: '/',
-      getPages: [
-        GetPage(
-            name: '/', page: () => NoticeScreen(), binding: NoticeBindings())
-      ],
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:dream/models/notice.dart';
 import 'package:dream/utils/time_util.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../image_slider_screen.dart';
 import 'image_spliter.dart';
@@ -33,7 +34,7 @@ class NoticeCard extends StatelessWidget {
                   Text(notice.content,
                       style: Theme.of(context).textTheme.bodyText1),
                   SizedBox(
-                    height: 8,
+                    height: 8.h,
                   ),
                   //이미지, 슬라이더
                   GestureDetector(
@@ -68,20 +69,20 @@ class NoticeCard extends StatelessWidget {
                         color: Colors.black,
                       ),
                       SizedBox(
-                        width: 5,
+                        width: 5.w,
                       ),
                       Text("좋아요 ${notice.favorites ?? ""}",
                           style: Theme.of(context).textTheme.bodyText2)
                     ],
                   ),
                   SizedBox(
-                    width: 30,
+                    width: 30.w,
                   ),
                   Row(
                     children: [
                       Icon(Icons.messenger_outline_rounded),
                       SizedBox(
-                        width: 5,
+                        width: 5.w,
                       ),
                       Text('댓글 ${notice.comments < 1 ? '쓰기' : notice.comments}',
                           style: Theme.of(context).textTheme.bodyText2)

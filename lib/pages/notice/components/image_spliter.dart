@@ -29,7 +29,7 @@ class ImageSpliter extends StatelessWidget {
           ),
           Expanded(
               child: Image.network(
-            images[0],
+            images[1],
             fit: BoxFit.cover,
           ))
         ],
@@ -51,7 +51,7 @@ class ImageSpliter extends StatelessWidget {
           children: [
             Expanded(
                 child: Image.network(
-              images[0],
+              images[1],
               fit: BoxFit.cover,
             )),
             SizedBox(
@@ -60,7 +60,7 @@ class ImageSpliter extends StatelessWidget {
             if (images.length == 3)
               Expanded(
                   child: Image.network(
-                images[0],
+                images[2],
                 fit: BoxFit.cover,
               )),
             if (images.length > 3)
@@ -69,7 +69,7 @@ class ImageSpliter extends StatelessWidget {
                 Positioned.fill(
                   child: Container(
                     child: Image.network(
-                      images[0],
+                      images[2],
                       fit: BoxFit.cover,
                     ),
                   ),
