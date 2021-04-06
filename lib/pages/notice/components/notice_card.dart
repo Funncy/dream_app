@@ -11,7 +11,7 @@ import 'image_spliter.dart';
 class NoticeCard extends StatelessWidget {
   final NoticeModel notice;
 
-  const NoticeCard({Key key, this.notice}) : super(key: key);
+  const NoticeCard({Key key, @required this.notice}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -62,19 +62,24 @@ class NoticeCard extends StatelessWidget {
               padding: const EdgeInsets.all(10.0),
               child: Row(
                 children: [
-                  Row(
-                    children: [
-                      //TODO: 내가 눌렀는지에 따라 이미지 변경해야함.
-                      Icon(
-                        Icons.favorite_border,
-                        color: Constants.favoriteAndCommentColor,
-                      ),
-                      SizedBox(
-                        width: 5.w,
-                      ),
-                      Text("좋아요 ${notice.favorites ?? ""}",
-                          style: Theme.of(context).textTheme.bodyText2)
-                    ],
+                  GestureDetector(
+                    onTap: () {
+                      print("favorite");
+                    },
+                    child: Row(
+                      children: [
+                        //TODO: 내가 눌렀는지에 따라 이미지 변경해야함.
+                        Icon(
+                          Icons.favorite_border,
+                          color: Constants.favoriteAndCommentColor,
+                        ),
+                        SizedBox(
+                          width: 5.w,
+                        ),
+                        Text("좋아요 ${notice.favorites ?? ""}",
+                            style: Theme.of(context).textTheme.bodyText2)
+                      ],
+                    ),
                   ),
                   SizedBox(
                     width: 30.w,

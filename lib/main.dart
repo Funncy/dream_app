@@ -1,6 +1,7 @@
 import 'package:dream/bindings/notice_bindings.dart';
 import 'package:dream/pages/bottom_navigation/main_screen.dart';
 import 'package:dream/pages/notice/notice_body_widget.dart';
+import 'package:dream/pages/notice_detail/notice_detail_screen.dart';
 import 'package:dream/utils/time_util.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -40,7 +41,11 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         getPages: [
           GetPage(
-              name: '/', page: () => MainScreen(), binding: NoticeBindings())
+              name: '/', page: () => MainScreen(), binding: NoticeBindings()),
+          GetPage(
+              name: '/notice_detail',
+              page: () => NoticeDetailScreen(),
+              binding: NoticeBindings())
         ],
       ),
     );

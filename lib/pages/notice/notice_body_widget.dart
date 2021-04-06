@@ -1,19 +1,13 @@
-import 'package:dream/models/notice.dart';
 import 'package:dream/pages/common/empty_widget.dart';
 import 'package:dream/pages/common/error_message_widget.dart';
 import 'package:dream/pages/common/loading_widget.dart';
 import 'package:dream/pages/common/screen_status_widget.dart';
 import 'package:dream/pages/notice/components/notice_card.dart';
-import 'package:dream/pages/notice/image_slider_screen.dart';
-import 'package:dream/utils/time_util.dart';
+import 'package:dream/pages/notice_detail/notice_detail_screen.dart';
 import 'package:dream/viewmodels/notice_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:intl/intl.dart';
-import 'package:timeago/timeago.dart' as timeago;
-
-import 'components/image_spliter.dart';
 
 class NoticeBodyWidget extends StatefulWidget {
   @override
@@ -41,7 +35,15 @@ class _NoticeBodyWidgetState extends State<NoticeBodyWidget> {
             body: ListView.builder(
                 itemCount: noticeList.length,
                 itemBuilder: (context, index) {
-                  return NoticeCard(notice: noticeList[index]);
+                  return GestureDetector(
+                      onTap: () {
+                        // Get.to(NoticeDetailScreen(),
+                        //     arguments: noticeList[index]);
+                        Get.toNamed('/notice_detail',
+                            preventDuplicates: false,
+                            arguments: noticeList[index]);
+                      },
+                      child: NoticeCard(notice: noticeList[index]));
                 }),
             error: ErrorMessageWidget(errorMessage: 'test'),
             loading: LoadingWidget(),
