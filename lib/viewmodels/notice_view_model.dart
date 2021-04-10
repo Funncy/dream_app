@@ -21,13 +21,14 @@ class NoticeViewModel extends GetxController
   }
 
   void getNoticeList() async {
-    Either<ErrorModel, List<NoticeModel>> result =
+    List<NoticeModel> result =
         await getDataWithScreenStatus(_noticeRepository.getNoticeList);
 
-    result.fold((l) => null, (r) {
+    if (result != null) {
       noticeList.clear();
-      noticeList.addAll(r);
-      checkEmptyWithScreenStatus(r);
-    });
+      noticeList.addAll(result);
+
+      checkEmptyWithScreenStatus(result);
+    }
   }
 }

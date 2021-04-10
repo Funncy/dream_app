@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dartz/dartz.dart';
 import 'package:dream/core/error/error_model.dart';
 import 'package:dream/core/screen_status/status_enum.dart';
 import 'package:dream/models/notice.dart';
@@ -33,11 +34,11 @@ void main() {
     test('공지사항 가져오기 - 성공', () async {
       //arrange
       when(mockNoticeRepository.getNoticeList())
-          .thenAnswer((_) async => noticeList);
+          .thenAnswer((_) async => Right(noticeList));
       //act
       await noticeViewModel.getNoticeList();
       //assert
-      expect(noticeViewModel.notices, noticeList);
+      expect(noticeViewModel.noticeList, noticeList);
       expect(noticeViewModel.getScreenStatus(), Status.loaded);
       verify(mockNoticeRepository.getNoticeList()).called(1);
     });
@@ -45,21 +46,22 @@ void main() {
     test('공지사항 가져오기 - 에러', () async {
       //arrange
       when(mockNoticeRepository.getNoticeList())
-          .thenThrow(ErrorModel(message: 'Firebase Error'));
+          .thenAnswer((_) async => Left(ErrorModel(message: 'Firebase Error')));
       //act
       await noticeViewModel.getNoticeList();
       //assert
-      expect(noticeViewModel.notices.length, 0);
+      expect(noticeViewModel.noticeList.length, 0);
       expect(noticeViewModel.getScreenStatus(), Status.error);
       verify(mockNoticeRepository.getNoticeList()).called(1);
     });
     test('공지사항 가져오기 - Empty', () async {
       //arrange
-      when(mockNoticeRepository.getNoticeList()).thenAnswer((_) async => []);
+      when(mockNoticeRepository.getNoticeList())
+          .thenAnswer((_) async => Right([]));
       //act
       await noticeViewModel.getNoticeList();
       //assert
-      expect(noticeViewModel.notices.length, 0);
+      expect(noticeViewModel.noticeList.length, 0);
       expect(noticeViewModel.getScreenStatus(), Status.empty);
       verify(mockNoticeRepository.getNoticeList()).called(1);
     });
