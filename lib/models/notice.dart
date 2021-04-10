@@ -18,7 +18,7 @@ class NoticeModel extends Core {
     @required this.favorites,
   });
 
-  factory NoticeModel.fromFirestroe(DocumentSnapshot doc) {
+  factory NoticeModel.fromFirestore(DocumentSnapshot doc) {
     var json = doc.data();
 
     var model = NoticeModel(
