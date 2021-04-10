@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dartz/dartz.dart';
+import 'package:dream/core/error/error_model.dart';
 import 'package:dream/models/notice.dart';
 import 'package:dream/repositories/notice_repository.dart';
 import 'package:dream/repositories/notice_repository_impl.dart';
@@ -11,7 +13,7 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 class NoticeViewModel extends GetxController
     with ScreenStatus, GetDataWithScreen {
   NoticeRepository _noticeRepository;
-  RxList<NoticeModel> notices = <NoticeModel>[].obs;
+  RxList<NoticeModel> noticeList = <NoticeModel>[].obs;
   //RxList<NoticeModel> not sub type List<NoticeModel>
 
   NoticeViewModel({@required NoticeRepository noticeRepository}) {
@@ -19,14 +21,13 @@ class NoticeViewModel extends GetxController
   }
 
   void getNoticeList() async {
-    var result = await getDataWithScreenStatus(_noticeRepository.getNoticeList);
+    Either<ErrorModel, List<NoticeModel>> result =
+        await getDataWithScreenStatus(_noticeRepository.getNoticeList);
 
-    if (result == null) {
-      return;
-    }
-
-    notices.clear();
-    notices.addAll(result);
-    checkEmptyWithScreenStatus(result);
+    result.fold((l) => null, (r) {
+      noticeList.clear();
+      noticeList.addAll(r);
+      checkEmptyWithScreenStatus(r);
+    });
   }
 }

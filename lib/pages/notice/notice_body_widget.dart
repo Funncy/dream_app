@@ -29,7 +29,7 @@ class _NoticeBodyWidgetState extends State<NoticeBodyWidget> {
       color: Colors.black12,
       child: Obx(() {
         var screenStatus = noticeViewmodel.getScreenStatus();
-        var noticeList = noticeViewmodel.notices;
+        var noticeList = noticeViewmodel.noticeList;
 
         return ScreenStatusWidget(
             body: ListView.builder(

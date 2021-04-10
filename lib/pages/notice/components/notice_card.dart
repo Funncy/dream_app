@@ -43,12 +43,14 @@ class NoticeCard extends StatelessWidget {
                             imageUrlList: notice.images,
                           ));
                     },
-                    child: Container(
-                      width: size.width,
-                      //TODO: 나중에 스크린 유틸로 사이즈 변경하기
-                      height: 250,
-                      child: ImageSpliter(images: notice.images),
-                    ),
+                    child: notice.images.length > 0
+                        ? Container(
+                            width: size.width,
+                            //TODO: 나중에 스크린 유틸로 사이즈 변경하기
+                            height: 250,
+                            child: ImageSpliter(images: notice.images),
+                          )
+                        : Container(),
                   ),
                 ],
               ),

@@ -36,6 +36,7 @@ dependencies:
   timeago: ^2.0.30
   carousel_slider: ^3.0.0
   flutter_screenutil: ^4.0.3+1
+  dartz: ^0.9.2
 
 dev_dependencies:
   flutter_test:
