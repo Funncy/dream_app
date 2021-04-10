@@ -18,7 +18,6 @@ class NoticeCard extends StatelessWidget {
     //시간 로드
     var date = TimeUtil.getDateString(notice.updatedAt ?? notice.createdAt);
 
-    // var date = DateFormat.yMMMd('ko').format(createdAt);
     return Padding(
       padding: const EdgeInsets.only(bottom: 10.0),
       child: Container(

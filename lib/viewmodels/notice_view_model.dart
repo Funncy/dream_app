@@ -12,6 +12,7 @@ class NoticeViewModel extends GetxController
     with ScreenStatus, GetDataWithScreen {
   NoticeRepository _noticeRepository;
   RxList<NoticeModel> notices = <NoticeModel>[].obs;
+  //RxList<NoticeModel> not sub type List<NoticeModel>
 
   NoticeViewModel({@required NoticeRepository noticeRepository}) {
     _noticeRepository = noticeRepository;
