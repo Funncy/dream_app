@@ -11,19 +11,13 @@ mixin GetDataWithScreen on ScreenStatus {
     //화면 로딩으로 시작
     setScreenStatus(Status.loading);
 
+    //Either Left는 실패 Right는 성공
+    //fold로 좌우 분기 처리
     Either<ErrorModel, T> result = await getData();
     return result.fold((l) {
       setScreenStatus(Status.error);
       return null;
     }, (r) => r);
-
-    // try {
-    //   return await getData();
-    // } catch (e) {
-    //   //데이터 로드 중 에러 발생시 에러 화면
-    //   setScreenStatus(Status.error);
-    //   return null;
-    // }
   }
 
   //데이터가 빈 경우 Empty화면 띄워야하는 경우
