@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../image_slider_screen.dart';
+import '../../../image_slider/image_slider_screen.dart';
 import 'image_spliter.dart';
 
 class NoticeCard extends StatelessWidget {
@@ -39,6 +39,7 @@ class NoticeCard extends StatelessWidget {
                   //이미지, 슬라이더
                   GestureDetector(
                     onTap: () {
+                      // 화면 전환
                       Get.to(() => ImageSliderScreen(
                             imageUrlList: notice.images,
                           ));
@@ -46,7 +47,6 @@ class NoticeCard extends StatelessWidget {
                     child: notice.images.length > 0
                         ? Container(
                             width: size.width,
-                            //TODO: 나중에 스크린 유틸로 사이즈 변경하기
                             height: 250.w,
                             child: ImageSpliter(images: notice.images),
                           )

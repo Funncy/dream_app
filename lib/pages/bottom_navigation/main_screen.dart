@@ -40,13 +40,13 @@ class _MainScreenState extends State<MainScreen> {
         ],
       ),
       body: Center(
-        child: _widgetList.elementAt(_selectedIndex),
+        child: _bodyWidgetList.elementAt(_selectedIndex),
       ),
     );
   }
 
   //바텀 네비게이션바에 연결된 BodyWidget들
-  List _widgetList = [
+  List _bodyWidgetList = [
     NoticeBodyWidget(),
     Text("공지사항2"),
     Text("공지사항3"),
