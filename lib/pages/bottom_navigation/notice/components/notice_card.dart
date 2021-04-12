@@ -47,7 +47,7 @@ class NoticeCard extends StatelessWidget {
                         ? Container(
                             width: size.width,
                             //TODO: 나중에 스크린 유틸로 사이즈 변경하기
-                            height: 250,
+                            height: 250.w,
                             child: ImageSpliter(images: notice.images),
                           )
                         : Container(),

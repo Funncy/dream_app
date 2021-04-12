@@ -1,5 +1,5 @@
 import 'package:dream/constants.dart';
-import 'package:dream/pages/notice/notice_body_widget.dart';
+import 'package:dream/pages/bottom_navigation/notice/notice_body_widget.dart';
 import 'package:flutter/material.dart';
 
 class MainScreen extends StatefulWidget {
@@ -45,6 +45,7 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
+  //바텀 네비게이션바에 연결된 BodyWidget들
   List _widgetList = [
     NoticeBodyWidget(),
     Text("공지사항2"),
