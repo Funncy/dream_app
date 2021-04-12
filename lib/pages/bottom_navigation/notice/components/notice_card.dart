@@ -19,7 +19,7 @@ class NoticeCard extends StatelessWidget {
     var date = TimeUtil.getDateString(notice.updatedAt ?? notice.createdAt);
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10.0),
+      padding: const EdgeInsets.only(bottom: 0.0),
       child: Container(
         color: Colors.white,
         child: Column(
@@ -57,10 +57,10 @@ class NoticeCard extends StatelessWidget {
             ),
             Divider(
               thickness: 1.0,
-              color: Colors.black12,
+              color: Colors.black26,
             ),
             Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(10),
               child: Row(
                 children: [
                   GestureDetector(

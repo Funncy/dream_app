@@ -37,7 +37,6 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
       ),
       body: SafeArea(
         child: Container(
-          color: Colors.black12,
           child: Column(
             children: [
               Expanded(
@@ -46,10 +45,13 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
                     NoticeCard(
                       notice: notice,
                     ),
-                    Container(
-                      child:
-                          Center(child: Text("동역자를 존중하며 따뜻한 교회 문화를 함께 만들어가요.")),
+                    Divider(
+                      thickness: 1.0,
+                      color: Colors.black26,
                     ),
+                    NoticeComment(),
+                    NoticeComment(),
+                    NoticeComment()
                   ],
                   //댓글 리스트 만들어야함.
                 ),
@@ -61,6 +63,92 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
               )
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class NoticeComment extends StatelessWidget {
+  const NoticeComment({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 60.w,
+              child: CircleAvatar(
+                backgroundImage: AssetImage('assets/images/test-img.jpeg'),
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      width: 250.w,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: Text(
+                              "유저 아이디",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: Text('더드림/시온/두드림 . 25분전'),
+                          ),
+                        ],
+                      ),
+                    ),
+                    InkWell(child: Icon(Icons.more_vert))
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Container(
+                    width: 230.w,
+                    child: Text(
+                      "본문 ~~~~ ~~~ \n ~~~~~~~~~~~~~~~ \n ~~~~~~~~~~~~~~ asdjaskdljaslkdjalksjdlkasjdlkjaslkdjaslkjdlkasjdlkjasldkjaslkdjlaksjdlkasjdlkasjdlkajsdlkjaslkdjaslkdjlaksjdlkasjdlkj",
+                      overflow: TextOverflow.clip,
+                    ),
+                  ),
+                ),
+                Row(
+                  children: [
+                    InkWell(
+                      child: Text(
+                        "공감하기",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    InkWell(
+                      child: Text(
+                        "답글쓰기",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            )
+          ],
         ),
       ),
     );
