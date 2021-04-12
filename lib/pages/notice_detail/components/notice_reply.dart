@@ -1,9 +1,8 @@
-import 'package:dream/pages/notice_detail/components/notice_reply.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class NoticeComment extends StatelessWidget {
-  const NoticeComment({
+class NoticeReply extends StatelessWidget {
+  const NoticeReply({
     Key key,
   }) : super(key: key);
 
@@ -26,42 +25,32 @@ class NoticeComment extends StatelessWidget {
                   ),
                 ),
               ),
-              Expanded(
+              Flexible(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          width: 250.w,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 5),
-                                child: Text(
-                                  "유저 아이디",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 8),
-                                child: Text(
-                                  '더드림/시온/두드림 . 25분전',
-                                  style: TextStyle(color: Colors.black45),
-                                ),
-                              ),
-                            ],
+                    Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 5),
+                            child: Text(
+                              "유저 아이디",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
                           ),
-                        ),
-                      ],
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: Text('더드림/시온/두드림 . 25분전'),
+                          ),
+                        ],
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
                       child: Container(
-                        width: 230.w,
+                        width: 180.w,
                         child: Text(
                           "본문 ~~~~ ~~~ \n ~~~~~~~~~~~~~~~ \n ~~~~~~~~~~~~~~ asdjaskdljaslkdjalksjdlkasjdlkjaslkdjaslkjdlkasjdlkjasldkjaslkdjlaksjdlkasjdlkasjdlkajsdlkjaslkdjaslkdjlaksjdlkasjdlkj",
                           overflow: TextOverflow.clip,
@@ -88,16 +77,14 @@ class NoticeComment extends StatelessWidget {
                       ],
                     ),
                     //Reply List
-                    NoticeReply(),
-                    NoticeReply(),
-                    NoticeReply(),
+                    Container()
                   ],
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
                 child: InkWell(child: Icon(Icons.more_vert)),
-              )
+              ),
             ],
           ),
         ),
