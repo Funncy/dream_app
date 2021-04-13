@@ -19,7 +19,7 @@ class BottonInputBar extends StatelessWidget {
       child: Row(
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(13.0),
             child: Container(
               width: 300.w,
               height: 30.h,
@@ -31,7 +31,11 @@ class BottonInputBar extends StatelessWidget {
                 child: Center(
                   child: TextField(
                     controller: textEditingController,
-                    decoration: null,
+                    decoration: InputDecoration(
+                      hintText: '댓글을 입력해주세요 :)',
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.all(9),
+                    ),
                   ),
                 ),
               ),

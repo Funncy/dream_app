@@ -91,6 +91,30 @@ class NoticeComment extends StatelessWidget {
                     NoticeReply(),
                     NoticeReply(),
                     NoticeReply(),
+                    InkWell(
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Container(
+                            width: 250.w,
+                            height: 25.h,
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.black26),
+                                borderRadius: BorderRadius.circular(15)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Center(
+                                  child: Text(
+                                '답글을 입력해주세요.',
+                                style: TextStyle(
+                                    color: Colors.black38, fontSize: 15),
+                              )),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

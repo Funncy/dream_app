@@ -65,15 +65,6 @@ class NoticeReply extends StatelessWidget {
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        InkWell(
-                          child: Text(
-                            "답글쓰기",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
                       ],
                     ),
                     //Reply List
