@@ -68,6 +68,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
                               children: commentList
                                   .map((comment) => NoticeComment(
                                         noticeCommentModel: comment,
+                                        isReplyScreen: false,
                                       ))
                                   .toList()),
                           error: ErrorMessageWidget(errorMessage: 'test'),

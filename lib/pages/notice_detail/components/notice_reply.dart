@@ -19,7 +19,7 @@ class NoticeReply extends StatelessWidget {
     return Container(
       color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.symmetric(vertical: 10.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -37,23 +37,33 @@ class NoticeReply extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    child: Column(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 5),
-                          child: Text(
-                            //TODO: 추후에 닉네임으로 변경해야함.
-                            noticeCommentReplyModel.uid,
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 5),
+                              child: Text(
+                                //TODO: 추후에 닉네임으로 변경해야함.
+                                noticeCommentReplyModel.uid,
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: Text(
+                                date,
+                                style: TextStyle(color: Colors.black38),
+                              ),
+                            ),
+                          ],
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 8),
-                          child: Text(
-                            date,
-                            style: TextStyle(color: Colors.black38),
-                          ),
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: InkWell(child: Icon(Icons.more_vert)),
                         ),
                       ],
                     ),
@@ -69,6 +79,7 @@ class NoticeReply extends StatelessWidget {
                     ),
                   ),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       InkWell(
                         child: Text(
@@ -76,16 +87,19 @@ class NoticeReply extends StatelessWidget {
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
+                      Row(
+                        children: [
+                          Icon(Icons.favorite_border),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text("3")
+                        ],
+                      )
                     ],
                   ),
-                  //Reply List
-                  Container()
                 ],
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: InkWell(child: Icon(Icons.more_vert)),
             ),
           ],
         ),

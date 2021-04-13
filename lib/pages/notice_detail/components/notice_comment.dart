@@ -1,14 +1,18 @@
 import 'package:dream/models/notice.dart';
 import 'package:dream/pages/notice_detail/components/notice_reply.dart';
+import 'package:dream/pages/notice_reply/notice_reply_screen.dart';
 import 'package:dream/utils/time_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 class NoticeComment extends StatelessWidget {
   final NoticeCommentModel noticeCommentModel;
+  final bool isReplyScreen;
   const NoticeComment({
     Key key,
     this.noticeCommentModel,
+    this.isReplyScreen,
   }) : super(key: key);
 
   @override
@@ -39,6 +43,7 @@ class NoticeComment extends StatelessWidget {
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
                         width: 250.w,
@@ -63,6 +68,10 @@ class NoticeComment extends StatelessWidget {
                           ],
                         ),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: InkWell(child: Icon(Icons.more_vert)),
+                      ),
                     ],
                   ),
                   Padding(
@@ -76,22 +85,45 @@ class NoticeComment extends StatelessWidget {
                     ),
                   ),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      InkWell(
-                        child: Text(
-                          "공감하기",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
+                      Row(
+                        children: [
+                          InkWell(
+                            child: Text(
+                              "공감하기",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          isReplyScreen
+                              ? Container()
+                              : InkWell(
+                                  onTap: () {
+                                    Get.to(NoticeReplyScreen(
+                                      noticeCommentModel: noticeCommentModel,
+                                    ));
+                                  },
+                                  child: Text(
+                                    "답글쓰기",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                        ],
                       ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      InkWell(
-                        child: Text(
-                          "답글쓰기",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
+                      //TODO: 좋아요 숫자에 따라 처리
+                      Row(
+                        children: [
+                          Icon(Icons.favorite_border),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text("3")
+                        ],
+                      )
                     ],
                   ),
                   //Reply List
@@ -101,8 +133,13 @@ class NoticeComment extends StatelessWidget {
                               noticeCommentReplyModel: model,
                             ))
                         .toList(),
-                  if (noticeCommentModel.replyCount > 0)
+                  if (noticeCommentModel.replyCount > 0 && !isReplyScreen)
                     InkWell(
+                      onTap: () {
+                        Get.to(NoticeReplyScreen(
+                          noticeCommentModel: noticeCommentModel,
+                        ));
+                      },
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Padding(
@@ -129,10 +166,6 @@ class NoticeComment extends StatelessWidget {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: InkWell(child: Icon(Icons.more_vert)),
-            )
           ],
         ),
       ),
