@@ -20,76 +20,74 @@ class NoticeReply extends StatelessWidget {
       color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(10.0),
-        child: Flexible(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Container(
-                  width: 30.w,
-                  child: CircleAvatar(
-                    backgroundImage: AssetImage('assets/images/test-img.jpeg'),
-                  ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Container(
+                width: 30.w,
+                child: CircleAvatar(
+                  backgroundImage: AssetImage('assets/images/test-img.jpeg'),
                 ),
               ),
-              Flexible(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 5),
-                            child: Text(
-                              //TODO: 추후에 닉네임으로 변경해야함.
-                              noticeCommentReplyModel.uid,
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 8),
-                            child: Text(
-                              date,
-                              style: TextStyle(color: Colors.black38),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Container(
-                        width: 180.w,
-                        child: Text(
-                          noticeCommentReplyModel.content,
-                          overflow: TextOverflow.clip,
-                        ),
-                      ),
-                    ),
-                    Row(
+            ),
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        InkWell(
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 5),
                           child: Text(
-                            "공감하기",
+                            //TODO: 추후에 닉네임으로 변경해야함.
+                            noticeCommentReplyModel.uid,
                             style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Text(
+                            date,
+                            style: TextStyle(color: Colors.black38),
                           ),
                         ),
                       ],
                     ),
-                    //Reply List
-                    Container()
-                  ],
-                ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Container(
+                      width: 180.w,
+                      child: Text(
+                        noticeCommentReplyModel.content,
+                        overflow: TextOverflow.clip,
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      InkWell(
+                        child: Text(
+                          "공감하기",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                  //Reply List
+                  Container()
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: InkWell(child: Icon(Icons.more_vert)),
-              ),
-            ],
-          ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: InkWell(child: Icon(Icons.more_vert)),
+            ),
+          ],
         ),
       ),
     );
