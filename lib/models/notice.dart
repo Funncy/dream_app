@@ -57,7 +57,7 @@ class NoticeCommentModel extends Core {
       @required this.content,
       @required this.replyCount});
 
-  factory NoticeCommentModel.fromFirestroe(DocumentSnapshot doc) {
+  factory NoticeCommentModel.fromFirestore(DocumentSnapshot doc) {
     var json = doc.data();
 
     var model = NoticeCommentModel(
@@ -88,7 +88,7 @@ class NoticeCommentReplyModel extends Core {
   NoticeCommentReplyModel(
       {@required this.did, @required this.uid, @required this.content});
 
-  factory NoticeCommentReplyModel.fromFirestroe(DocumentSnapshot doc) {
+  factory NoticeCommentReplyModel.fromFirestore(DocumentSnapshot doc) {
     var json = doc.data();
 
     var model = NoticeCommentReplyModel(
