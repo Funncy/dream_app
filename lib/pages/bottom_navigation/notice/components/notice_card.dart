@@ -41,14 +41,14 @@ class NoticeCard extends StatelessWidget {
                     onTap: () {
                       // 화면 전환
                       Get.to(() => ImageSliderScreen(
-                            imageUrlList: notice.images,
+                            imageUrlList: notice.imageList,
                           ));
                     },
-                    child: notice.images.length > 0
+                    child: notice.imageList.length > 0
                         ? Container(
                             width: size.width,
                             height: 250.w,
-                            child: ImageSpliter(images: notice.images),
+                            child: ImageSpliter(images: notice.imageList),
                           )
                         : Container(),
                   ),
@@ -92,7 +92,8 @@ class NoticeCard extends StatelessWidget {
                       SizedBox(
                         width: 5.w,
                       ),
-                      Text('댓글 ${notice.comments < 1 ? '쓰기' : notice.comments}',
+                      Text(
+                          '댓글 ${notice.commentCount < 1 ? '쓰기' : notice.commentCount}',
                           style: Theme.of(context).textTheme.bodyText2)
                     ],
                   )

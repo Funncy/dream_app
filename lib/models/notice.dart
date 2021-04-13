@@ -6,15 +6,15 @@ class NoticeModel extends Core {
   final String did;
   final String uid;
   final String content;
-  final List<String> images = [];
-  final int comments;
+  final List<String> imageList = [];
+  final int commentCount;
   final int favorites;
 
   NoticeModel({
     @required this.did,
     @required this.uid,
     @required this.content,
-    @required this.comments,
+    @required this.commentCount,
     @required this.favorites,
   });
 
@@ -25,8 +25,7 @@ class NoticeModel extends Core {
       did: doc.id,
       uid: json['uid'],
       content: json['content'],
-      // subType Error Solution
-      comments: json['comments'],
+      commentCount: json['comment_count'],
       favorites: json['favorites'],
     );
     // print((json['createdAt'] as Timestamp).toDate().toString());
@@ -39,53 +38,98 @@ class NoticeModel extends Core {
         'did': uid,
         'uid': uid,
         'content': content,
-        'images': images,
-        'comments': comments,
+        'images': imageList,
+        'comment_count': commentCount,
         'favorites': favorites,
       };
 }
 
 class NoticeCommentModel extends Core {
-  String uid;
-  String content;
+  final String did;
+  final String uid;
+  final String content;
+  final int replyCount;
   List<NoticeCommentReplyModel> replys;
 
-  NoticeCommentModel({@required this.uid, @required this.content});
+  NoticeCommentModel(
+      {@required this.did,
+      @required this.uid,
+      @required this.content,
+      @required this.replyCount});
 
-  NoticeCommentModel.fromFirestroe(DocumentSnapshot doc)
-      : uid = doc.data()['uid'],
-        content = doc.data()['content'];
+  factory NoticeCommentModel.fromFirestroe(DocumentSnapshot doc) {
+    var json = doc.data();
+
+    var model = NoticeCommentModel(
+      did: doc.id,
+      uid: json['uid'],
+      content: json['content'],
+      replyCount: json['replyCount'],
+    );
+
+    model.createdAt = (json['createdAt'] as Timestamp)?.toDate() ?? null;
+    model.updatedAt = (json['updatedAt'] as Timestamp)?.toDate() ?? null;
+    return model;
+  }
 
   Map<String, dynamic> toJson() => {
+        'did': did,
         'uid': uid,
         'content': content,
+        'reply_count': replyCount,
       };
 }
 
 class NoticeCommentReplyModel extends Core {
-  String uid;
-  String content;
+  final String did;
+  final String uid;
+  final String content;
 
-  NoticeCommentReplyModel({@required this.uid, @required this.content});
+  NoticeCommentReplyModel(
+      {@required this.did, @required this.uid, @required this.content});
 
-  NoticeCommentReplyModel.fromFirestroe(DocumentSnapshot doc)
-      : uid = doc.data()['uid'],
-        content = doc.data()['content'];
+  factory NoticeCommentReplyModel.fromFirestroe(DocumentSnapshot doc) {
+    var json = doc.data();
+
+    var model = NoticeCommentReplyModel(
+      did: doc.id,
+      uid: json['uid'],
+      content: json['content'],
+    );
+
+    model.createdAt = (json['createdAt'] as Timestamp)?.toDate() ?? null;
+    model.updatedAt = (json['updatedAt'] as Timestamp)?.toDate() ?? null;
+    return model;
+  }
 
   Map<String, dynamic> toJson() => {
+        'did': did,
         'uid': uid,
         'content': content,
       };
 }
 
 class FavoriteModel extends Core {
-  String uid;
+  final String did;
+  final String uid;
 
-  FavoriteModel({@required this.uid});
+  FavoriteModel({@required this.did, @required this.uid});
 
-  FavoriteModel.fromFirestroe(DocumentSnapshot doc) : uid = doc.data()['uid'];
+  factory FavoriteModel.fromFirestroe(DocumentSnapshot doc) {
+    var json = doc.data();
+
+    var model = FavoriteModel(
+      did: doc.id,
+      uid: json['uid'],
+    );
+
+    model.createdAt = (json['createdAt'] as Timestamp)?.toDate() ?? null;
+    model.updatedAt = (json['updatedAt'] as Timestamp)?.toDate() ?? null;
+    return model;
+  }
 
   Map<String, dynamic> toJson() => {
+        'did': did,
         'uid': uid,
       };
 }

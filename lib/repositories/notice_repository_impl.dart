@@ -60,7 +60,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
   Future<void> setNoticeImageList(
       NoticeModel model, Function getImageList) async {
-    model.images
+    model.imageList
         .addAll(await firebaseServie.getAllImageUrl('/notice', model.did));
   }
 }
