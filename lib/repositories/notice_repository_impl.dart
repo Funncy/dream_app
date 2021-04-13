@@ -42,7 +42,8 @@ class NoticeRepositoryImpl extends NoticeRepository {
       // 그리고 forEach안에 async 함수를 돌릴 수 없어 아래와 같이 복잡(?) 해졌는데
       // 어떤 방식이 더 좋은 방법인지 이것보다 더 좋은 방법이 있을까요?
       noticeList.addAll(await firebaseServie.getAllData<NoticeModel>(
-          'notice', (e) => NoticeModel.fromFirestore(e)));
+          collectionName: 'notice',
+          toModelFunction: (e) => NoticeModel.fromFirestore(e)));
 
       // forEach 비동기 처리를 위한 FutureList
       List<Future<dynamic>> futureList = [];
@@ -67,15 +68,16 @@ class NoticeRepositoryImpl extends NoticeRepository {
       //댓글 가져오기
       commentList.addAll(
           await firebaseServie.getAllDataByDid<NoticeCommentModel>(
-              'notice_comment',
-              did,
-              (e) => NoticeCommentModel.fromFirestore(e)));
+              collectionName: 'notice_comment',
+              columnName: 'nid',
+              did: did,
+              toModelFunction: (e) => NoticeCommentModel.fromFirestore(e)));
       //답글 가져오기
       for (var comment in commentList) {
         comment.replys = await firebaseServie.getAllDataInnerCollection(
-            comment.documentReference,
-            'reply',
-            (e) => NoticeCommentReplyModel.fromFirestore(e));
+            documentReference: comment.documentReference,
+            collectionName: 'reply',
+            toModelFunction: (e) => NoticeCommentReplyModel.fromFirestore(e));
       }
     } catch (e) {
       return Left(ErrorModel(message: '파이어베이스 에러'));
@@ -85,7 +87,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
   Future<void> setNoticeImageList(
       NoticeModel model, Function getImageList) async {
-    model.imageList
-        .addAll(await firebaseServie.getAllImageUrl('/notice', model.did));
+    model.imageList.addAll(
+        await firebaseServie.getAllImageUrl(path: '/notice', docId: model.did));
   }
 }
