@@ -8,14 +8,16 @@ class NoticeModel extends Core {
   final String content;
   final List<String> imageList = [];
   final int commentCount;
-  final int favorites;
+  final DocumentReference documentReference;
+  final int favoriteCount;
 
   NoticeModel({
     @required this.did,
     @required this.uid,
     @required this.content,
     @required this.commentCount,
-    @required this.favorites,
+    @required this.favoriteCount,
+    @required this.documentReference,
   });
 
   factory NoticeModel.fromFirestore(DocumentSnapshot doc) {
@@ -26,7 +28,8 @@ class NoticeModel extends Core {
       uid: json['uid'],
       content: json['content'],
       commentCount: json['comment_count'],
-      favorites: json['favorites'],
+      favoriteCount: json['favorite_count'],
+      documentReference: doc.reference,
     );
     // print((json['createdAt'] as Timestamp).toDate().toString());
     model.createdAt = (json['createdAt'] as Timestamp)?.toDate() ?? null;
@@ -40,31 +43,38 @@ class NoticeModel extends Core {
         'content': content,
         'images': imageList,
         'comment_count': commentCount,
-        'favorites': favorites,
+        'favorite_count': favoriteCount,
       };
 }
 
 class NoticeCommentModel extends Core {
   final String did;
+  //Notice ID
+  final String nid;
   final String uid;
   final String content;
   final int replyCount;
+  final DocumentReference documentReference;
   List<NoticeCommentReplyModel> replys;
 
   NoticeCommentModel(
       {@required this.did,
+      @required this.nid,
       @required this.uid,
       @required this.content,
-      @required this.replyCount});
+      @required this.replyCount,
+      @required this.documentReference});
 
   factory NoticeCommentModel.fromFirestore(DocumentSnapshot doc) {
     var json = doc.data();
 
     var model = NoticeCommentModel(
       did: doc.id,
+      nid: json['nid'],
       uid: json['uid'],
       content: json['content'],
-      replyCount: json['replyCount'],
+      replyCount: json['reply_count'],
+      documentReference: doc.reference,
     );
 
     model.createdAt = (json['createdAt'] as Timestamp)?.toDate() ?? null;
@@ -74,6 +84,7 @@ class NoticeCommentModel extends Core {
 
   Map<String, dynamic> toJson() => {
         'did': did,
+        'nid': nid,
         'uid': uid,
         'content': content,
         'reply_count': replyCount,
@@ -84,9 +95,13 @@ class NoticeCommentReplyModel extends Core {
   final String did;
   final String uid;
   final String content;
+  final DocumentReference documentReference;
 
   NoticeCommentReplyModel(
-      {@required this.did, @required this.uid, @required this.content});
+      {@required this.did,
+      @required this.uid,
+      @required this.content,
+      @required this.documentReference});
 
   factory NoticeCommentReplyModel.fromFirestore(DocumentSnapshot doc) {
     var json = doc.data();
@@ -95,6 +110,7 @@ class NoticeCommentReplyModel extends Core {
       did: doc.id,
       uid: json['uid'],
       content: json['content'],
+      documentReference: doc.reference,
     );
 
     model.createdAt = (json['createdAt'] as Timestamp)?.toDate() ?? null;

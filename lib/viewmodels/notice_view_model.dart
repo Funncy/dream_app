@@ -14,6 +14,7 @@ class NoticeViewModel extends GetxController
     with ScreenStatus, GetDataWithScreen {
   NoticeRepository _noticeRepository;
   RxList<NoticeModel> noticeList = <NoticeModel>[].obs;
+  RxList<NoticeCommentModel> commentList = <NoticeCommentModel>[].obs;
   //RxList<NoticeModel> not sub type List<NoticeModel>
 
   NoticeViewModel({@required NoticeRepository noticeRepository}) {
@@ -27,6 +28,18 @@ class NoticeViewModel extends GetxController
     if (result != null) {
       noticeList.clear();
       noticeList.addAll(result);
+
+      checkEmptyWithScreenStatus(result);
+    }
+  }
+
+  void getCommentList(String did) async {
+    List<NoticeCommentModel> result = await getDataWithScreenStatus(
+        () async => await _noticeRepository.getCommentList(did));
+
+    if (result != null) {
+      commentList.clear();
+      commentList.addAll(result);
 
       checkEmptyWithScreenStatus(result);
     }

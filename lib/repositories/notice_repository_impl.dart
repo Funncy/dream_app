@@ -18,7 +18,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
   @override
   Future<Either<ErrorModel, List<NoticeModel>>> getNoticeList() async {
-    List<NoticeModel> notices = [];
+    List<NoticeModel> noticeList = [];
 
     try {
       //1. 기존 방식
@@ -41,12 +41,12 @@ class NoticeRepositoryImpl extends NoticeRepository {
       // 아래와 같이 코드 재활용을 위해서 처리했더니 2번 loop 돌게 되었습니다.
       // 그리고 forEach안에 async 함수를 돌릴 수 없어 아래와 같이 복잡(?) 해졌는데
       // 어떤 방식이 더 좋은 방법인지 이것보다 더 좋은 방법이 있을까요?
-      notices.addAll(await firebaseServie.getAllData<NoticeModel>(
+      noticeList.addAll(await firebaseServie.getAllData<NoticeModel>(
           'notice', (e) => NoticeModel.fromFirestore(e)));
 
       // forEach 비동기 처리를 위한 FutureList
       List<Future<dynamic>> futureList = [];
-      notices.forEach((element) {
+      noticeList.forEach((element) {
         futureList
             .add(setNoticeImageList(element, firebaseServie.getAllImageUrl));
       });
@@ -55,7 +55,32 @@ class NoticeRepositoryImpl extends NoticeRepository {
     } catch (e) {
       return Left(ErrorModel(message: '파이어베이스 에러'));
     }
-    return Right(notices);
+    return Right(noticeList);
+  }
+
+  @override
+  Future<Either<ErrorModel, List<NoticeCommentModel>>> getCommentList(
+      String did) async {
+    List<NoticeCommentModel> commentList = [];
+
+    try {
+      //댓글 가져오기
+      commentList.addAll(
+          await firebaseServie.getAllDataByDid<NoticeCommentModel>(
+              'notice_comment',
+              did,
+              (e) => NoticeCommentModel.fromFirestore(e)));
+      //답글 가져오기
+      for (var comment in commentList) {
+        comment.replys = await firebaseServie.getAllDataInnerCollection(
+            comment.documentReference,
+            'reply',
+            (e) => NoticeCommentReplyModel.fromFirestore(e));
+      }
+    } catch (e) {
+      return Left(ErrorModel(message: '파이어베이스 에러'));
+    }
+    return Right(commentList);
   }
 
   Future<void> setNoticeImageList(

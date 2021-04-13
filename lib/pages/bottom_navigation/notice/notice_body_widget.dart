@@ -19,8 +19,10 @@ class _NoticeBodyWidgetState extends State<NoticeBodyWidget> {
 
   @override
   void initState() {
-    noticeViewmodel.getNoticeList();
     super.initState();
+    //build후에 함수 실행
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => noticeViewmodel.getNoticeList());
   }
 
   @override

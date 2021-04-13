@@ -1,13 +1,21 @@
+import 'package:dream/models/notice.dart';
+import 'package:dream/utils/time_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class NoticeReply extends StatelessWidget {
+  final NoticeCommentReplyModel noticeCommentReplyModel;
   const NoticeReply({
     Key key,
+    this.noticeCommentReplyModel,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    //시간 로드
+    var date = TimeUtil.getDateString(
+        noticeCommentReplyModel.updatedAt ?? noticeCommentReplyModel.createdAt);
+
     return Container(
       color: Colors.white,
       child: Padding(
@@ -36,13 +44,17 @@ class NoticeReply extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 5),
                             child: Text(
-                              "유저 아이디",
+                              //TODO: 추후에 닉네임으로 변경해야함.
+                              noticeCommentReplyModel.uid,
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(bottom: 8),
-                            child: Text('더드림/시온/두드림 . 25분전'),
+                            child: Text(
+                              date,
+                              style: TextStyle(color: Colors.black38),
+                            ),
                           ),
                         ],
                       ),
@@ -52,7 +64,7 @@ class NoticeReply extends StatelessWidget {
                       child: Container(
                         width: 180.w,
                         child: Text(
-                          "본문 ~~~~ ~~~ \n ~~~~~~~~~~~~~~~ \n ~~~~~~~~~~~~~~ asdjaskdljaslkdjalksjdlkasjdlkjaslkdjaslkjdlkasjdlkjasldkjaslkdjlaksjdlkasjdlkasjdlkajsdlkjaslkdjaslkdjlaksjdlkasjdlkj",
+                          noticeCommentReplyModel.content,
                           overflow: TextOverflow.clip,
                         ),
                       ),

@@ -77,7 +77,7 @@ class NoticeCard extends StatelessWidget {
                         SizedBox(
                           width: 5.w,
                         ),
-                        Text("좋아요 ${notice.favorites ?? ""}",
+                        Text("좋아요 ${notice.favoriteCount ?? ""}",
                             style: Theme.of(context).textTheme.bodyText2)
                       ],
                     ),
@@ -93,6 +93,7 @@ class NoticeCard extends StatelessWidget {
                         width: 5.w,
                       ),
                       Text(
+                          //TODO: NULL처리 해줘야함.
                           '댓글 ${notice.commentCount < 1 ? '쓰기' : notice.commentCount}',
                           style: Theme.of(context).textTheme.bodyText2)
                     ],
