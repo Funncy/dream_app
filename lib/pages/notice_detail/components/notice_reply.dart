@@ -93,7 +93,8 @@ class NoticeReply extends StatelessWidget {
                           SizedBox(
                             width: 5,
                           ),
-                          Text("3")
+                          Text(
+                              "${noticeCommentReplyModel.favoriteCount ?? "0"}")
                         ],
                       )
                     ],
