@@ -44,6 +44,8 @@ class NoticeModel extends Core {
         'images': imageList,
         'comment_count': commentCount,
         'favorite_count': favoriteCount,
+        'createdAt': createdAt,
+        'updatedAt': updatedAt,
       };
 }
 
@@ -88,6 +90,8 @@ class NoticeCommentModel extends Core {
         'uid': uid,
         'content': content,
         'reply_count': replyCount,
+        'createdAt': createdAt,
+        'updatedAt': updatedAt,
       };
 }
 
@@ -122,6 +126,8 @@ class NoticeCommentReplyModel extends Core {
         'did': did,
         'uid': uid,
         'content': content,
+        'createdAt': createdAt,
+        'updatedAt': updatedAt,
       };
 }
 
@@ -147,5 +153,7 @@ class FavoriteModel extends Core {
   Map<String, dynamic> toJson() => {
         'did': did,
         'uid': uid,
+        'createdAt': createdAt,
+        'updatedAt': updatedAt,
       };
 }
