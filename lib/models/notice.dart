@@ -47,6 +47,15 @@ class NoticeModel extends Core {
         'createdAt': createdAt,
         'updatedAt': updatedAt,
       };
+
+  Map<String, dynamic> toSaveJson() => {
+        'uid': uid,
+        'content': content,
+        'comment_count': commentCount,
+        'favorite_count': favoriteCount,
+        'createdAt': createdAt,
+        'updatedAt': updatedAt,
+      };
 }
 
 class NoticeCommentModel extends Core {
@@ -93,6 +102,15 @@ class NoticeCommentModel extends Core {
         'createdAt': createdAt,
         'updatedAt': updatedAt,
       };
+
+  Map<String, dynamic> toSaveJson() => {
+        'nid': nid,
+        'uid': uid,
+        'content': content,
+        'reply_count': replyCount,
+        'createdAt': createdAt,
+        'updatedAt': updatedAt,
+      };
 }
 
 class NoticeCommentReplyModel extends Core {
@@ -129,6 +147,13 @@ class NoticeCommentReplyModel extends Core {
         'createdAt': createdAt,
         'updatedAt': updatedAt,
       };
+
+  Map<String, dynamic> toSaveJson() => {
+        'uid': uid,
+        'content': content,
+        'createdAt': createdAt,
+        'updatedAt': updatedAt,
+      };
 }
 
 class FavoriteModel extends Core {
@@ -152,6 +177,12 @@ class FavoriteModel extends Core {
 
   Map<String, dynamic> toJson() => {
         'did': did,
+        'uid': uid,
+        'createdAt': createdAt,
+        'updatedAt': updatedAt,
+      };
+
+  Map<String, dynamic> toSaveJson() => {
         'uid': uid,
         'createdAt': createdAt,
         'updatedAt': updatedAt,
