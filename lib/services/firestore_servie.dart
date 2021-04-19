@@ -22,6 +22,7 @@ class FirebaseService {
     var querySnapshot = await _firebaseFirestore
         .collection(collectionName)
         .where(columnName, isEqualTo: did)
+        .orderBy('updatedAt')
         .get();
 
     return querySnapshot.docs.map<T>(toModelFunction).toList();
@@ -31,8 +32,10 @@ class FirebaseService {
       {@required DocumentReference documentReference,
       @required String collectionName,
       @required Function toModelFunction}) async {
-    var querySnapshot =
-        await documentReference.collection(collectionName).get();
+    var querySnapshot = await documentReference
+        .collection(collectionName)
+        .orderBy('updatedAt')
+        .get();
     return querySnapshot.docs.map<T>(toModelFunction).toList();
   }
 

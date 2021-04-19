@@ -111,6 +111,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
         favoriteCount: 0,
         documentReference: null);
     model.createdAt = DateTime.now();
+    model.updatedAt = model.createdAt;
     try {
       await firebaseServie.writeDataInCollection(
           collectionName: commentCollectionName, json: model.toSaveJson());

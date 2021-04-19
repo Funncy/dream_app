@@ -33,6 +33,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
     //TODO: uid 연동해야함.
     noticeViewModel.writeComment(
         nid: notice.did, uid: '123', content: _textEditingController.text);
+    _textEditingController.text = '';
   }
 
   @override
@@ -59,7 +60,6 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
                       thickness: 1.0,
                       color: Colors.black26,
                     ),
-
                     Obx(() {
                       var dataStatus = noticeViewModel.commentStatus.value;
                       var commentList = noticeViewModel.commentList;
@@ -81,14 +81,9 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
                           updating: Container(),
                           dataStatus: dataStatus);
                     })
-                    // NoticeComment(),
-                    // NoticeComment(),
-                    // NoticeComment()
                   ],
-                  //댓글 리스트 만들어야함.
                 ),
               ),
-              //TODO: 대화창 만들어야함.
               BottonInputBar(
                 textEditingController: _textEditingController,
                 inputFunction: inputComment,
