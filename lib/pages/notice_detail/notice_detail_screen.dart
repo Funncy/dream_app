@@ -60,10 +60,10 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
                     ),
 
                     Obx(() {
-                      var screenStatus = noticeViewmodel.getScreenStatus();
+                      var dataStatus = noticeViewmodel.commentStatus.value;
                       var commentList = noticeViewmodel.commentList;
 
-                      return ScreenStatusWidget(
+                      return DataStatusWidget(
                           body: Column(
                               children: commentList
                                   .map((comment) => NoticeComment(
@@ -77,7 +77,8 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
                             child: LoadingWidget(),
                           ),
                           empty: EmptyWidget(),
-                          screenStatus: screenStatus);
+                          updating: Container(),
+                          dataStatus: dataStatus);
                     })
                     // NoticeComment(),
                     // NoticeComment(),

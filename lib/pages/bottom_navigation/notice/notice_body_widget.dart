@@ -30,10 +30,10 @@ class _NoticeBodyWidgetState extends State<NoticeBodyWidget> {
     return Container(
       color: Colors.black12,
       child: Obx(() {
-        var screenStatus = noticeViewmodel.getScreenStatus();
+        var dataStatus = noticeViewmodel.noticeStatus.value;
         var noticeList = noticeViewmodel.noticeList;
 
-        return ScreenStatusWidget(
+        return DataStatusWidget(
             body: ListView.builder(
                 itemCount: noticeList.length,
                 itemBuilder: (context, index) {
@@ -57,7 +57,8 @@ class _NoticeBodyWidgetState extends State<NoticeBodyWidget> {
             error: ErrorMessageWidget(errorMessage: 'test'),
             loading: LoadingWidget(),
             empty: EmptyWidget(),
-            screenStatus: screenStatus);
+            updating: Container(),
+            dataStatus: dataStatus);
       }),
     );
   }

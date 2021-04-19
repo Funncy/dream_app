@@ -1,26 +1,27 @@
-import 'package:dream/core/screen_status/status_enum.dart';
-import 'package:dream/viewmodels/common/screen_status.dart';
+import 'package:dream/core/data_status/status_enum.dart';
 import 'package:flutter/material.dart';
 
-class ScreenStatusWidget extends StatelessWidget {
+class DataStatusWidget extends StatelessWidget {
   final Widget body;
   final Widget error;
   final Widget loading;
   final Widget empty;
-  final Status screenStatus;
+  final Widget updating;
+  final Status dataStatus;
 
-  const ScreenStatusWidget(
+  const DataStatusWidget(
       {Key key,
       @required this.body,
       @required this.error,
       @required this.loading,
       @required this.empty,
-      @required this.screenStatus})
+      @required this.dataStatus,
+      @required this.updating})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    switch (screenStatus) {
+    switch (dataStatus) {
       case Status.initial:
       case Status.loading:
         return loading;
@@ -30,7 +31,9 @@ class ScreenStatusWidget extends StatelessWidget {
         break;
       case Status.empty:
         return empty;
-
+        break;
+      case Status.updating:
+        return updating;
         break;
       case Status.loaded:
         return body;
