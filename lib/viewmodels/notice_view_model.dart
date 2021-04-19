@@ -1,4 +1,6 @@
+import 'package:dartz/dartz.dart';
 import 'package:dream/core/data_status/status_enum.dart';
+import 'package:dream/core/error/error_model.dart';
 import 'package:dream/models/notice.dart';
 import 'package:dream/repositories/notice_repository.dart';
 import 'package:dream/viewmodels/common/get_data_with_screen.dart';
@@ -27,6 +29,7 @@ class NoticeViewModel extends GetxController with GetDataWithScreen {
     List<NoticeModel> result = await getDataWithScreenStatus(
         dataStatus: noticeStatus,
         getData: _noticeRepository.getNoticeList,
+        isInitial: true,
         isList: true);
 
     if (result != null) {
@@ -37,10 +40,40 @@ class NoticeViewModel extends GetxController with GetDataWithScreen {
     }
   }
 
-  void getCommentList(String did) async {
+  void writeComment(
+      {@required String nid,
+      @required String uid,
+      @required String content}) async {
+    //update 중
+    commentStatus.value = Status.updating;
+    Either<ErrorModel, void> updated =
+        await _noticeRepository.writeComment(nid, uid, content);
+    updated.fold((l) {
+      commentStatus.value = Status.error;
+      return;
+    }, (r) {});
+
+    //정상적으로 서버 통신 완료
+    //댓글 다시 읽어 오기
     List<NoticeCommentModel> result = await getDataWithScreenStatus(
         dataStatus: commentStatus,
-        getData: () async => await _noticeRepository.getCommentList(did),
+        getData: () async => await _noticeRepository.getCommentList(nid),
+        isInitial: false,
+        isList: true);
+
+    if (result != null) {
+      commentList.clear();
+      commentList.addAll(result);
+
+      checkEmptyWithScreenStatus(dataStatus: commentStatus, result: result);
+    }
+  }
+
+  void getCommentList({@required String nid}) async {
+    List<NoticeCommentModel> result = await getDataWithScreenStatus(
+        dataStatus: commentStatus,
+        getData: () async => await _noticeRepository.getCommentList(nid),
+        isInitial: true,
         isList: true);
 
     if (result != null) {

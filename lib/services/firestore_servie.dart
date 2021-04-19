@@ -44,4 +44,10 @@ class FirebaseService {
       imageUrlList.add(await item.getDownloadURL());
     return imageUrlList;
   }
+
+  Future<void> writeDataInCollection(
+      {@required String collectionName,
+      @required Map<String, Object> json}) async {
+    await _firebaseFirestore.collection(collectionName).add(json);
+  }
 }

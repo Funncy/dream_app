@@ -7,7 +7,6 @@ import 'package:dream/pages/common/loading_widget.dart';
 import 'package:dream/pages/common/screen_status_widget.dart';
 import 'package:dream/pages/notice_detail/components/bottom_input_bar.dart';
 import 'package:dream/pages/notice_detail/components/notice_comment.dart';
-import 'package:dream/utils/time_util.dart';
 import 'package:dream/viewmodels/notice_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,7 +17,7 @@ class NoticeDetailScreen extends StatefulWidget {
 }
 
 class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
-  final noticeViewmodel = Get.find<NoticeViewModel>();
+  final noticeViewModel = Get.find<NoticeViewModel>();
   final TextEditingController _textEditingController = TextEditingController();
   var notice = Get.arguments as NoticeModel;
 
@@ -27,11 +26,13 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
     super.initState();
     //build후에 함수 실행
     WidgetsBinding.instance.addPostFrameCallback(
-        (_) => noticeViewmodel.getCommentList(notice.did));
+        (_) => noticeViewModel.getCommentList(nid: notice.did));
   }
 
   void inputComment() {
-    //TODO: FireStore에 댓글 추가하는 로직 추가해야함. viewmodel 통해서
+    //TODO: uid 연동해야함.
+    noticeViewModel.writeComment(
+        nid: notice.did, uid: '123', content: _textEditingController.text);
   }
 
   @override
@@ -60,8 +61,8 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
                     ),
 
                     Obx(() {
-                      var dataStatus = noticeViewmodel.commentStatus.value;
-                      var commentList = noticeViewmodel.commentList;
+                      var dataStatus = noticeViewModel.commentStatus.value;
+                      var commentList = noticeViewModel.commentList;
 
                       return DataStatusWidget(
                           body: Column(

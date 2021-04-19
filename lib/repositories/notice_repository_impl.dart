@@ -12,6 +12,15 @@ class NoticeRepositoryImpl extends NoticeRepository {
   FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
   FirebaseService firebaseServie = FirebaseService();
 
+  //FireStore Name
+  final String noticeCollectionName = 'notice';
+  final String commentCollectionName = 'notice_comment';
+  final String replyCollectionName = 'reply';
+  final String noticeColumnName = 'nid';
+
+  //Firebase Storage URL
+  final String noticeImagePath = '/notice';
+
   NoticeRepositoryImpl({@required FirebaseFirestore firebaseFirestore}) {
     _firebaseFirestore = firebaseFirestore;
   }
@@ -42,7 +51,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
       // 그리고 forEach안에 async 함수를 돌릴 수 없어 아래와 같이 복잡(?) 해졌는데
       // 어떤 방식이 더 좋은 방법인지 이것보다 더 좋은 방법이 있을까요?
       noticeList.addAll(await firebaseServie.getAllData<NoticeModel>(
-          collectionName: 'notice',
+          collectionName: noticeCollectionName,
           toModelFunction: (e) => NoticeModel.fromFirestore(e)));
 
       // forEach 비동기 처리를 위한 FutureList
@@ -61,22 +70,22 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
   @override
   Future<Either<ErrorModel, List<NoticeCommentModel>>> getCommentList(
-      String did) async {
+      String nid) async {
     List<NoticeCommentModel> commentList = [];
 
     try {
       //댓글 가져오기
       commentList.addAll(
           await firebaseServie.getAllDataByDid<NoticeCommentModel>(
-              collectionName: 'notice_comment',
-              columnName: 'nid',
-              did: did,
+              collectionName: commentCollectionName,
+              columnName: noticeColumnName,
+              did: nid,
               toModelFunction: (e) => NoticeCommentModel.fromFirestore(e)));
       //답글 가져오기
       for (var comment in commentList) {
         comment.replys = await firebaseServie.getAllDataInnerCollection(
             documentReference: comment.documentReference,
-            collectionName: 'reply',
+            collectionName: replyCollectionName,
             toModelFunction: (e) => NoticeCommentReplyModel.fromFirestore(e));
       }
     } catch (e) {
@@ -87,7 +96,27 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
   Future<void> setNoticeImageList(
       NoticeModel model, Function getImageList) async {
-    model.imageList.addAll(
-        await firebaseServie.getAllImageUrl(path: '/notice', docId: model.did));
+    model.imageList.addAll(await firebaseServie.getAllImageUrl(
+        path: noticeImagePath, docId: model.did));
+  }
+
+  Future<Either<ErrorModel, void>> writeComment(
+      String nid, String uid, String content) async {
+    NoticeCommentModel model = NoticeCommentModel(
+        did: null,
+        nid: nid,
+        uid: uid,
+        content: content,
+        replyCount: 0,
+        favoriteCount: 0,
+        documentReference: null);
+    model.createdAt = DateTime.now();
+    try {
+      await firebaseServie.writeDataInCollection(
+          collectionName: commentCollectionName, json: model.toSaveJson());
+      return Right(null);
+    } catch (e) {
+      return Left(ErrorModel(message: '파이어베이스 에러'));
+    }
   }
 }

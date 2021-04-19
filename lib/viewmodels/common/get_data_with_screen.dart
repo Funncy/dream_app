@@ -11,9 +11,10 @@ mixin GetDataWithScreen {
   Future<T> getDataWithScreenStatus<T>(
       {@required Function getData,
       @required Rx<Status> dataStatus,
+      @required bool isInitial,
       @required bool isList}) async {
     //화면 로딩으로 시작
-    dataStatus.value = Status.loading;
+    if (isInitial) dataStatus.value = Status.loading;
 
     //Either Left는 실패 Right는 성공
     //fold로 좌우 분기 처리
