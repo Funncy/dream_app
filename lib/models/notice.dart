@@ -66,6 +66,7 @@ class NoticeCommentModel extends Core {
   final String content;
   final int replyCount;
   final DocumentReference documentReference;
+  final int favoriteCount;
   List<NoticeCommentReplyModel> replys;
 
   NoticeCommentModel(
@@ -74,6 +75,7 @@ class NoticeCommentModel extends Core {
       @required this.uid,
       @required this.content,
       @required this.replyCount,
+      @required this.favoriteCount,
       @required this.documentReference});
 
   factory NoticeCommentModel.fromFirestore(DocumentSnapshot doc) {
@@ -85,6 +87,7 @@ class NoticeCommentModel extends Core {
       uid: json['uid'],
       content: json['content'],
       replyCount: json['reply_count'],
+      favoriteCount: json['favorite_count'],
       documentReference: doc.reference,
     );
 
@@ -99,6 +102,7 @@ class NoticeCommentModel extends Core {
         'uid': uid,
         'content': content,
         'reply_count': replyCount,
+        'favorite_count': favoriteCount,
         'createdAt': createdAt,
         'updatedAt': updatedAt,
       };
@@ -108,6 +112,7 @@ class NoticeCommentModel extends Core {
         'uid': uid,
         'content': content,
         'reply_count': replyCount,
+        'favorite_count': favoriteCount,
         'createdAt': createdAt,
         'updatedAt': updatedAt,
       };
@@ -117,12 +122,14 @@ class NoticeCommentReplyModel extends Core {
   final String did;
   final String uid;
   final String content;
+  final int favoriteCount;
   final DocumentReference documentReference;
 
   NoticeCommentReplyModel(
       {@required this.did,
       @required this.uid,
       @required this.content,
+      @required this.favoriteCount,
       @required this.documentReference});
 
   factory NoticeCommentReplyModel.fromFirestore(DocumentSnapshot doc) {
@@ -132,6 +139,7 @@ class NoticeCommentReplyModel extends Core {
       did: doc.id,
       uid: json['uid'],
       content: json['content'],
+      favoriteCount: json['favorite_count'],
       documentReference: doc.reference,
     );
 
@@ -144,6 +152,7 @@ class NoticeCommentReplyModel extends Core {
         'did': did,
         'uid': uid,
         'content': content,
+        'favorite_count': favoriteCount,
         'createdAt': createdAt,
         'updatedAt': updatedAt,
       };
@@ -151,6 +160,7 @@ class NoticeCommentReplyModel extends Core {
   Map<String, dynamic> toSaveJson() => {
         'uid': uid,
         'content': content,
+        'favorite_count': favoriteCount,
         'createdAt': createdAt,
         'updatedAt': updatedAt,
       };
