@@ -31,37 +31,37 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
     try {
       //1. 기존 방식
-      // var noticeCollection =
-      //     await _firebaseFirestore.collection('notice').get();
-      // for (var notice in noticeCollection.docs) {
-      //   notices.add(NoticeModel.fromFirestroe(notice));
-      //   //공지별 이미지 리스트 가져오기
-      //   var images =
-      //       await _firebaseStorage.ref('/notice/${notice.id}').listAll();
+      var noticeCollection =
+          await _firebaseFirestore.collection('notice').get();
+      for (var notice in noticeCollection.docs) {
+        noticeList.add(NoticeModel.fromFirestore(notice));
+        //공지별 이미지 리스트 가져오기
+        var images =
+            await _firebaseStorage.ref('/notice/${notice.id}').listAll();
 
-      //   for (var item in images.items) {
-      //     var url = await item.getDownloadURL();
-      //     notices.last.images.add(url);
-      //   }
-      // }
+        for (var item in images.items) {
+          var url = await item.getDownloadURL();
+          noticeList.last.imageList.add(url);
+        }
+      }
 
-      //2. 수정한 방식
-      // 위에 방식은 loop 1번에 이미지까지 모두 가져올 수 있었지만
-      // 아래와 같이 코드 재활용을 위해서 처리했더니 2번 loop 돌게 되었습니다.
-      // 그리고 forEach안에 async 함수를 돌릴 수 없어 아래와 같이 복잡(?) 해졌는데
-      // 어떤 방식이 더 좋은 방법인지 이것보다 더 좋은 방법이 있을까요?
-      noticeList.addAll(await firebaseService.getAllData<NoticeModel>(
-          collectionName: noticeCollectionName,
-          toModelFunction: (e) => NoticeModel.fromFirestore(e)));
+      // //2. 수정한 방식
+      // // 위에 방식은 loop 1번에 이미지까지 모두 가져올 수 있었지만
+      // // 아래와 같이 코드 재활용을 위해서 처리했더니 2번 loop 돌게 되었습니다.
+      // // 그리고 forEach안에 async 함수를 돌릴 수 없어 아래와 같이 복잡(?) 해졌는데
+      // // 어떤 방식이 더 좋은 방법인지 이것보다 더 좋은 방법이 있을까요?
+      // noticeList.addAll(await firebaseService.getAllData<NoticeModel>(
+      //     collectionName: noticeCollectionName,
+      //     toModelFunction: (e) => NoticeModel.fromFirestore(e)));
 
-      // forEach 비동기 처리를 위한 FutureList
-      List<Future<dynamic>> futureList = [];
-      noticeList.forEach((element) {
-        futureList
-            .add(setNoticeImageList(element, firebaseService.getAllImageUrl));
-      });
-      //javascript에서는 Promise.all
-      await Future.wait(futureList);
+      // // forEach 비동기 처리를 위한 FutureList
+      // List<Future<dynamic>> futureList = [];
+      // noticeList.forEach((element) {
+      //   futureList
+      //       .add(setNoticeImageList(element, firebaseService.getAllImageUrl));
+      // });
+      // //javascript에서는 Promise.all
+      // await Future.wait(futureList);
     } catch (e) {
       return Left(ErrorModel(message: '파이어베이스 에러'));
     }
@@ -75,21 +75,40 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
     try {
       //댓글 가져오기
-      commentList.addAll(
-          await firebaseService.getAllDataByDid<NoticeCommentModel>(
-              collectionName: commentCollectionName,
-              columnName: noticeColumnName,
-              did: nid,
-              toModelFunction: (e) => NoticeCommentModel.fromFirestore(e)));
-      //답글 가져오기
+      QuerySnapshot querySnapshot = await _firebaseFirestore
+          .collection(commentCollectionName)
+          .where(noticeColumnName, isEqualTo: nid)
+          .orderBy('updatedAt')
+          .get();
+      commentList.addAll(querySnapshot.docs
+          .map((e) => NoticeCommentModel.fromFirestore(e))
+          .toList());
+
       for (var comment in commentList) {
-        comment.replys =
-            await firebaseService.getAllDataInnerCollectionByReference(
-                documentReference: comment.documentReference,
-                collectionName: replyCollectionName,
-                toModelFunction: (e) =>
-                    NoticeCommentReplyModel.fromFirestore(e));
+        var result = await getReplyList(comment.did);
+        result.fold((l) {
+          throw ErrorModel(message: '파이어베이스 에러');
+        }, (r) {
+          comment.replys = r;
+        });
       }
+
+      // commentList.addAll(
+      //     await firebaseService.getAllDataByDid<NoticeCommentModel>(
+      //         collectionName: commentCollectionName,
+      //         columnName: noticeColumnName,
+      //         did: nid,
+      //         toModelFunction: (e) => NoticeCommentModel.fromFirestore(e)));
+
+      // //답글 가져오기
+      // for (var comment in commentList) {
+      //   comment.replys =
+      //       await firebaseService.getAllDataInnerCollectionByReference(
+      //           documentReference: comment.documentReference,
+      //           collectionName: replyCollectionName,
+      //           toModelFunction: (e) =>
+      //               NoticeCommentReplyModel.fromFirestore(e));
+      // }
     } catch (e) {
       return Left(ErrorModel(message: '파이어베이스 에러'));
     }
@@ -99,16 +118,24 @@ class NoticeRepositoryImpl extends NoticeRepository {
   @override
   Future<Either<ErrorModel, List<NoticeCommentReplyModel>>> getReplyList(
       String did) async {
-    List<NoticeCommentReplyModel> replyList = [];
     try {
-      replyList.addAll(await firebaseService
-          .getAllDataInnerCollectionById<NoticeCommentReplyModel>(
-              did: did,
-              parentCollectionName: commentCollectionName,
-              childCollectionName: replyCollectionName,
-              toModelFunction: (e) =>
-                  NoticeCommentReplyModel.fromFirestore(e)));
-      return Right(replyList);
+      QuerySnapshot querySnapshot = await _firebaseFirestore
+          .collection(commentCollectionName)
+          .doc(did)
+          .collection(replyCollectionName)
+          .orderBy('updatedAt')
+          .get();
+
+      // replyList.addAll(await firebaseService
+      //     .getAllDataInnerCollectionById<NoticeCommentReplyModel>(
+      //         did: did,
+      //         parentCollectionName: commentCollectionName,
+      //         childCollectionName: replyCollectionName,
+      //         toModelFunction: (e) =>
+      //             NoticeCommentReplyModel.fromFirestore(e)));
+      return Right(querySnapshot.docs
+          .map((e) => NoticeCommentReplyModel.fromFirestore(e))
+          .toList());
     } catch (e) {
       return Left(ErrorModel(message: '파이어베이스 에러'));
     }
@@ -116,8 +143,14 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
   Future<void> setNoticeImageList(
       NoticeModel model, Function getImageList) async {
-    model.imageList.addAll(await firebaseService.getAllImageUrl(
-        path: noticeImagePath, docId: model.did));
+    var imageList =
+        await _firebaseStorage.ref('${noticeImagePath}/${model.did}').listAll();
+    List<String> imageUrlList = [];
+    for (var item in imageList.items)
+      imageUrlList.add(await item.getDownloadURL());
+
+    model.imageList.clear();
+    model.imageList.addAll(imageUrlList);
   }
 
   //댓글 쓰기 함수
@@ -137,17 +170,26 @@ class NoticeRepositoryImpl extends NoticeRepository {
     model.createdAt = DateTime.now();
     model.updatedAt = model.createdAt;
     try {
-      await firebaseService.writeDataInCollection(
-          collectionName: commentCollectionName, json: model.toSaveJson());
+      await _firebaseFirestore
+          .collection(commentCollectionName)
+          .add(model.toSaveJson());
+      // await firebaseService.writeDataInCollection(
+      //     collectionName: commentCollectionName, json: model.toSaveJson());
       //댓글 갯수 증가 시키기 위한 로직
-      var noticeData = await firebaseService.getData(
-          collectionName: noticeCollectionName, did: nid);
-      await firebaseService.updateInCollection(
-          collectionName: noticeCollectionName,
-          did: nid,
-          updateJson: {
-            'comment_count': (noticeData['comment_count'] ?? 0) + 1
-          });
+      var noticeSnapshot = await _firebaseFirestore
+          .collection(noticeCollectionName)
+          .doc(nid)
+          .get();
+      // var noticeData = await firebaseService.getData(
+      //     collectionName: noticeCollectionName, did: nid);
+      await _firebaseFirestore.collection(noticeCollectionName).doc(nid).update(
+          {'comment_count': (noticeSnapshot.data()['comment_count'] ?? 0) + 1});
+      // await firebaseService.updateInCollection(
+      //     collectionName: noticeCollectionName,
+      //     did: nid,
+      //     updateJson: {
+      //       'comment_count': (noticeData['comment_count'] ?? 0) + 1
+      //     });
       return Right(null);
     } catch (e) {
       return Left(ErrorModel(message: '파이어베이스 에러'));
@@ -169,18 +211,33 @@ class NoticeRepositoryImpl extends NoticeRepository {
     model.createdAt = DateTime.now();
     model.updatedAt = model.createdAt;
     try {
-      await firebaseService.writeDataInInnerCollection(
-          parentCollectionName: commentCollectionName,
-          did: did,
-          childCollectionName: replyCollectionName,
-          json: model.toSaveJson());
+      await _firebaseFirestore
+          .collection(commentCollectionName)
+          .doc(did)
+          .collection(replyCollectionName)
+          .add(model.toSaveJson());
+      // await firebaseService.writeDataInInnerCollection(
+      //     parentCollectionName: commentCollectionName,
+      //     did: did,
+      //     childCollectionName: replyCollectionName,
+      //     json: model.toSaveJson());
       //답글 갯수 증가 시키기 위한 로직
-      var commentData = await firebaseService.getData(
-          collectionName: commentCollectionName, did: did);
-      await firebaseService.updateInCollection(
-          collectionName: commentCollectionName,
-          did: did,
-          updateJson: {'reply_count': (commentData['reply_count'] ?? 0) + 1});
+      var commentSnapshot = await _firebaseFirestore
+          .collection(commentCollectionName)
+          .doc(did)
+          .get();
+      // var commentData = await firebaseService.getData(
+      //     collectionName: commentCollectionName, did: did);
+      await _firebaseFirestore
+          .collection(commentCollectionName)
+          .doc(did)
+          .update({
+        'reply_count': (commentSnapshot.data()['reply_count'] ?? 0) + 1
+      });
+      // await firebaseService.updateInCollection(
+      //     collectionName: commentCollectionName,
+      //     did: did,
+      //     updateJson: {'reply_count': (commentData['reply_count'] ?? 0) + 1});
       //로컬 데이터도 증가가 필요함. 이건 ViewModel에서
       return Right(null);
     } catch (e) {
