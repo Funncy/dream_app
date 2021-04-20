@@ -8,6 +8,7 @@ import 'package:dream/pages/notice_detail/components/notice_comment.dart';
 import 'package:dream/viewmodels/notice_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class NoticeReplyScreen extends StatefulWidget {
   final String nid;
@@ -66,7 +67,18 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
                           child: LoadingWidget(),
                         ),
                         empty: EmptyWidget(),
-                        updating: Container(),
+                        updating: Stack(
+                          children: [
+                            NoticeComment(
+                              noticeCommentModel: widget.noticeCommentModel,
+                              isReplyScreen: true,
+                            ),
+                            Container(
+                              height: 400.h,
+                              child: Center(child: CircularProgressIndicator()),
+                            )
+                          ],
+                        ),
                         dataStatus: dataStatus);
                   }),
                 ),

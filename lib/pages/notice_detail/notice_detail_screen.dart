@@ -10,6 +10,7 @@ import 'package:dream/pages/notice_detail/components/notice_comment.dart';
 import 'package:dream/viewmodels/notice_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class NoticeDetailScreen extends StatefulWidget {
   @override
@@ -78,7 +79,22 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
                             child: LoadingWidget(),
                           ),
                           empty: EmptyWidget(),
-                          updating: Container(),
+                          updating: Stack(
+                            children: [
+                              Column(
+                                  children: commentList
+                                      .map((comment) => NoticeComment(
+                                            noticeCommentModel: comment,
+                                            isReplyScreen: false,
+                                          ))
+                                      .toList()),
+                              Container(
+                                height: 400.h,
+                                child:
+                                    Center(child: CircularProgressIndicator()),
+                              )
+                            ],
+                          ),
                           dataStatus: dataStatus);
                     })
                   ],
