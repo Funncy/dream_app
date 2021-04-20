@@ -7,9 +7,9 @@ class NoticeModel extends Core {
   final String uid;
   final String content;
   final List<String> imageList = [];
-  final int commentCount;
+  int commentCount;
   final DocumentReference documentReference;
-  final int favoriteCount;
+  int favoriteCount;
 
   NoticeModel({
     @required this.did,
@@ -64,9 +64,9 @@ class NoticeCommentModel extends Core {
   final String nid;
   final String uid;
   final String content;
-  final int replyCount;
+  int replyCount;
   final DocumentReference documentReference;
-  final int favoriteCount;
+  int favoriteCount;
   List<NoticeCommentReplyModel> replys;
 
   NoticeCommentModel(
@@ -122,7 +122,7 @@ class NoticeCommentReplyModel extends Core {
   final String did;
   final String uid;
   final String content;
-  final int favoriteCount;
+  int favoriteCount;
   final DocumentReference documentReference;
 
   NoticeCommentReplyModel(

@@ -16,6 +16,7 @@ class NoticeViewModel extends GetxController with GetDataWithScreen {
   Rx<Status> noticeStatus = Status.initial.obs;
   RxList<NoticeCommentModel> commentList = <NoticeCommentModel>[].obs;
   Rx<Status> commentStatus = Status.initial.obs;
+  Rx<Status> replyStatus = Status.initial.obs;
   //RxList<NoticeModel> not sub type List<NoticeModel>
 
   NoticeViewModel({@required NoticeRepository noticeRepository}) {
@@ -46,12 +47,15 @@ class NoticeViewModel extends GetxController with GetDataWithScreen {
       @required String content}) async {
     //update 중
     commentStatus.value = Status.updating;
-    Either<ErrorModel, void> updated =
-        await _noticeRepository.writeComment(nid, uid, content);
+    Either<ErrorModel, void> updated = await _noticeRepository.writeComment(
+        nid: nid, uid: uid, content: content);
     updated.fold((l) {
       commentStatus.value = Status.error;
       return;
     }, (r) {});
+
+    //에러인 경우 아래 진행 안함
+    if (updated.isLeft()) return;
 
     //정상적으로 서버 통신 완료
     //댓글 다시 읽어 오기
@@ -69,6 +73,46 @@ class NoticeViewModel extends GetxController with GetDataWithScreen {
     }
   }
 
+  Future<void> writeReply(
+      {@required String nid,
+      @required String did,
+      @required String uid,
+      @required String content}) async {
+    replyStatus.value = Status.updating;
+    commentStatus.value = Status.updating;
+    Either<ErrorModel, void> updated = await _noticeRepository.writeReply(
+        did: did, uid: uid, content: content);
+
+    updated.fold((l) {
+      replyStatus.value = Status.error;
+      //댓글 화면은 일단 그대로
+      commentStatus.value = Status.loaded;
+      //TODO: 에러시 다이얼로그 처리 어떻게 할지?
+    }, (r) {});
+
+    //에러인 경우 아래 진행 안함
+    if (updated.isLeft()) return;
+
+    NoticeCommentModel comment =
+        commentList.where((comment) => comment.did == did).first;
+    //서버에서 댓글 갯수 증가 반영
+    comment.replyCount += 1;
+
+    //정상적으로 서버 통신 완료
+    //답글 다시 읽어 오기
+    List<NoticeCommentReplyModel> result = await getDataWithScreenStatus(
+        dataStatus: commentStatus,
+        getData: () async => await _noticeRepository.getReplyList(comment.did),
+        isInitial: false,
+        isList: false);
+
+    comment.replys.clear();
+    comment.replys.addAll(result);
+
+    replyStatus.value = Status.loaded;
+    commentStatus.value = Status.loaded;
+  }
+
   void getCommentList({@required String nid}) async {
     List<NoticeCommentModel> result = await getDataWithScreenStatus(
         dataStatus: commentStatus,
@@ -81,6 +125,8 @@ class NoticeViewModel extends GetxController with GetDataWithScreen {
       commentList.addAll(result);
 
       checkEmptyWithScreenStatus(dataStatus: commentStatus, result: result);
+      if (commentStatus.value == Status.loaded)
+        replyStatus.value = Status.loaded;
     }
   }
 }

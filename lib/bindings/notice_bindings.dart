@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 class NoticeBindings implements Bindings {
   @override
   void dependencies() {
-    Get.create<NoticeViewModel>(() => NoticeViewModel(
+    Get.put<NoticeViewModel>(NoticeViewModel(
         noticeRepository: NoticeRepositoryImpl(
             firebaseFirestore: FirebaseFirestore.instance)));
   }

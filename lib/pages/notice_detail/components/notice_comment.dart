@@ -8,12 +8,21 @@ import 'package:get/get.dart';
 
 class NoticeComment extends StatelessWidget {
   final NoticeCommentModel noticeCommentModel;
+  final String nid;
   final bool isReplyScreen;
   const NoticeComment({
     Key key,
     this.noticeCommentModel,
     this.isReplyScreen,
+    this.nid,
   }) : super(key: key);
+
+  void pageToReply() {
+    Get.to(NoticeReplyScreen(
+      noticeCommentModel: noticeCommentModel,
+      nid: nid,
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,11 +110,7 @@ class NoticeComment extends StatelessWidget {
                           isReplyScreen
                               ? Container()
                               : InkWell(
-                                  onTap: () {
-                                    Get.to(NoticeReplyScreen(
-                                      noticeCommentModel: noticeCommentModel,
-                                    ));
-                                  },
+                                  onTap: pageToReply,
                                   child: Text(
                                     "답글쓰기",
                                     style:
@@ -127,7 +132,7 @@ class NoticeComment extends StatelessWidget {
                     ],
                   ),
                   //Reply List
-                  if (noticeCommentModel.replyCount > 0)
+                  if (noticeCommentModel.replys.length > 0)
                     ...noticeCommentModel.replys
                         .map((model) => NoticeReply(
                               noticeCommentReplyModel: model,
@@ -135,11 +140,7 @@ class NoticeComment extends StatelessWidget {
                         .toList(),
                   if (noticeCommentModel.replyCount > 0 && !isReplyScreen)
                     InkWell(
-                      onTap: () {
-                        Get.to(NoticeReplyScreen(
-                          noticeCommentModel: noticeCommentModel,
-                        ));
-                      },
+                      onTap: pageToReply,
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Padding(
