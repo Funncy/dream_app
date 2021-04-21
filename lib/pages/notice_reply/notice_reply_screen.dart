@@ -1,3 +1,4 @@
+import 'package:dream/core/data_status/status_enum.dart';
 import 'package:dream/models/notice.dart';
 import 'package:dream/pages/common/empty_widget.dart';
 import 'package:dream/pages/common/error_message_widget.dart';
@@ -23,6 +24,17 @@ class NoticeReplyScreen extends StatefulWidget {
 class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
   final noticeViewModel = Get.find<NoticeViewModel>();
   final TextEditingController _textEditingController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  @override
+  void initState() {
+    super.initState();
+    debounce(noticeViewModel.replyStatus, (_) {
+      if (noticeViewModel.replyStatus.value == Status.loaded) {
+        _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+            duration: Duration(milliseconds: 500), curve: Curves.ease);
+      }
+    }, time: Duration(milliseconds: 500));
+  }
 
   void inputReply() {
     //TODO: uid 실제 유저로 바꿔야함.
@@ -31,6 +43,7 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
         did: widget.noticeCommentModel.did,
         uid: '123',
         content: _textEditingController.text);
+    _textEditingController.text = '';
   }
 
   @override
@@ -48,48 +61,60 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
         backgroundColor: Colors.white,
       ),
       body: SafeArea(
-        child: Container(
-          child: Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Obx(() {
-                    var dataStatus = noticeViewModel.replyStatus.value;
+        child: Obx(() {
+          var dataStatus = noticeViewModel.replyStatus.value;
 
-                    return DataStatusWidget(
-                        body: NoticeComment(
-                          noticeCommentModel: widget.noticeCommentModel,
-                          isReplyScreen: true,
-                        ),
-                        error: ErrorMessageWidget(errorMessage: 'test'),
-                        loading: Padding(
-                          padding: const EdgeInsets.only(top: 50.0),
-                          child: LoadingWidget(),
-                        ),
-                        empty: EmptyWidget(),
-                        updating: Stack(
-                          children: [
-                            NoticeComment(
+          return Container(
+            child: Stack(children: [
+              Column(
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      controller: _scrollController,
+                      child: Obx(() {
+                        var dataStatus = noticeViewModel.replyStatus.value;
+
+                        return DataStatusWidget(
+                            body: NoticeComment(
                               noticeCommentModel: widget.noticeCommentModel,
                               isReplyScreen: true,
                             ),
-                            Container(
-                              height: 400.h,
-                              child: Center(child: CircularProgressIndicator()),
-                            )
-                          ],
-                        ),
-                        dataStatus: dataStatus);
-                  }),
-                ),
+                            error: ErrorMessageWidget(errorMessage: 'test'),
+                            loading: Padding(
+                              padding: const EdgeInsets.only(top: 50.0),
+                              child: LoadingWidget(),
+                            ),
+                            empty: EmptyWidget(),
+                            updating: Stack(
+                              children: [
+                                NoticeComment(
+                                  noticeCommentModel: widget.noticeCommentModel,
+                                  isReplyScreen: true,
+                                ),
+                                // Container(
+                                //   height: 400.h,
+                                //   child: Center(
+                                //       child: CircularProgressIndicator()),
+                                // )
+                              ],
+                            ),
+                            dataStatus: dataStatus);
+                      }),
+                    ),
+                  ),
+                  BottonInputBar(
+                    textEditingController: _textEditingController,
+                    inputFunction: inputReply,
+                  ),
+                ],
               ),
-              BottonInputBar(
-                textEditingController: _textEditingController,
-                inputFunction: inputReply,
-              ),
-            ],
-          ),
-        ),
+              if (dataStatus == Status.updating)
+                Center(
+                  child: CircularProgressIndicator(),
+                )
+            ]),
+          );
+        }),
       ),
     );
   }
