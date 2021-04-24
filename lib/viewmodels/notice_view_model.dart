@@ -103,14 +103,11 @@ class NoticeViewModel extends GetxController {
       @required String uid,
       @required String content}) async {
     replyStatus.value = Status.updating;
-    commentStatus.value = Status.updating;
     Either<ErrorModel, void> either = await _noticeRepository.writeReply(
         did: did, uid: uid, content: content);
 
     either.fold((l) {
       replyStatus.value = Status.error;
-      //댓글 화면은 일단 그대로
-      commentStatus.value = Status.loaded;
       //TODO: 에러시 다이얼로그 처리 어떻게 할지?
     }, (r) {});
 
@@ -128,10 +125,11 @@ class NoticeViewModel extends GetxController {
     var result =
         either2.fold((l) => commentStatus.value = Status.error, (r) => r);
 
+    if (either2.isLeft()) return;
+
     comment.replyList.clear();
     comment.replyList.addAll(result);
 
     replyStatus.value = Status.loaded;
-    commentStatus.value = Status.loaded;
   }
 }
