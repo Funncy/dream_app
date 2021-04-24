@@ -47,6 +47,8 @@ class NoticeViewModel extends GetxController {
   }
 
   void getCommentList({@required String nid}) async {
+    commentStatus.value = Status.loading;
+
     Either<ErrorModel, List<NoticeCommentModel>> either =
         await _noticeRepository.getCommentList(nid);
     var result =
