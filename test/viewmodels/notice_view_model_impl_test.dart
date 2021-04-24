@@ -1,11 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
+import 'package:dream/core/data_status/status_enum.dart';
 import 'package:dream/core/error/error_model.dart';
-import 'package:dream/core/screen_status/status_enum.dart';
 import 'package:dream/models/notice.dart';
 import 'package:dream/repositories/notice_repository_impl.dart';
 import 'package:dream/viewmodels/notice_view_model.dart';
-import 'package:dream/viewmodels/common/screen_status.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
@@ -27,19 +25,22 @@ void main() {
         uid: '123',
         content: 'test1',
         commentCount: 0,
-        favoriteCount: 0),
+        favoriteCount: 0,
+        documentReference: null),
     NoticeModel(
         did: '123',
         uid: '123',
         content: 'test2',
         commentCount: 0,
-        favoriteCount: 0),
+        favoriteCount: 0,
+        documentReference: null),
     NoticeModel(
         did: '123',
         uid: '123',
         content: 'test3',
         commentCount: 0,
-        favoriteCount: 0),
+        favoriteCount: 0,
+        documentReference: null),
   ];
 
   group('공지사항', () {
@@ -51,7 +52,7 @@ void main() {
       await noticeViewModel.getNoticeList();
       //assert
       expect(noticeViewModel.noticeList, noticeList);
-      expect(noticeViewModel.getScreenStatus(), Status.loaded);
+      expect(noticeViewModel.noticeStatus.value, Status.loaded);
       verify(mockNoticeRepository.getNoticeList()).called(1);
     });
 
@@ -63,7 +64,7 @@ void main() {
       await noticeViewModel.getNoticeList();
       //assert
       expect(noticeViewModel.noticeList.length, 0);
-      expect(noticeViewModel.getScreenStatus(), Status.error);
+      expect(noticeViewModel.noticeStatus.value, Status.error);
       verify(mockNoticeRepository.getNoticeList()).called(1);
     });
     test('공지사항 가져오기 - Empty', () async {
@@ -74,7 +75,7 @@ void main() {
       await noticeViewModel.getNoticeList();
       //assert
       expect(noticeViewModel.noticeList.length, 0);
-      expect(noticeViewModel.getScreenStatus(), Status.empty);
+      expect(noticeViewModel.noticeStatus.value, Status.empty);
       verify(mockNoticeRepository.getNoticeList()).called(1);
     });
   });
