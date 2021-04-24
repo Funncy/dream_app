@@ -89,7 +89,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
         result.fold((l) {
           throw ErrorModel(message: '파이어베이스 에러');
         }, (r) {
-          comment.replys = r;
+          comment.replyList = r;
         });
       }
 

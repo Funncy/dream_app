@@ -67,7 +67,7 @@ class NoticeCommentModel extends Core {
   int replyCount;
   final DocumentReference documentReference;
   int favoriteCount;
-  List<NoticeCommentReplyModel> replys;
+  List<NoticeCommentReplyModel> replyList;
 
   NoticeCommentModel(
       {@required this.did,

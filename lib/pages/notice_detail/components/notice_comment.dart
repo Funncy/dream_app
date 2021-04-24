@@ -132,8 +132,8 @@ class NoticeComment extends StatelessWidget {
                     ],
                   ),
                   //Reply List
-                  if (noticeCommentModel.replys.length > 0)
-                    ...noticeCommentModel.replys
+                  if (noticeCommentModel.replyList.length > 0)
+                    ...noticeCommentModel.replyList
                         .map((model) => NoticeReply(
                               noticeCommentReplyModel: model,
                             ))
