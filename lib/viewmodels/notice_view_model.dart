@@ -3,7 +3,6 @@ import 'package:dream/core/data_status/status_enum.dart';
 import 'package:dream/core/error/error_model.dart';
 import 'package:dream/models/notice.dart';
 import 'package:dream/repositories/notice_repository.dart';
-import 'package:dream/viewmodels/common/get_data_with_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
@@ -127,8 +126,8 @@ class NoticeViewModel extends GetxController {
     var result =
         either2.fold((l) => commentStatus.value = Status.error, (r) => r);
 
-    comment.replys.clear();
-    comment.replys.addAll(result);
+    comment.replyList.clear();
+    comment.replyList.addAll(result);
 
     replyStatus.value = Status.loaded;
     commentStatus.value = Status.loaded;
