@@ -46,11 +46,11 @@ class NoticeViewModel extends GetxController {
       noticeStatus.value = Status.empty;
   }
 
-  void getCommentList({@required String nid}) async {
+  void getCommentList({@required String noticeId}) async {
     commentStatus.value = Status.loading;
 
     Either<ErrorModel, List<NoticeCommentModel>> either =
-        await _noticeRepository.getCommentList(nid);
+        await _noticeRepository.getCommentList(noticeId: noticeId);
     var result =
         either.fold((l) => commentStatus.value = Status.error, (r) => r);
 
@@ -66,13 +66,13 @@ class NoticeViewModel extends GetxController {
   }
 
   void writeComment(
-      {@required String nid,
-      @required String uid,
+      {@required String noticeId,
+      @required String userId,
       @required String content}) async {
     //update 중
     commentStatus.value = Status.updating;
     Either<ErrorModel, void> either = await _noticeRepository.writeComment(
-        nid: nid, uid: uid, content: content);
+        noticeId: noticeId, userId: userId, content: content);
     either.fold((l) {
       commentStatus.value = Status.error;
     }, (r) {});
@@ -83,7 +83,7 @@ class NoticeViewModel extends GetxController {
     //정상적으로 서버 통신 완료
     //댓글 다시 읽어 오기
     Either<ErrorModel, List<NoticeCommentModel>> either2 =
-        await _noticeRepository.getCommentList(nid);
+        await _noticeRepository.getCommentList(noticeId: noticeId);
     var result =
         either2.fold((l) => commentStatus.value = Status.error, (r) => r);
 
@@ -98,13 +98,13 @@ class NoticeViewModel extends GetxController {
   }
 
   Future<void> writeReply(
-      {@required String nid,
-      @required String did,
-      @required String uid,
+      {@required String noticeId,
+      @required String commentId,
+      @required String userId,
       @required String content}) async {
     replyStatus.value = Status.updating;
     Either<ErrorModel, void> either = await _noticeRepository.writeReply(
-        did: did, uid: uid, content: content);
+        commentId: commentId, userId: userId, content: content);
 
     either.fold((l) {
       replyStatus.value = Status.error;
@@ -115,13 +115,14 @@ class NoticeViewModel extends GetxController {
     if (either.isLeft()) return;
 
     NoticeCommentModel comment =
-        commentList.where((comment) => comment.did == did).first;
+        commentList.where((comment) => comment.docuemtnId == commentId).first;
     //서버에서 댓글 갯수 증가 반영
     comment.replyCount += 1;
 
     //정상적으로 서버 통신 완료
     //답글 다시 읽어 오기
-    var either2 = await _noticeRepository.getReplyList(comment.did);
+    var either2 =
+        await _noticeRepository.getReplyList(commentId: comment.docuemtnId);
     var result =
         either2.fold((l) => commentStatus.value = Status.error, (r) => r);
 

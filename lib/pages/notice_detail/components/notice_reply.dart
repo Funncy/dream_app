@@ -48,7 +48,7 @@ class NoticeReply extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(vertical: 5),
                               child: Text(
                                 //TODO: 추후에 닉네임으로 변경해야함.
-                                noticeCommentReplyModel.uid,
+                                noticeCommentReplyModel.userId,
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                             ),
