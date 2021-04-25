@@ -6,11 +6,15 @@ import 'package:flutter/foundation.dart';
 abstract class NoticeRepository {
   Future<Either<ErrorModel, List<NoticeModel>>> getNoticeList();
   Future<Either<ErrorModel, List<NoticeCommentModel>>> getCommentList(
-      String nid);
+      {@required String noticeId});
   Future<Either<ErrorModel, List<NoticeCommentReplyModel>>> getReplyList(
-      String did);
+      {@required String commentId});
   Future<Either<ErrorModel, void>> writeComment(
-      {@required String nid, @required String uid, @required String content});
+      {@required String noticeId,
+      @required String userId,
+      @required String content});
   Future<Either<ErrorModel, void>> writeReply(
-      {@required String did, @required String uid, @required String content});
+      {@required String commentId,
+      @required String userId,
+      @required String content});
 }

@@ -3,8 +3,8 @@ import 'package:dream/models/core.dart';
 import 'package:flutter/foundation.dart';
 
 class NoticeModel extends Core {
-  final String did;
-  final String uid;
+  final String documentId;
+  final String userId;
   final String content;
   final List<String> imageList = [];
   int commentCount;
@@ -12,8 +12,8 @@ class NoticeModel extends Core {
   int favoriteCount;
 
   NoticeModel({
-    @required this.did,
-    @required this.uid,
+    @required this.documentId,
+    @required this.userId,
     @required this.content,
     @required this.commentCount,
     @required this.favoriteCount,
@@ -24,8 +24,8 @@ class NoticeModel extends Core {
     var json = doc.data();
 
     var model = NoticeModel(
-      did: doc.id,
-      uid: json['uid'],
+      documentId: doc.id,
+      userId: json['user_id'],
       content: json['content'],
       commentCount: json['comment_count'],
       favoriteCount: json['favorite_count'],
@@ -38,8 +38,8 @@ class NoticeModel extends Core {
   }
 
   Map<String, dynamic> toJson() => {
-        'did': uid,
-        'uid': uid,
+        'document_id': userId,
+        'user_id': userId,
         'content': content,
         'images': imageList,
         'comment_count': commentCount,
@@ -49,7 +49,7 @@ class NoticeModel extends Core {
       };
 
   Map<String, dynamic> toSaveJson() => {
-        'uid': uid,
+        'user_id': userId,
         'content': content,
         'comment_count': commentCount,
         'favorite_count': favoriteCount,
@@ -59,10 +59,10 @@ class NoticeModel extends Core {
 }
 
 class NoticeCommentModel extends Core {
-  final String did;
+  final String docuemtnId;
   //Notice ID
-  final String nid;
-  final String uid;
+  final String noticeId;
+  final String userId;
   final String content;
   int replyCount;
   final DocumentReference documentReference;
@@ -70,9 +70,9 @@ class NoticeCommentModel extends Core {
   List<NoticeCommentReplyModel> replyList;
 
   NoticeCommentModel(
-      {@required this.did,
-      @required this.nid,
-      @required this.uid,
+      {@required this.docuemtnId,
+      @required this.noticeId,
+      @required this.userId,
       @required this.content,
       @required this.replyCount,
       @required this.favoriteCount,
@@ -82,9 +82,9 @@ class NoticeCommentModel extends Core {
     var json = doc.data();
 
     var model = NoticeCommentModel(
-      did: doc.id,
-      nid: json['nid'],
-      uid: json['uid'],
+      docuemtnId: doc.id,
+      noticeId: json['notice_id'],
+      userId: json['user_id'],
       content: json['content'],
       replyCount: json['reply_count'],
       favoriteCount: json['favorite_count'],
@@ -97,9 +97,9 @@ class NoticeCommentModel extends Core {
   }
 
   Map<String, dynamic> toJson() => {
-        'did': did,
-        'nid': nid,
-        'uid': uid,
+        'document_id': docuemtnId,
+        'notice_id': noticeId,
+        'user_id': userId,
         'content': content,
         'reply_count': replyCount,
         'favorite_count': favoriteCount,
@@ -108,8 +108,8 @@ class NoticeCommentModel extends Core {
       };
 
   Map<String, dynamic> toSaveJson() => {
-        'nid': nid,
-        'uid': uid,
+        'notice_id': noticeId,
+        'user_id': userId,
         'content': content,
         'reply_count': replyCount,
         'favorite_count': favoriteCount,
@@ -119,15 +119,15 @@ class NoticeCommentModel extends Core {
 }
 
 class NoticeCommentReplyModel extends Core {
-  final String did;
-  final String uid;
+  final String documentId;
+  final String userId;
   final String content;
   int favoriteCount;
   final DocumentReference documentReference;
 
   NoticeCommentReplyModel(
-      {@required this.did,
-      @required this.uid,
+      {@required this.documentId,
+      @required this.userId,
       @required this.content,
       @required this.favoriteCount,
       @required this.documentReference});
@@ -136,8 +136,8 @@ class NoticeCommentReplyModel extends Core {
     var json = doc.data();
 
     var model = NoticeCommentReplyModel(
-      did: doc.id,
-      uid: json['uid'],
+      documentId: doc.id,
+      userId: json['user_id'],
       content: json['content'],
       favoriteCount: json['favorite_count'],
       documentReference: doc.reference,
@@ -149,8 +149,8 @@ class NoticeCommentReplyModel extends Core {
   }
 
   Map<String, dynamic> toJson() => {
-        'did': did,
-        'uid': uid,
+        'document_id': documentId,
+        'user_id': userId,
         'content': content,
         'favorite_count': favoriteCount,
         'createdAt': createdAt,
@@ -158,7 +158,7 @@ class NoticeCommentReplyModel extends Core {
       };
 
   Map<String, dynamic> toSaveJson() => {
-        'uid': uid,
+        'user_id': userId,
         'content': content,
         'favorite_count': favoriteCount,
         'createdAt': createdAt,
@@ -167,17 +167,17 @@ class NoticeCommentReplyModel extends Core {
 }
 
 class FavoriteModel extends Core {
-  final String did;
-  final String uid;
+  final String documentId;
+  final String userId;
 
-  FavoriteModel({@required this.did, @required this.uid});
+  FavoriteModel({@required this.documentId, @required this.userId});
 
   factory FavoriteModel.fromFirestroe(DocumentSnapshot doc) {
     var json = doc.data();
 
     var model = FavoriteModel(
-      did: doc.id,
-      uid: json['uid'],
+      documentId: doc.id,
+      userId: json['user_id'],
     );
 
     model.createdAt = (json['createdAt'] as Timestamp)?.toDate() ?? null;
@@ -186,14 +186,14 @@ class FavoriteModel extends Core {
   }
 
   Map<String, dynamic> toJson() => {
-        'did': did,
-        'uid': uid,
+        'document_id': documentId,
+        'user_id': userId,
         'createdAt': createdAt,
         'updatedAt': updatedAt,
       };
 
   Map<String, dynamic> toSaveJson() => {
-        'uid': uid,
+        'user_id': userId,
         'createdAt': createdAt,
         'updatedAt': updatedAt,
       };

@@ -63,7 +63,7 @@ class NoticeComment extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(vertical: 5),
                               child: Text(
                                 //TODO: 추후 유저 아이디가 아닌 닉네임으로 수정해야함.
-                                noticeCommentModel.uid,
+                                noticeCommentModel.userId,
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                             ),

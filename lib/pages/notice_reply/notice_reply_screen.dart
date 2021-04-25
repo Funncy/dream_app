@@ -39,9 +39,9 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
   void inputReply() {
     //TODO: uid 실제 유저로 바꿔야함.
     noticeViewModel.writeReply(
-        nid: widget.nid,
-        did: widget.noticeCommentModel.did,
-        uid: '123',
+        noticeId: widget.nid,
+        commentId: widget.noticeCommentModel.docuemtnId,
+        userId: '123',
         content: _textEditingController.text);
     _textEditingController.text = '';
   }
