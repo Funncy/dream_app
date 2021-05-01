@@ -11,15 +11,6 @@ class NoticeRepositoryImpl extends NoticeRepository {
   FirebaseFirestore _firebaseFirestore;
   FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
 
-  //FireStore Name
-  final String noticeCollectionName = 'notice';
-  final String commentCollectionName = 'notice_comment';
-  final String replyCollectionName = 'notice_reply';
-  final String noticeColumnName = 'nid';
-
-  //Firebase Storage URL
-  final String noticeImagePath = '/notice';
-
   NoticeRepositoryImpl({@required FirebaseFirestore firebaseFirestore}) {
     _firebaseFirestore = firebaseFirestore;
   }
@@ -35,12 +26,23 @@ class NoticeRepositoryImpl extends NoticeRepository {
       for (var notice in noticeCollection.docs) {
         noticeList.add(NoticeModel.fromFirestore(notice));
         //공지별 이미지 리스트 가져오기
-        var images =
+        ListResult images =
             await _firebaseStorage.ref('/notice/${notice.id}').listAll();
 
-        for (var item in images.items) {
-          var url = await item.getDownloadURL();
+        for (Reference item in images.items) {
+          String url = await item.getDownloadURL();
           noticeList.last.imageList.add(url);
+        }
+
+        //공지별 좋아요 리스트 가져오기
+        //좋아요 숫자가 0이면 접근 하지 않음
+        if (noticeList.last.favoriteCount > 0) {
+          var favoriteList = await getFavoriteList(
+              collectionName: noticeCollectionName, documentId: notice.id);
+          if (favoriteList.isLeft()) {
+            return Left(ErrorModel(message: 'get Notice favorite error'));
+          }
+          noticeList.last.favoriteList = favoriteList.getOrElse(() => null);
         }
       }
     } catch (e) {
@@ -79,6 +81,23 @@ class NoticeRepositoryImpl extends NoticeRepository {
     return Right(commentList);
   }
 
+  Future<Either<ErrorModel, List<FavoriteModel>>> getFavoriteList(
+      {@required String collectionName, @required String documentId}) async {
+    try {
+      QuerySnapshot querySnapshot = await _firebaseFirestore
+          .collection(collectionName)
+          .doc(documentId)
+          .collection(favoriteCollectionName)
+          .orderBy('user_id')
+          .get();
+      return Right(querySnapshot.docs
+          .map((e) => FavoriteModel.fromFirestroe(e))
+          .toList());
+    } catch (e) {
+      return Left(ErrorModel(message: 'Firebase Error'));
+    }
+  }
+
   @override
   Future<Either<ErrorModel, List<NoticeCommentReplyModel>>> getReplyList(
       {@required String commentId}) async {
@@ -98,6 +117,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
     }
   }
 
+  @override
   Future<void> setNoticeImageList(
       {@required NoticeModel model, @required Function getImageList}) async {
     var imageList = await _firebaseStorage
@@ -113,6 +133,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
   //댓글 쓰기 함수
   //nid는 notice doucment id로 해당 document값을 저장하기 위함
+  @override
   Future<Either<ErrorModel, void>> writeComment(
       {@required String noticeId,
       @required String userId,
@@ -152,6 +173,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
   //답글 쓰기 함수
   //did는 notice_comment doucment id로 해당 inner Collection으로 들어가기 위함
+  @override
   Future<Either<ErrorModel, void>> writeReply(
       {@required String commentId,
       @required String userId,
@@ -188,5 +210,25 @@ class NoticeRepositoryImpl extends NoticeRepository {
     } catch (e) {
       return Left(ErrorModel(message: '파이어베이스 에러'));
     }
+  }
+
+  @override
+  Future<Either<ErrorModel, void>> addFavorite(
+      {@required String collectionName,
+      @required String documentId,
+      @required String userId}) async {
+    FavoriteModel favoriteModel =
+        FavoriteModel(documentId: documentId, userId: userId);
+
+    try {
+      await _firebaseFirestore
+          .collection(collectionName)
+          .doc(documentId)
+          .collection(favoriteCollectionName)
+          .add(favoriteModel.toSaveJson());
+    } catch (e) {
+      return Left(ErrorModel(message: 'Firebase Error'));
+    }
+    return Right(null);
   }
 }

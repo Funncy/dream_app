@@ -133,4 +133,30 @@ class NoticeViewModel extends GetxController {
 
     replyStatus.value = Status.loaded;
   }
+
+  Future<void> addNoticeFavorite(
+      {@required String noticeId, @required String userId}) async {
+    //Notice의 좋아요 리스트 가져오기 inner Collection
+    NoticeModel notice =
+        noticeList.where((notice) => notice.documentId == noticeId).first;
+
+    //이미 등록되있다면 무시
+    if (notice.favoriteList
+            .where((favorite) => favorite.userId == userId)
+            .length >
+        0) {
+      return;
+    }
+
+    await _noticeRepository.addFavorite(
+        collectionName: _noticeRepository.noticeCollectionName,
+        documentId: noticeId,
+        userId: userId);
+  }
+
+  Future<void> deleteNoticeFavorite(
+      {@required String noticeId, @required String uid}) async {}
+
+  Future<void> addCommentFavorite(
+      {@required String noticeId, @required String uid}) {}
 }

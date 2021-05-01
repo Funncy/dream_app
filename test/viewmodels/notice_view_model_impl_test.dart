@@ -345,4 +345,8 @@ void main() {
       verify(mockNoticeRepository.getReplyList(commentId: '123')).called(1);
     });
   });
+
+  group('좋아요', () {
+    test('댓글 좋아요 - 성공', () async {});
+  });
 }

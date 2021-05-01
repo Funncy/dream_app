@@ -1,6 +1,7 @@
 import 'package:dream/constants.dart';
 import 'package:dream/models/notice.dart';
 import 'package:dream/utils/time_util.dart';
+import 'package:dream/viewmodels/notice_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,6 +11,8 @@ import 'image_spliter.dart';
 
 class NoticeCard extends StatelessWidget {
   final NoticeModel notice;
+  //TODO: 실제 유저 아이디로 변경해야함.
+  final String userId = '123';
 
   const NoticeCard({Key key, @required this.notice}) : super(key: key);
   @override
@@ -17,6 +20,7 @@ class NoticeCard extends StatelessWidget {
     var size = MediaQuery.of(context).size;
     //시간 로드
     var date = TimeUtil.getDateString(notice.updatedAt ?? notice.createdAt);
+    NoticeViewModel noticeViewModel = Get.find<NoticeViewModel>();
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 0.0),
@@ -65,15 +69,24 @@ class NoticeCard extends StatelessWidget {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      print("favorite");
+                      noticeViewModel.addNoticeFavorite(
+                          noticeId: notice.documentId, userId: userId);
                     },
                     child: Row(
                       children: [
                         //TODO: 내가 눌렀는지에 따라 이미지 변경해야함.
-                        Icon(
-                          Icons.favorite_border,
-                          color: Constants.favoriteAndCommentColor,
-                        ),
+                        if (notice.favoriteList
+                            .where((favorite) => favorite.userId == userId)
+                            .isNotEmpty)
+                          Icon(
+                            Icons.favorite,
+                            color: Constants.favoriteAndCommentColor,
+                          )
+                        else
+                          Icon(
+                            Icons.favorite_border,
+                            color: Constants.favoriteAndCommentColor,
+                          ),
                         SizedBox(
                           width: 5.w,
                         ),

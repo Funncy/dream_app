@@ -10,7 +10,7 @@ class NoticeModel extends Core {
   int commentCount;
   final DocumentReference documentReference;
   int favoriteCount;
-  List<FavoriteModel> favoriteList;
+  List<FavoriteModel> favoriteList = [];
 
   NoticeModel({
     @required this.documentId,
