@@ -4,6 +4,16 @@ import 'package:dream/models/notice.dart';
 import 'package:flutter/foundation.dart';
 
 abstract class NoticeRepository {
+  //FireStore Name
+  final String noticeCollectionName = 'notice';
+  final String commentCollectionName = 'notice_comment';
+  final String replyCollectionName = 'notice_reply';
+  final String noticeColumnName = 'notice_id';
+  final String favoriteCollectionName = 'favorite_list';
+
+  //Firebase Storage URL
+  final String noticeImagePath = '/notice';
+
   Future<Either<ErrorModel, List<NoticeModel>>> getNoticeList();
   Future<Either<ErrorModel, List<NoticeCommentModel>>> getCommentList(
       {@required String noticeId});
@@ -17,4 +27,8 @@ abstract class NoticeRepository {
       {@required String commentId,
       @required String userId,
       @required String content});
+  Future<Either<ErrorModel, void>> addFavorite(
+      {@required String collectionName,
+      @required String documentId,
+      @required String userId});
 }
