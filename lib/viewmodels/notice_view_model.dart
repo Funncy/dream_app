@@ -23,140 +23,140 @@ class NoticeViewModel extends GetxController {
     _noticeRepository = noticeRepository;
   }
 
-  void getNoticeList() async {
-    //데이터 상태와 데이터를 가져오는 함수를 전달
-    //추가로 리스트 형태인지를 전달
-    // 리스트 형태인경우 데이터의 길이에 따라 Empty위젯을 보여줘야 함.
-    noticeStatus.value = Status.loading;
-    Either<ErrorModel, List<NoticeModel>> either =
-        await _noticeRepository.getNoticeList();
-    var result = either.fold((l) {
-      noticeStatus.value = Status.error;
-    }, (r) => r);
+  // void getNoticeList() async {
+  //   //데이터 상태와 데이터를 가져오는 함수를 전달
+  //   //추가로 리스트 형태인지를 전달
+  //   // 리스트 형태인경우 데이터의 길이에 따라 Empty위젯을 보여줘야 함.
+  //   noticeStatus.value = Status.loading;
+  //   Either<ErrorModel, List<NoticeModel>> either =
+  //       await _noticeRepository.getNoticeList();
+  //   var result = either.fold((l) {
+  //     noticeStatus.value = Status.error;
+  //   }, (r) => r);
 
-    //에러인 경우 종료
-    if (either.isLeft()) return;
+  //   //에러인 경우 종료
+  //   if (either.isLeft()) return;
 
-    //Right이면 List로 반환됨.
-    noticeList.clear();
-    noticeList.addAll(result);
-    if (noticeList.length > 0)
-      noticeStatus.value = Status.loaded;
-    else
-      noticeStatus.value = Status.empty;
-  }
+  //   //Right이면 List로 반환됨.
+  //   noticeList.clear();
+  //   noticeList.addAll(result);
+  //   if (noticeList.length > 0)
+  //     noticeStatus.value = Status.loaded;
+  //   else
+  //     noticeStatus.value = Status.empty;
+  // }
 
-  void getCommentList({@required String noticeId}) async {
-    commentStatus.value = Status.loading;
+  // void getCommentList({@required String noticeId}) async {
+  //   commentStatus.value = Status.loading;
 
-    Either<ErrorModel, List<NoticeCommentModel>> either =
-        await _noticeRepository.getCommentList(noticeId: noticeId);
-    var result =
-        either.fold((l) => commentStatus.value = Status.error, (r) => r);
+  //   Either<ErrorModel, List<NoticeCommentModel>> either =
+  //       await _noticeRepository.getCommentList(noticeId: noticeId);
+  //   var result =
+  //       either.fold((l) => commentStatus.value = Status.error, (r) => r);
 
-    if (either.isLeft()) return;
+  //   if (either.isLeft()) return;
 
-    commentList.clear();
-    commentList.addAll(result);
+  //   commentList.clear();
+  //   commentList.addAll(result);
 
-    if (commentList.length > 0)
-      commentStatus.value = Status.loaded;
-    else
-      commentStatus.value = Status.empty;
-  }
+  //   if (commentList.length > 0)
+  //     commentStatus.value = Status.loaded;
+  //   else
+  //     commentStatus.value = Status.empty;
+  // }
 
-  void writeComment(
-      {@required String noticeId,
-      @required String userId,
-      @required String content}) async {
-    //update 중
-    commentStatus.value = Status.updating;
-    Either<ErrorModel, void> either = await _noticeRepository.writeComment(
-        noticeId: noticeId, userId: userId, content: content);
-    either.fold((l) {
-      commentStatus.value = Status.error;
-    }, (r) {});
+  // void writeComment(
+  //     {@required String noticeId,
+  //     @required String userId,
+  //     @required String content}) async {
+  //   //update 중
+  //   commentStatus.value = Status.updating;
+  //   Either<ErrorModel, void> either = await _noticeRepository.writeComment(
+  //       noticeId: noticeId, userId: userId, content: content);
+  //   either.fold((l) {
+  //     commentStatus.value = Status.error;
+  //   }, (r) {});
 
-    //에러인 경우 아래 진행 안함
-    if (either.isLeft()) return;
+  //   //에러인 경우 아래 진행 안함
+  //   if (either.isLeft()) return;
 
-    //정상적으로 서버 통신 완료
-    //댓글 다시 읽어 오기
-    Either<ErrorModel, List<NoticeCommentModel>> either2 =
-        await _noticeRepository.getCommentList(noticeId: noticeId);
-    var result =
-        either2.fold((l) => commentStatus.value = Status.error, (r) => r);
+  //   //정상적으로 서버 통신 완료
+  //   //댓글 다시 읽어 오기
+  //   Either<ErrorModel, List<NoticeCommentModel>> either2 =
+  //       await _noticeRepository.getCommentList(noticeId: noticeId);
+  //   var result =
+  //       either2.fold((l) => commentStatus.value = Status.error, (r) => r);
 
-    if (either2.isLeft()) return;
+  //   if (either2.isLeft()) return;
 
-    commentList.clear();
-    commentList.addAll(result);
-    if (commentList.length > 0)
-      commentStatus.value = Status.loaded;
-    else
-      commentStatus.value = Status.empty;
-  }
+  //   commentList.clear();
+  //   commentList.addAll(result);
+  //   if (commentList.length > 0)
+  //     commentStatus.value = Status.loaded;
+  //   else
+  //     commentStatus.value = Status.empty;
+  // }
 
-  Future<void> writeReply(
-      {@required String noticeId,
-      @required String commentId,
-      @required String userId,
-      @required String content}) async {
-    replyStatus.value = Status.updating;
-    Either<ErrorModel, void> either = await _noticeRepository.writeReply(
-        commentId: commentId, userId: userId, content: content);
+  // Future<void> writeReply(
+  //     {@required String noticeId,
+  //     @required String commentId,
+  //     @required String userId,
+  //     @required String content}) async {
+  //   replyStatus.value = Status.updating;
+  //   Either<ErrorModel, void> either = await _noticeRepository.writeReply(
+  //       commentId: commentId, userId: userId, content: content);
 
-    either.fold((l) {
-      replyStatus.value = Status.error;
-      //TODO: 에러시 다이얼로그 처리 어떻게 할지?
-    }, (r) {});
+  //   either.fold((l) {
+  //     replyStatus.value = Status.error;
+  //     //TODO: 에러시 다이얼로그 처리 어떻게 할지?
+  //   }, (r) {});
 
-    //에러인 경우 아래 진행 안함
-    if (either.isLeft()) return;
+  //   //에러인 경우 아래 진행 안함
+  //   if (either.isLeft()) return;
 
-    NoticeCommentModel comment =
-        commentList.where((comment) => comment.docuemtnId == commentId).first;
-    //서버에서 댓글 갯수 증가 반영
-    comment.replyCount += 1;
+  //   NoticeCommentModel comment =
+  //       commentList.where((comment) => comment.docuemtnId == commentId).first;
+  //   //서버에서 댓글 갯수 증가 반영
+  //   comment.replyCount += 1;
 
-    //정상적으로 서버 통신 완료
-    //답글 다시 읽어 오기
-    var either2 =
-        await _noticeRepository.getReplyList(commentId: comment.docuemtnId);
-    var result =
-        either2.fold((l) => commentStatus.value = Status.error, (r) => r);
+  //   //정상적으로 서버 통신 완료
+  //   //답글 다시 읽어 오기
+  //   var either2 =
+  //       await _noticeRepository.getReplyList(commentId: comment.docuemtnId);
+  //   var result =
+  //       either2.fold((l) => commentStatus.value = Status.error, (r) => r);
 
-    if (either2.isLeft()) return;
+  //   if (either2.isLeft()) return;
 
-    comment.replyList.clear();
-    comment.replyList.addAll(result);
+  //   comment.replyList.clear();
+  //   comment.replyList.addAll(result);
 
-    replyStatus.value = Status.loaded;
-  }
+  //   replyStatus.value = Status.loaded;
+  // }
 
-  Future<void> addNoticeFavorite(
-      {@required String noticeId, @required String userId}) async {
-    //Notice의 좋아요 리스트 가져오기 inner Collection
-    NoticeModel notice =
-        noticeList.where((notice) => notice.documentId == noticeId).first;
+  // Future<void> addNoticeFavorite(
+  //     {@required String noticeId, @required String userId}) async {
+  //   //Notice의 좋아요 리스트 가져오기 inner Collection
+  //   NoticeModel notice =
+  //       noticeList.where((notice) => notice.documentId == noticeId).first;
 
-    //이미 등록되있다면 무시
-    if (notice.favoriteList
-            .where((favorite) => favorite.userId == userId)
-            .length >
-        0) {
-      return;
-    }
+  //   //이미 등록되있다면 무시
+  //   if (notice.favoriteList
+  //           .where((favorite) => favorite.userId == userId)
+  //           .length >
+  //       0) {
+  //     return;
+  //   }
 
-    await _noticeRepository.addFavorite(
-        collectionName: _noticeRepository.noticeCollectionName,
-        documentId: noticeId,
-        userId: userId);
-  }
+  //   await _noticeRepository.addFavorite(
+  //       collectionName: _noticeRepository.noticeCollectionName,
+  //       documentId: noticeId,
+  //       userId: userId);
+  // }
 
-  Future<void> deleteNoticeFavorite(
-      {@required String noticeId, @required String uid}) async {}
+  // Future<void> deleteNoticeFavorite(
+  //     {@required String noticeId, @required String uid}) async {}
 
-  Future<void> addCommentFavorite(
-      {@required String noticeId, @required String uid}) {}
+  // Future<void> addCommentFavorite(
+  //     {@required String noticeId, @required String uid}) {}
 }

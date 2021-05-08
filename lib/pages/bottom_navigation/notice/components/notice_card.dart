@@ -67,8 +67,8 @@ class NoticeCard extends StatelessWidget {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      noticeViewModel.addNoticeFavorite(
-                          noticeId: notice.documentId, userId: userId);
+                      // noticeViewModel.addNoticeFavorite(
+                      //     noticeId: notice.documentId, userId: userId);
                     },
                     child: Row(
                       children: [

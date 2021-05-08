@@ -28,9 +28,9 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
   void initState() {
     super.initState();
     //build후에 함수 실행
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      noticeViewModel.getCommentList(noticeId: notice.documentId);
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   noticeViewModel.getCommentList(noticeId: notice.documentId);
+    // });
 
     //댓글 추가 이후 스크롤 내리기
     noticeViewModel.commentStatus.stream.reduce((preStatus, status) {
@@ -50,11 +50,11 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
 
   void inputComment() {
     //TODO: uid 연동해야함.
-    noticeViewModel.writeComment(
-        noticeId: notice.documentId,
-        userId: '123',
-        content: _textEditingController.text);
-    _textEditingController.text = '';
+    // noticeViewModel.writeComment(
+    //     noticeId: notice.documentId,
+    //     userId: '123',
+    //     content: _textEditingController.text);
+    // _textEditingController.text = '';
   }
 
   @override
