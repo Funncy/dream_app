@@ -14,6 +14,8 @@ abstract class NoticeRepository {
   //Firebase Storage URL
   final String noticeImagePath = '/notice';
 
+  Future<void> createDummyData();
+
   Future<Either<ErrorModel, List<NoticeModel>>> getNoticeList();
   Future<Either<ErrorModel, List<NoticeCommentModel>>> getCommentList(
       {@required String noticeId});
