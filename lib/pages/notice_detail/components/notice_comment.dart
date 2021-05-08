@@ -144,7 +144,7 @@ class NoticeComment extends StatelessWidget {
                               noticeCommentReplyModel: model,
                             ))
                         .toList(),
-                  if (noticeCommentModel.replyCount > 0 && !isReplyScreen)
+                  if (noticeCommentModel.replyList.length > 0 && !isReplyScreen)
                     InkWell(
                       onTap: pageToReply,
                       child: Align(
