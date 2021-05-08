@@ -63,7 +63,7 @@ class NoticeCommentModel extends Core {
   final String docuemtnId;
   final String userId;
   final String content;
-  List<Map<String, Object>> replyList;
+  List<NoticeCommentReplyModel> replyList;
   List<String> favoriteUserList;
   final DocumentReference documentReference;
 
@@ -78,11 +78,15 @@ class NoticeCommentModel extends Core {
   factory NoticeCommentModel.fromFirestore(DocumentSnapshot doc) {
     var json = doc.data();
 
+    List<Map<String, Object>> replyJsonList = json['reply_list'];
+    List<NoticeCommentReplyModel> replyList =
+        replyJsonList.map((e) => NoticeCommentReplyModel.fromJson(e)).toList();
+
     var model = NoticeCommentModel(
       docuemtnId: doc.id,
       userId: json['user_id'],
       content: json['content'],
-      replyList: json['reply_list'],
+      replyList: replyList,
       favoriteUserList: json['favorite_user_list'],
       documentReference: doc.reference,
     );
