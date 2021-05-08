@@ -41,21 +41,19 @@ class NoticeCard extends StatelessWidget {
                     height: 8.h,
                   ),
                   //이미지, 슬라이더
-                  GestureDetector(
-                    onTap: () {
-                      // 화면 전환
-                      Get.to(() => ImageSliderScreen(
-                            imageUrlList: notice.imageList,
-                          ));
-                    },
-                    child: notice.imageList.length > 0
-                        ? Container(
-                            width: size.width,
-                            height: 250.w,
-                            child: ImageSpliter(images: notice.imageList),
-                          )
-                        : Container(),
-                  ),
+                  if (notice.imageList.length > 0)
+                    GestureDetector(
+                        onTap: () {
+                          // 화면 전환
+                          Get.to(() => ImageSliderScreen(
+                                imageUrlList: notice.imageList,
+                              ));
+                        },
+                        child: Container(
+                          width: size.width,
+                          height: 250.w,
+                          child: ImageSpliter(images: notice.imageList),
+                        )),
                 ],
               ),
             ),
