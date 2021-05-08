@@ -72,9 +72,8 @@ class NoticeCard extends StatelessWidget {
                     },
                     child: Row(
                       children: [
-                        //TODO: 내가 눌렀는지에 따라 이미지 변경해야함.
-                        if (notice.favoriteList
-                            .where((favorite) => favorite.userId == userId)
+                        if (notice.favoriteUserList
+                            .where((userId) => userId == userId)
                             .isNotEmpty)
                           Icon(
                             Icons.favorite,
@@ -88,7 +87,7 @@ class NoticeCard extends StatelessWidget {
                         SizedBox(
                           width: 5.w,
                         ),
-                        Text("좋아요 ${notice.favoriteCount ?? ""}",
+                        Text("좋아요 ${notice.favoriteUserList.length ?? ""}",
                             style: Theme.of(context).textTheme.bodyText2)
                       ],
                     ),
