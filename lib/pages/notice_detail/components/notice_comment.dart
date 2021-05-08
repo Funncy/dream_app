@@ -119,14 +119,20 @@ class NoticeComment extends StatelessWidget {
                                 ),
                         ],
                       ),
-                      //TODO: 좋아요 숫자에 따라 처리
                       Row(
                         children: [
-                          Icon(Icons.favorite_border),
+                          //TODO: 가짜 유저 아이디 실제 유저 아이디로 변경 필요
+                          if (noticeCommentModel.favoriteUserList
+                              .where((userId) => userId == '123')
+                              .isNotEmpty)
+                            Icon(Icons.favorite_border)
+                          else
+                            Icon(Icons.favorite),
                           SizedBox(
                             width: 5,
                           ),
-                          Text("${noticeCommentModel.favoriteCount ?? "0"}")
+                          Text(
+                              "${noticeCommentModel.favoriteUserList.length ?? "0"}")
                         ],
                       )
                     ],
