@@ -94,7 +94,7 @@ class NoticeReply extends StatelessWidget {
                             width: 5,
                           ),
                           Text(
-                              "${noticeCommentReplyModel.favoriteCount ?? "0"}")
+                              "${noticeCommentReplyModel.favoriteUserList.length ?? "0"}")
                         ],
                       )
                     ],
