@@ -27,28 +27,28 @@ class NoticeViewModel extends GetxController {
     _noticeRepository.createDummyData();
   }
 
-  // void getNoticeList() async {
-  //   //데이터 상태와 데이터를 가져오는 함수를 전달
-  //   //추가로 리스트 형태인지를 전달
-  //   // 리스트 형태인경우 데이터의 길이에 따라 Empty위젯을 보여줘야 함.
-  //   noticeStatus.value = Status.loading;
-  //   Either<ErrorModel, List<NoticeModel>> either =
-  //       await _noticeRepository.getNoticeList();
-  //   var result = either.fold((l) {
-  //     noticeStatus.value = Status.error;
-  //   }, (r) => r);
+  void getNoticeList() async {
+    //데이터 상태와 데이터를 가져오는 함수를 전달
+    //추가로 리스트 형태인지를 전달
+    // 리스트 형태인경우 데이터의 길이에 따라 Empty위젯을 보여줘야 함.
+    noticeStatus.value = Status.loading;
+    Either<ErrorModel, List<NoticeModel>> either =
+        await _noticeRepository.getNoticeList();
+    var result = either.fold((l) {
+      noticeStatus.value = Status.error;
+    }, (r) => r);
 
-  //   //에러인 경우 종료
-  //   if (either.isLeft()) return;
+    //에러인 경우 종료
+    if (either.isLeft()) return;
 
-  //   //Right이면 List로 반환됨.
-  //   noticeList.clear();
-  //   noticeList.addAll(result);
-  //   if (noticeList.length > 0)
-  //     noticeStatus.value = Status.loaded;
-  //   else
-  //     noticeStatus.value = Status.empty;
-  // }
+    //Right이면 List로 반환됨.
+    noticeList.clear();
+    noticeList.addAll(result);
+    if (noticeList.length > 0)
+      noticeStatus.value = Status.loaded;
+    else
+      noticeStatus.value = Status.empty;
+  }
 
   // void getCommentList({@required String noticeId}) async {
   //   commentStatus.value = Status.loading;
