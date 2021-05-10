@@ -100,7 +100,7 @@ class NoticeCommentModel extends Core {
         'document_id': docuemtnId,
         'user_id': userId,
         'content': content,
-        'reply_list': replyList,
+        'reply_list': replyList.map((e) => e.toSaveJson()).toList(),
         'favorite_user_list': favoriteUserList,
         'createdAt': createdAt,
         'updatedAt': updatedAt,
@@ -109,7 +109,7 @@ class NoticeCommentModel extends Core {
   Map<String, dynamic> toSaveJson() => {
         'user_id': userId,
         'content': content,
-        'reply_list': replyList,
+        'reply_list': replyList.map((e) => e.toSaveJson()).toList(),
         'favorite_user_list': favoriteUserList,
         'createdAt': createdAt,
         'updatedAt': updatedAt,
