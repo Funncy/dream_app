@@ -106,42 +106,42 @@ void main() {
         documentReference: null),
   ];
 
-  // group('공지사항', () {
-  //   test('공지사항 가져오기 - 성공', () async {
-  //     //arrange
-  //     when(mockNoticeRepository.getNoticeList())
-  //         .thenAnswer((_) async => Right(noticeList));
-  //     //act
-  //     await noticeViewModel.getNoticeList();
-  //     //assert
-  //     expect(noticeViewModel.noticeList, noticeList);
-  //     expect(statusList, [Status.loading, Status.loaded]);
-  //     verify(mockNoticeRepository.getNoticeList()).called(1);
-  //   });
+  group('공지사항', () {
+    test('공지사항 가져오기 - 성공', () async {
+      //arrange
+      when(mockNoticeRepository.getNoticeList())
+          .thenAnswer((_) async => Right(noticeList));
+      //act
+      await noticeViewModel.getNoticeList();
+      //assert
+      expect(noticeViewModel.noticeList, noticeList);
+      expect(statusList, [Status.loading, Status.loaded]);
+      verify(mockNoticeRepository.getNoticeList()).called(1);
+    });
 
-  //   test('공지사항 가져오기 - 에러', () async {
-  //     //arrange
-  //     when(mockNoticeRepository.getNoticeList())
-  //         .thenAnswer((_) async => Left(ErrorModel(message: 'Firebase Error')));
-  //     //act
-  //     await noticeViewModel.getNoticeList();
-  //     //assert
-  //     expect(noticeViewModel.noticeList.length, 0);
-  //     expect(statusList, [Status.loading, Status.error]);
-  //     verify(mockNoticeRepository.getNoticeList()).called(1);
-  //   });
-  //   test('공지사항 가져오기 - Empty', () async {
-  //     //arrange
-  //     when(mockNoticeRepository.getNoticeList())
-  //         .thenAnswer((_) async => Right([]));
-  //     //act
-  //     await noticeViewModel.getNoticeList();
-  //     //assert
-  //     expect(noticeViewModel.noticeList.length, 0);
-  //     expect(statusList, [Status.loading, Status.empty]);
-  //     verify(mockNoticeRepository.getNoticeList()).called(1);
-  //   });
-  // });
+    test('공지사항 가져오기 - 에러', () async {
+      //arrange
+      when(mockNoticeRepository.getNoticeList())
+          .thenAnswer((_) async => Left(ErrorModel(message: 'Firebase Error')));
+      //act
+      await noticeViewModel.getNoticeList();
+      //assert
+      expect(noticeViewModel.noticeList.length, 0);
+      expect(statusList, [Status.loading, Status.error]);
+      verify(mockNoticeRepository.getNoticeList()).called(1);
+    });
+    test('공지사항 가져오기 - Empty', () async {
+      //arrange
+      when(mockNoticeRepository.getNoticeList())
+          .thenAnswer((_) async => Right([]));
+      //act
+      await noticeViewModel.getNoticeList();
+      //assert
+      expect(noticeViewModel.noticeList.length, 0);
+      expect(statusList, [Status.loading, Status.empty]);
+      verify(mockNoticeRepository.getNoticeList()).called(1);
+    });
+  });
 
   // group('댓글', () {
   //   test('댓글 가져오기 - 성공', () async {
