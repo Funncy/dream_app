@@ -9,7 +9,7 @@ import 'package:flutter/foundation.dart';
 
 class NoticeRepositoryImpl extends NoticeRepository {
   FirebaseFirestore _firebaseFirestore;
-  FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
+  // FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
 
   NoticeRepositoryImpl({@required FirebaseFirestore firebaseFirestore}) {
     _firebaseFirestore = firebaseFirestore;
@@ -43,7 +43,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
     var commentList = [
       NoticeCommentModel(
-          docuemtnId: null,
+          documentId: null,
           userId: '123',
           content: 'comment 01',
           replyList: [
@@ -55,7 +55,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
           favoriteUserList: [],
           documentReference: null),
       NoticeCommentModel(
-          docuemtnId: null,
+          documentId: null,
           userId: '123',
           content: 'comment 01',
           replyList: [
@@ -94,9 +94,16 @@ class NoticeRepositoryImpl extends NoticeRepository {
   }
 
   @override
-  Future<Either<ErrorModel, List<NoticeModel>>> getNoticeList() {
-    // TODO: implement getNoticeList
-    throw UnimplementedError();
+  Future<Either<ErrorModel, List<NoticeModel>>> getNoticeList() async {
+    try {
+      var querySnapshot =
+          await _firebaseFirestore.collection(noticeCollectionName).get();
+      List<NoticeModel> result =
+          querySnapshot.docs.map((e) => NoticeModel.fromFirestore(e)).toList();
+      return Right(result);
+    } catch (e) {
+      return Left(ErrorModel(message: 'firebase Error'));
+    }
   }
 
   @override
