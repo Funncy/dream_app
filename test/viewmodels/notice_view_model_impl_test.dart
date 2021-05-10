@@ -69,7 +69,7 @@ void main() {
 
   final commentList = [
     NoticeCommentModel(
-        docuemtnId: '121',
+        documentId: '121',
         userId: 'test1',
         content: 'test 001',
         replyList: [
@@ -81,7 +81,7 @@ void main() {
         favoriteUserList: ['123', '245'],
         documentReference: null),
     NoticeCommentModel(
-        docuemtnId: '122',
+        documentId: '122',
         userId: 'test12',
         content: 'test 002',
         replyList: [
@@ -93,7 +93,7 @@ void main() {
         favoriteUserList: ['123', '245'],
         documentReference: null),
     NoticeCommentModel(
-        docuemtnId: '123',
+        documentId: '123',
         userId: 'test1',
         content: 'test 003',
         replyList: [
