@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dream/models/core.dart';
 import 'package:flutter/foundation.dart';
+import 'package:equatable/equatable.dart';
 
-class NoticeModel extends Core {
+class NoticeModel extends Equatable with Core {
   final String documentId;
   final String userId;
   final String content;
@@ -56,11 +57,21 @@ class NoticeModel extends Core {
         'created_at': createdAt,
         'updated_at': updatedAt,
       };
+  @override
+  List<Object> get props => [
+        documentId,
+        userId,
+        content,
+        imageList,
+        commentCount,
+        favoriteUserList,
+        documentReference
+      ];
 }
 
 //Inner Collection
-class NoticeCommentModel extends Core {
-  final String docuemtnId;
+class NoticeCommentModel extends Equatable with Core {
+  final String documentId;
   final String userId;
   final String content;
   List<NoticeCommentReplyModel> replyList;
@@ -68,12 +79,22 @@ class NoticeCommentModel extends Core {
   final DocumentReference documentReference;
 
   NoticeCommentModel(
-      {@required this.docuemtnId,
+      {@required this.documentId,
       @required this.userId,
       @required this.content,
       @required this.replyList,
       @required this.favoriteUserList,
       @required this.documentReference});
+
+  @override
+  List<Object> get props => [
+        documentId,
+        userId,
+        content,
+        replyList,
+        favoriteUserList,
+        documentReference
+      ];
 
   factory NoticeCommentModel.fromFirestore(DocumentSnapshot doc) {
     var json = doc.data();
@@ -83,7 +104,7 @@ class NoticeCommentModel extends Core {
         replyJsonList.map((e) => NoticeCommentReplyModel.fromJson(e)).toList();
 
     var model = NoticeCommentModel(
-      docuemtnId: doc.id,
+      documentId: doc.id,
       userId: json['user_id'],
       content: json['content'],
       replyList: replyList,
@@ -97,7 +118,7 @@ class NoticeCommentModel extends Core {
   }
 
   Map<String, dynamic> toJson() => {
-        'document_id': docuemtnId,
+        'document_id': documentId,
         'user_id': userId,
         'content': content,
         'reply_list': replyList.map((e) => e.toSaveJson()).toList(),
@@ -116,7 +137,7 @@ class NoticeCommentModel extends Core {
       };
 }
 
-class NoticeCommentReplyModel extends Core {
+class NoticeCommentReplyModel extends Equatable with Core {
   final String userId;
   final String content;
   List<String> favoriteUserList;
@@ -125,6 +146,13 @@ class NoticeCommentReplyModel extends Core {
       {@required this.userId,
       @required this.content,
       @required this.favoriteUserList});
+
+  @override
+  List<Object> get props => [
+        userId,
+        content,
+        favoriteUserList,
+      ];
 
   factory NoticeCommentReplyModel.fromJson(Map<String, Object> json) {
     var model = NoticeCommentReplyModel(
