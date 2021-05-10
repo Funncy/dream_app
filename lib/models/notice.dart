@@ -32,10 +32,8 @@ class NoticeModel extends Core {
       documentReference: doc.reference,
     );
 
-    model.createdAt =
-        (json['created_at'] as Timestamp)?.toDate() ?? Timestamp.now();
-    model.updatedAt =
-        (json['updated_at'] as Timestamp)?.toDate() ?? Timestamp.now();
+    model.createdAt = (json['created_at'] as Timestamp)?.toDate() ?? null;
+    model.updatedAt = (json['updated_at'] as Timestamp)?.toDate() ?? null;
     return model;
   }
 
@@ -46,8 +44,8 @@ class NoticeModel extends Core {
         'images': imageList,
         'comment_count': commentCount,
         'favorite_user_list': favoriteUserList,
-        'created_at': createdAt ?? Timestamp.now(),
-        'updated_at': updatedAt ?? Timestamp.now(),
+        'created_at': createdAt,
+        'updated_at': updatedAt,
       };
 
   Map<String, dynamic> toSaveJson() => {
@@ -55,8 +53,8 @@ class NoticeModel extends Core {
         'content': content,
         'comment_count': commentCount,
         'favorite_user_list': favoriteUserList,
-        'created_at': createdAt ?? Timestamp.now(),
-        'updated_at': updatedAt ?? Timestamp.now(),
+        'created_at': createdAt,
+        'updated_at': updatedAt,
       };
 }
 
@@ -93,10 +91,8 @@ class NoticeCommentModel extends Core {
       documentReference: doc.reference,
     );
 
-    model.createdAt =
-        (json['created_at'] as Timestamp)?.toDate() ?? Timestamp.now();
-    model.updatedAt =
-        (json['updated_at'] as Timestamp)?.toDate() ?? Timestamp.now();
+    model.createdAt = (json['created_at'] as Timestamp)?.toDate() ?? null;
+    model.updatedAt = (json['updated_at'] as Timestamp)?.toDate() ?? null;
     return model;
   }
 
@@ -106,8 +102,8 @@ class NoticeCommentModel extends Core {
         'content': content,
         'reply_list': replyList.map((e) => e.toSaveJson()).toList(),
         'favorite_user_list': favoriteUserList,
-        'created_at': createdAt ?? Timestamp.now(),
-        'updated_at': updatedAt ?? Timestamp.now(),
+        'created_at': createdAt,
+        'updated_at': updatedAt,
       };
 
   Map<String, dynamic> toSaveJson() => {
@@ -115,8 +111,8 @@ class NoticeCommentModel extends Core {
         'content': content,
         'reply_list': replyList.map((e) => e.toSaveJson()).toList(),
         'favorite_user_list': favoriteUserList,
-        'created_at': createdAt ?? Timestamp.now(),
-        'updated_at': updatedAt ?? Timestamp.now(),
+        'created_at': createdAt,
+        'updated_at': updatedAt,
       };
 }
 
@@ -136,10 +132,8 @@ class NoticeCommentReplyModel extends Core {
       content: json['content'],
       favoriteUserList: json['favorite_user_list'],
     );
-    model.createdAt =
-        (json['created_at'] as Timestamp)?.toDate() ?? Timestamp.now();
-    model.updatedAt =
-        (json['updated_at'] as Timestamp)?.toDate() ?? Timestamp.now();
+    model.createdAt = (json['created_at'] as Timestamp)?.toDate() ?? null;
+    model.updatedAt = (json['updated_at'] as Timestamp)?.toDate() ?? null;
     return model;
   }
 
@@ -147,15 +141,15 @@ class NoticeCommentReplyModel extends Core {
         'user_id': userId,
         'content': content,
         'favorite_user_list': favoriteUserList,
-        'created_at': createdAt ?? Timestamp.now(),
-        'updated_at': updatedAt ?? Timestamp.now(),
+        'created_at': createdAt,
+        'updated_at': updatedAt,
       };
 
   Map<String, dynamic> toSaveJson() => {
         'user_id': userId,
         'content': content,
         'favorite_user_list': favoriteUserList,
-        'created_at': createdAt ?? Timestamp.now(),
-        'updated_at': updatedAt ?? Timestamp.now(),
+        'created_at': createdAt,
+        'updated_at': updatedAt,
       };
 }
