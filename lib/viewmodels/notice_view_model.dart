@@ -23,6 +23,10 @@ class NoticeViewModel extends GetxController {
     _noticeRepository = noticeRepository;
   }
 
+  void createDummyData() async {
+    _noticeRepository.createDummyData();
+  }
+
   // void getNoticeList() async {
   //   //데이터 상태와 데이터를 가져오는 함수를 전달
   //   //추가로 리스트 형태인지를 전달

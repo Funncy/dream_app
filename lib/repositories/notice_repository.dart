@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 abstract class NoticeRepository {
   //FireStore Name
   final String noticeCollectionName = 'notice';
-  final String commentCollectionName = 'notice_comment';
+  final String commentCollectionName = 'comment';
   final String replyCollectionName = 'notice_reply';
   final String noticeColumnName = 'notice_id';
   final String favoriteCollectionName = 'favorite_list';

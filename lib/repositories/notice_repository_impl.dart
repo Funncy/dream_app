@@ -16,7 +16,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
   }
 
   @override
-  Future<void> createDummyData() {
+  Future<void> createDummyData() async {
     var noticeModelList = [
       NoticeModel(
           documentId: null,
@@ -41,10 +41,41 @@ class NoticeRepositoryImpl extends NoticeRepository {
           documentReference: null),
     ];
 
+    var commentList = [
+      NoticeCommentModel(
+          docuemtnId: null,
+          userId: '123',
+          content: 'comment 01',
+          replyList: [
+            NoticeCommentReplyModel(
+                userId: '123', content: 'reply 01', favoriteUserList: []),
+            NoticeCommentReplyModel(
+                userId: '123', content: 'reply 02', favoriteUserList: []),
+          ],
+          favoriteUserList: [],
+          documentReference: null),
+      NoticeCommentModel(
+          docuemtnId: null,
+          userId: '123',
+          content: 'comment 01',
+          replyList: [
+            NoticeCommentReplyModel(
+                userId: '123', content: 'reply 01', favoriteUserList: []),
+          ],
+          favoriteUserList: [],
+          documentReference: null),
+    ];
+
     for (var notice in noticeModelList) {
-      _firebaseFirestore
+      var documentReference = await _firebaseFirestore
           .collection(noticeCollectionName)
           .add(notice.toSaveJson());
+
+      for (var comment in commentList) {
+        documentReference
+            .collection(commentCollectionName)
+            .add(comment.toSaveJson());
+      }
     }
   }
 
