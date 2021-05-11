@@ -81,14 +81,16 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
   @override
   Future<Either<ErrorModel, void>> addFavorite(
-      {String collectionName, String documentId, String userId}) {
+      {@required String collectionName,
+      @required String documentId,
+      @required String userId}) {
     // TODO: implement addFavorite
     throw UnimplementedError();
   }
 
   @override
   Future<Either<ErrorModel, List<NoticeCommentModel>>> getCommentList(
-      {String noticeId}) {
+      {@required String noticeId}) {
     // TODO: implement getCommentList
     throw UnimplementedError();
   }
@@ -108,21 +110,25 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
   @override
   Future<Either<ErrorModel, List<NoticeCommentReplyModel>>> getReplyList(
-      {String commentId}) {
+      {@required String commentId}) {
     // TODO: implement getReplyList
     throw UnimplementedError();
   }
 
   @override
   Future<Either<ErrorModel, void>> writeComment(
-      {String noticeId, String userId, String content}) {
+      {@required String noticeId,
+      @required String userId,
+      @required String content}) {
     // TODO: implement writeComment
     throw UnimplementedError();
   }
 
   @override
   Future<Either<ErrorModel, void>> writeReply(
-      {String commentId, String userId, String content}) {
+      {@required String commentId,
+      @required String userId,
+      @required String content}) {
     // TODO: implement writeReply
     throw UnimplementedError();
   }
