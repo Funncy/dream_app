@@ -73,7 +73,7 @@ class NoticeCard extends StatelessWidget {
                     child: Row(
                       children: [
                         if (notice.favoriteUserList
-                            .where((userId) => userId == userId)
+                            .where((u) => u == userId)
                             .isNotEmpty)
                           Icon(
                             Icons.favorite,
