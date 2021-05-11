@@ -28,9 +28,9 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
   void initState() {
     super.initState();
     //build후에 함수 실행
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   noticeViewModel.getCommentList(noticeId: notice.documentId);
-    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      noticeViewModel.getCommentList(noticeId: notice.documentId);
+    });
 
     //댓글 추가 이후 스크롤 내리기
     noticeViewModel.commentStatus.stream.reduce((preStatus, status) {
@@ -125,54 +125,6 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
                     ],
                   ),
                 ),
-                // child: ListView(
-                //   controller: _scrollController,
-                //   children: [
-                //     NoticeCard(
-                //       notice: notice,
-                //     ),
-                //     Divider(
-                //       thickness: 1.0,
-                //       color: Colors.black26,
-                //     ),
-                //     Obx(() {
-                //       var dataStatus = noticeViewModel.commentStatus.value;
-                //       var commentList = noticeViewModel.commentList;
-
-                //       return DataStatusWidget(
-                //           body: Column(
-                //               children: commentList
-                //                   .map((comment) => NoticeComment(
-                //                         noticeCommentModel: comment,
-                //                         isReplyScreen: false,
-                //                       ))
-                //                   .toList()),
-                //           error: ErrorMessageWidget(errorMessage: 'test'),
-                //           loading: Padding(
-                //             padding: const EdgeInsets.only(top: 50.0),
-                //             child: LoadingWidget(),
-                //           ),
-                //           empty: EmptyWidget(),
-                //           updating: Stack(
-                //             children: [
-                //               Column(
-                //                   children: commentList
-                //                       .map((comment) => NoticeComment(
-                //                             noticeCommentModel: comment,
-                //                             isReplyScreen: false,
-                //                           ))
-                //                       .toList()),
-                //               Container(
-                //                 height: 400.h,
-                //                 child:
-                //                     Center(child: CircularProgressIndicator()),
-                //               )
-                //             ],
-                //           ),
-                //           dataStatus: dataStatus);
-                //     })
-                //   ],
-                // ),
               ),
               BottonInputBar(
                 textEditingController: _textEditingController,
