@@ -29,7 +29,7 @@ class NoticeModel extends Equatable with Core {
       userId: json['user_id'],
       content: json['content'],
       commentCount: json['comment_count'],
-      favoriteUserList: json['favorite_user_list']?.cast<String>(),
+      favoriteUserList: json['favorite_user_list']?.cast<String>()?.toList(),
       documentReference: doc.reference,
     );
 
@@ -91,7 +91,7 @@ class NoticeCommentModel extends Equatable with Core {
         documentId,
         userId,
         content,
-        replyList,
+        replyList.map((e) => e.props).toList(),
         favoriteUserList,
         documentReference
       ];
@@ -108,7 +108,7 @@ class NoticeCommentModel extends Equatable with Core {
       userId: json['user_id'],
       content: json['content'],
       replyList: replyList,
-      favoriteUserList: json['favorite_user_list']?.cast<String>(),
+      favoriteUserList: json['favorite_user_list']?.cast<String>()?.toList(),
       documentReference: doc.reference,
     );
 
@@ -148,17 +148,13 @@ class NoticeCommentReplyModel extends Equatable with Core {
       @required this.favoriteUserList});
 
   @override
-  List<Object> get props => [
-        userId,
-        content,
-        favoriteUserList,
-      ];
+  List<Object> get props => [userId, content, favoriteUserList];
 
-  factory NoticeCommentReplyModel.fromJson(Map<String, Object> json) {
+  factory NoticeCommentReplyModel.fromJson(Map<String, dynamic> json) {
     var model = NoticeCommentReplyModel(
       userId: json['user_id'],
       content: json['content'],
-      favoriteUserList: json['favorite_user_list'],
+      favoriteUserList: json['favorite_user_list']?.cast<String>()?.toList(),
     );
     model.createdAt = (json['created_at'] as Timestamp)?.toDate() ?? null;
     model.updatedAt = (json['updated_at'] as Timestamp)?.toDate() ?? null;
