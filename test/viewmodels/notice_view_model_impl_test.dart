@@ -143,171 +143,97 @@ void main() {
     });
   });
 
-  // group('댓글', () {
-  //   test('댓글 가져오기 - 성공', () async {
-  //     //arrange
-  //     when(mockNoticeRepository.getCommentList(noticeId: '123'))
-  //         .thenAnswer((_) async => Right(commentList));
+  group('댓글', () {
+    test('댓글 가져오기 - 성공', () async {
+      //arrange
+      when(mockNoticeRepository.getCommentList(noticeId: '123'))
+          .thenAnswer((_) async => Right(commentList));
 
-  //     //act
-  //     await noticeViewModel.getCommentList(noticeId: '123');
-  //     //assert
+      //act
+      await noticeViewModel.getCommentList(noticeId: '123');
+      //assert
 
-  //     expect(noticeViewModel.commentList, commentList);
-  //     expect(noticeViewModel.commentList[1].replyCount,
-  //         noticeViewModel.commentList[1].replyList.length);
-  //     expect(statusList, [Status.loading, Status.loaded]);
-  //     verify(mockNoticeRepository.getCommentList(noticeId: '123')).called(1);
-  //   });
+      expect(noticeViewModel.commentList, commentList);
+      // expect(noticeViewModel.commentList[1].replyList,
+      //     noticeViewModel.commentList[1].replyList.length);
+      expect(statusList, [Status.loading, Status.loaded]);
+      verify(mockNoticeRepository.getCommentList(noticeId: '123')).called(1);
+    });
 
-  //   test('댓글 가져오기 - 에러', () async {
-  //     //arrange
-  //     when(mockNoticeRepository.getCommentList(noticeId: '123'))
-  //         .thenAnswer((_) async => Left(ErrorModel(message: 'Firebase Error')));
-  //     //act
-  //     await noticeViewModel.getCommentList(noticeId: '123');
-  //     //assert
-  //     expect(noticeViewModel.commentList.length, 0);
-  //     expect(statusList, [Status.loading, Status.error]);
-  //     verify(mockNoticeRepository.getCommentList(noticeId: '123')).called(1);
-  //   });
-  //   test('댓글 가져오기 - Empty', () async {
-  //     //arrange
-  //     when(mockNoticeRepository.getCommentList(noticeId: '123'))
-  //         .thenAnswer((_) async => Right([]));
-  //     //act
-  //     await noticeViewModel.getCommentList(noticeId: '123');
-  //     //assert
-  //     expect(noticeViewModel.commentList.length, 0);
-  //     expect(statusList, [Status.loading, Status.empty]);
-  //     verify(mockNoticeRepository.getCommentList(noticeId: '123')).called(1);
-  //   });
+    test('댓글 가져오기 - 에러', () async {
+      //arrange
+      when(mockNoticeRepository.getCommentList(noticeId: '123'))
+          .thenAnswer((_) async => Left(ErrorModel(message: 'Firebase Error')));
+      //act
+      await noticeViewModel.getCommentList(noticeId: '123');
+      //assert
+      expect(noticeViewModel.commentList.length, 0);
+      expect(statusList, [Status.loading, Status.error]);
+      verify(mockNoticeRepository.getCommentList(noticeId: '123')).called(1);
+    });
+    test('댓글 가져오기 - Empty', () async {
+      //arrange
+      when(mockNoticeRepository.getCommentList(noticeId: '123'))
+          .thenAnswer((_) async => Right([]));
+      //act
+      await noticeViewModel.getCommentList(noticeId: '123');
+      //assert
+      expect(noticeViewModel.commentList.length, 0);
+      expect(statusList, [Status.loading, Status.empty]);
+      verify(mockNoticeRepository.getCommentList(noticeId: '123')).called(1);
+    });
 
-  //   test('댓글 작성하기 - 성공', () async {
-  //     //arrange
-  //     when(mockNoticeRepository.writeComment(
-  //             noticeId: '123', userId: 'test123', content: 'test 001'))
-  //         .thenAnswer((realInvocation) async => Right(null));
-  //     when(mockNoticeRepository.getCommentList(noticeId: '123'))
-  //         .thenAnswer((_) async => Right(commentList));
-  //     //act
-  //     await noticeViewModel.writeComment(
-  //         noticeId: '123', userId: 'test123', content: 'test 001');
-  //     //assert
-  //     expect(noticeViewModel.commentList, commentList);
-  //     expect(noticeViewModel.commentList[1].replyCount,
-  //         noticeViewModel.commentList[1].replyList.length);
-  //     expect(statusList, [Status.updating, Status.loaded]);
-  //     verify(mockNoticeRepository.getCommentList(noticeId: '123')).called(1);
-  //   });
+    // test('댓글 작성하기 - 성공', () async {
+    //   //arrange
+    //   when(mockNoticeRepository.writeComment(
+    //           noticeId: '123', userId: 'test123', content: 'test 001'))
+    //       .thenAnswer((realInvocation) async => Right(null));
+    //   when(mockNoticeRepository.getCommentList(noticeId: '123'))
+    //       .thenAnswer((_) async => Right(commentList));
+    //   //act
+    //   await noticeViewModel.writeComment(
+    //       noticeId: '123', userId: 'test123', content: 'test 001');
+    //   //assert
+    //   expect(noticeViewModel.commentList, commentList);
+    //   expect(noticeViewModel.commentList[1].replyCount,
+    //       noticeViewModel.commentList[1].replyList.length);
+    //   expect(statusList, [Status.updating, Status.loaded]);
+    //   verify(mockNoticeRepository.getCommentList(noticeId: '123')).called(1);
+    // });
 
-  //   test('댓글 작성하기 - 쓰기 실패', () async {
-  //     //arrange
-  //     when(mockNoticeRepository.writeComment(
-  //             noticeId: '123', userId: 'test123', content: 'test 001'))
-  //         .thenAnswer((realInvocation) async =>
-  //             Left(ErrorModel(message: 'Firebase Error')));
-  //     //act
-  //     await noticeViewModel.writeComment(
-  //         noticeId: '123', userId: 'test123', content: 'test 001');
-  //     //assert
-  //     expect(statusList, [Status.updating, Status.error]);
-  //     verify(mockNoticeRepository.writeComment(
-  //             noticeId: '123', userId: 'test123', content: 'test 001'))
-  //         .called(1);
-  //   });
+    // test('댓글 작성하기 - 쓰기 실패', () async {
+    //   //arrange
+    //   when(mockNoticeRepository.writeComment(
+    //           noticeId: '123', userId: 'test123', content: 'test 001'))
+    //       .thenAnswer((realInvocation) async =>
+    //           Left(ErrorModel(message: 'Firebase Error')));
+    //   //act
+    //   await noticeViewModel.writeComment(
+    //       noticeId: '123', userId: 'test123', content: 'test 001');
+    //   //assert
+    //   expect(statusList, [Status.updating, Status.error]);
+    //   verify(mockNoticeRepository.writeComment(
+    //           noticeId: '123', userId: 'test123', content: 'test 001'))
+    //       .called(1);
+    // });
 
-  //   test('댓글 작성하기 - 읽기 실패', () async {
-  //     //arrange
-  //     when(mockNoticeRepository.writeComment(
-  //             noticeId: '123', userId: 'test123', content: 'test 001'))
-  //         .thenAnswer((realInvocation) async => Right(null));
-  //     when(mockNoticeRepository.getCommentList(noticeId: '123'))
-  //         .thenAnswer((_) async => Left(ErrorModel(message: 'Firebase Error')));
-  //     //act
-  //     await noticeViewModel.writeComment(
-  //         noticeId: '123', userId: 'test123', content: 'test 001');
-  //     //assert
-  //     expect(statusList, [Status.updating, Status.error]);
-  //     verify(mockNoticeRepository.writeComment(
-  //             noticeId: '123', userId: 'test123', content: 'test 001'))
-  //         .called(1);
-  //   });
-
-  //   test('답글 작성하기 - 성공', () async {
-  //     //arrange
-  //     when(mockNoticeRepository.writeReply(
-  //             commentId: '123', userId: 'test123', content: 'test 001'))
-  //         .thenAnswer((realInvocation) async => Right(null));
-  //     when(mockNoticeRepository.getReplyList(commentId: '123'))
-  //         .thenAnswer((_) async => Right(replyList));
-
-  //     noticeViewModel.commentList.addAll(commentList);
-  //     //act
-  //     await noticeViewModel.writeReply(
-  //         noticeId: '123',
-  //         commentId: '123',
-  //         userId: 'test123',
-  //         content: 'test 001');
-  //     //assert
-  //     expect(
-  //         noticeViewModel.commentList
-  //             .where((e) => e.docuemtnId == '123')
-  //             .first
-  //             .replyList,
-  //         replyList);
-  //     expect(statusList, [Status.updating, Status.loaded]);
-  //     verify(mockNoticeRepository.writeReply(
-  //             commentId: '123', userId: 'test123', content: 'test 001'))
-  //         .called(1);
-  //     verify(mockNoticeRepository.getReplyList(commentId: '123')).called(1);
-  //   });
-
-  //   test('답글 작성하기 - 쓰기 실패', () async {
-  //     //arrange
-  //     when(mockNoticeRepository.writeReply(
-  //             commentId: '123', userId: 'test123', content: 'test 001'))
-  //         .thenAnswer((realInvocation) async =>
-  //             Left(ErrorModel(message: 'firebase error')));
-
-  //     //act
-  //     await noticeViewModel.writeReply(
-  //         noticeId: '123',
-  //         commentId: '123',
-  //         userId: 'test123',
-  //         content: 'test 001');
-  //     //assert
-
-  //     expect(statusList, [Status.updating, Status.error]);
-  //     verify(mockNoticeRepository.writeReply(
-  //             commentId: '123', userId: 'test123', content: 'test 001'))
-  //         .called(1);
-  //     verifyNever(mockNoticeRepository.getReplyList(commentId: '123'));
-  //   });
-
-  //   test('답글 작성하기 - 읽기 실패', () async {
-  //     //arrange
-  //     when(mockNoticeRepository.writeReply(
-  //             commentId: '123', userId: 'test123', content: 'test 001'))
-  //         .thenAnswer((realInvocation) async => Right(null));
-  //     when(mockNoticeRepository.getReplyList(commentId: '123'))
-  //         .thenAnswer((_) async => Left(ErrorModel(message: 'firebase error')));
-  //     noticeViewModel.commentList.addAll(commentList);
-  //     //act
-  //     await noticeViewModel.writeReply(
-  //         noticeId: '123',
-  //         commentId: '123',
-  //         userId: 'test123',
-  //         content: 'test 001');
-  //     //assert
-
-  //     expect(statusList, [Status.updating, Status.error]);
-  //     verify(mockNoticeRepository.writeReply(
-  //             commentId: '123', userId: 'test123', content: 'test 001'))
-  //         .called(1);
-  //     verify(mockNoticeRepository.getReplyList(commentId: '123')).called(1);
-  //   });
-  // });
+    // test('댓글 작성하기 - 읽기 실패', () async {
+    //   //arrange
+    //   when(mockNoticeRepository.writeComment(
+    //           noticeId: '123', userId: 'test123', content: 'test 001'))
+    //       .thenAnswer((realInvocation) async => Right(null));
+    //   when(mockNoticeRepository.getCommentList(noticeId: '123'))
+    //       .thenAnswer((_) async => Left(ErrorModel(message: 'Firebase Error')));
+    //   //act
+    //   await noticeViewModel.writeComment(
+    //       noticeId: '123', userId: 'test123', content: 'test 001');
+    //   //assert
+    //   expect(statusList, [Status.updating, Status.error]);
+    //   verify(mockNoticeRepository.writeComment(
+    //           noticeId: '123', userId: 'test123', content: 'test 001'))
+    //       .called(1);
+    // });
+  });
 
   // group('좋아요', () {
   //   test('댓글 좋아요 - 성공', () async {});
