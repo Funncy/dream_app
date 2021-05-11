@@ -69,37 +69,37 @@ class NoticeViewModel extends GetxController {
       commentStatus.value = Status.empty;
   }
 
-  // void writeComment(
-  //     {@required String noticeId,
-  //     @required String userId,
-  //     @required String content}) async {
-  //   //update 중
-  //   commentStatus.value = Status.updating;
-  //   Either<ErrorModel, void> either = await _noticeRepository.writeComment(
-  //       noticeId: noticeId, userId: userId, content: content);
-  //   either.fold((l) {
-  //     commentStatus.value = Status.error;
-  //   }, (r) {});
+  void writeComment(
+      {@required String noticeId,
+      @required String userId,
+      @required String content}) async {
+    //update 중
+    commentStatus.value = Status.updating;
+    Either<ErrorModel, void> either = await _noticeRepository.writeComment(
+        noticeId: noticeId, userId: userId, content: content);
+    either.fold((l) {
+      commentStatus.value = Status.error;
+    }, (r) {});
 
-  //   //에러인 경우 아래 진행 안함
-  //   if (either.isLeft()) return;
+    //에러인 경우 아래 진행 안함
+    if (either.isLeft()) return;
 
-  //   //정상적으로 서버 통신 완료
-  //   //댓글 다시 읽어 오기
-  //   Either<ErrorModel, List<NoticeCommentModel>> either2 =
-  //       await _noticeRepository.getCommentList(noticeId: noticeId);
-  //   var result =
-  //       either2.fold((l) => commentStatus.value = Status.error, (r) => r);
+    //정상적으로 서버 통신 완료
+    //댓글 다시 읽어 오기
+    Either<ErrorModel, List<NoticeCommentModel>> either2 =
+        await _noticeRepository.getCommentList(noticeId: noticeId);
+    var result =
+        either2.fold((l) => commentStatus.value = Status.error, (r) => r);
 
-  //   if (either2.isLeft()) return;
+    if (either2.isLeft()) return;
 
-  //   commentList.clear();
-  //   commentList.addAll(result);
-  //   if (commentList.length > 0)
-  //     commentStatus.value = Status.loaded;
-  //   else
-  //     commentStatus.value = Status.empty;
-  // }
+    commentList.clear();
+    commentList.addAll(result);
+    if (commentList.length > 0)
+      commentStatus.value = Status.loaded;
+    else
+      commentStatus.value = Status.empty;
+  }
 
   // Future<void> writeReply(
   //     {@required String noticeId,
