@@ -99,7 +99,8 @@ class NoticeCommentModel extends Equatable with Core {
   factory NoticeCommentModel.fromFirestore(DocumentSnapshot doc) {
     var json = doc.data();
 
-    List<Map<String, Object>> replyJsonList = json['reply_list'];
+    List<Map<String, Object>> replyJsonList =
+        json['reply_list']?.cast<Map<String, Object>>();
     List<NoticeCommentReplyModel> replyList =
         replyJsonList.map((e) => NoticeCommentReplyModel.fromJson(e)).toList();
 
