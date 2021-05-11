@@ -29,7 +29,7 @@ class NoticeModel extends Equatable with Core {
       userId: json['user_id'],
       content: json['content'],
       commentCount: json['comment_count'],
-      favoriteUserList: json['favorite_user_list'],
+      favoriteUserList: json['favorite_user_list']?.cast<String>(),
       documentReference: doc.reference,
     );
 
@@ -108,7 +108,7 @@ class NoticeCommentModel extends Equatable with Core {
       userId: json['user_id'],
       content: json['content'],
       replyList: replyList,
-      favoriteUserList: json['favorite_user_list'],
+      favoriteUserList: json['favorite_user_list']?.cast<String>(),
       documentReference: doc.reference,
     );
 
@@ -158,7 +158,7 @@ class NoticeCommentReplyModel extends Equatable with Core {
     var model = NoticeCommentReplyModel(
       userId: json['user_id'],
       content: json['content'],
-      favoriteUserList: json['favorite_user_list'],
+      favoriteUserList: json['favorite_user_list']?.cast<String>(),
     );
     model.createdAt = (json['created_at'] as Timestamp)?.toDate() ?? null;
     model.updatedAt = (json['updated_at'] as Timestamp)?.toDate() ?? null;
