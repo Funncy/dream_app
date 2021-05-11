@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dream/core/error/error_model.dart';
 import 'package:dream/models/notice.dart';
 import 'package:dream/repositories/notice_repository_impl.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -46,6 +47,9 @@ void main() {
     when(mockDocumentReference.get())
         .thenAnswer((_) async => mockDocumentSnapshot);
     when(mockQueryDocumentsnapshot.id).thenReturn('123');
+
+    when(mockDocumentReference.collection(any))
+        .thenReturn(mockCollectionReference);
   });
 
   var noticeDataJson = {
@@ -64,6 +68,44 @@ void main() {
       commentCount: 0,
       favoriteUserList: ['245', '421'],
       documentReference: null);
+
+  var commentDataJson = {
+    'user_id': '123',
+    'content': '댓글 01',
+    'reply_list': [
+      {
+        'content': '답글 01',
+        'user_id': '123',
+        'favorite_user_list': [],
+        'createdAt': Timestamp.now(),
+        'updatedAt': Timestamp.now(),
+      },
+      {
+        'content': '답글 02',
+        'user_id': '123',
+        'favorite_user_list': [],
+        'createdAt': Timestamp.now(),
+        'updatedAt': Timestamp.now(),
+      }
+    ],
+    'favorite_user_list': [],
+    'createdAt': Timestamp.now(),
+    'updatedAt': Timestamp.now(),
+  };
+
+  var commentDataModel = NoticeCommentModel(
+      documentId: '123',
+      userId: '123',
+      content: '댓글 01',
+      replyList: [
+        NoticeCommentReplyModel(
+            userId: '123', content: '답글 01', favoriteUserList: []),
+        NoticeCommentReplyModel(
+            userId: '123', content: '답글 02', favoriteUserList: []),
+      ],
+      favoriteUserList: [],
+      documentReference: null);
+
   group('공지사항', () {
     test('공지사항 가져오기 - 성공', () async {
       //arrange
@@ -78,13 +120,56 @@ void main() {
 
     test('공지사항 가져오기 - 에러', () async {
       //arrange
+      when(mockCollectionReference.get())
+          .thenThrow(ErrorModel(message: 'firebase error'));
       //act
+      var result = await noticeRepositoryImpl.getNoticeList();
       //assert
+      expect(result.isLeft(), true);
     });
     test('공지사항 가져오기 - Empty', () async {
       //arrange
+      when(mockQuerySnapshot.docs).thenAnswer((_) => []);
       //act
+      var result = await noticeRepositoryImpl.getNoticeList();
+      var data = result.getOrElse(() => null);
       //assert
+      expect(result.isRight(), true);
+      expect(data.length, 0);
+    });
+  });
+
+  group('댓글', () {
+    test('댓글 가져오기 - 성공', () async {
+      //arrange
+      when(mockQueryDocumentsnapshot.data()).thenAnswer((_) => commentDataJson);
+      //act
+      var result = await noticeRepositoryImpl.getCommentList(noticeId: '123');
+      var data = result.getOrElse(() => null);
+      //assert
+      expect(result.isRight(), true);
+      expect(data, equals([commentDataModel, commentDataModel]));
+    });
+
+    test('댓글 가져오기 - 실패', () async {
+      //arrange
+      when(mockCollectionReference.get())
+          .thenThrow(ErrorModel(message: 'firebase error'));
+      //act
+      var result = await noticeRepositoryImpl.getCommentList(noticeId: '123');
+      //assert
+      expect(result.isLeft(), true);
+    });
+
+    test('댓글 가져오기 - Empty', () async {
+      //arrange
+      when(mockQuerySnapshot.docs).thenAnswer((_) => []);
+      //act
+      var result = await noticeRepositoryImpl.getNoticeList();
+      var data = result.getOrElse(() => null);
+      //assert
+      expect(result.isRight(), true);
+      expect(data.length, 0);
     });
   });
 }
