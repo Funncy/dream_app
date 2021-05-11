@@ -171,5 +171,28 @@ void main() {
       expect(result.isRight(), true);
       expect(data.length, 0);
     });
+
+    test('댓글 작성하기 - 성공', () async {
+      //arrange
+      when(mockCollectionReference.add(any))
+          .thenAnswer((realInvocation) async => mockDocumentReference);
+      when(mockQueryDocumentsnapshot.data()).thenAnswer((_) => commentDataJson);
+      //act
+      var result = await noticeRepositoryImpl.writeComment(
+          noticeId: '123', userId: '123', content: '답글 03');
+      //assert
+      expect(result.isRight(), true);
+    });
+
+    test('댓글 작성하기 - 실패', () async {
+      //arrange
+      when(mockCollectionReference.add(any))
+          .thenThrow(ErrorModel(message: 'firebase error'));
+      //act
+      var result = await noticeRepositoryImpl.writeComment(
+          noticeId: '123', userId: '123', content: '답글 03');
+      //assert
+      expect(result.isLeft(), true);
+    });
   });
 }
