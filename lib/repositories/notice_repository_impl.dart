@@ -139,6 +139,8 @@ class NoticeRepositoryImpl extends NoticeRepository {
           replyList: [],
           favoriteUserList: [],
           documentReference: null);
+      commentModel.createdAt = Timestamp.now().toDate();
+      commentModel.updatedAt = Timestamp.now().toDate();
 
       _firebaseFirestore
           .collection(noticeCollectionName)
