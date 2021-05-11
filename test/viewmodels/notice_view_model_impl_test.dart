@@ -181,56 +181,54 @@ void main() {
       verify(mockNoticeRepository.getCommentList(noticeId: '123')).called(1);
     });
 
-    // test('댓글 작성하기 - 성공', () async {
-    //   //arrange
-    //   when(mockNoticeRepository.writeComment(
-    //           noticeId: '123', userId: 'test123', content: 'test 001'))
-    //       .thenAnswer((realInvocation) async => Right(null));
-    //   when(mockNoticeRepository.getCommentList(noticeId: '123'))
-    //       .thenAnswer((_) async => Right(commentList));
-    //   //act
-    //   await noticeViewModel.writeComment(
-    //       noticeId: '123', userId: 'test123', content: 'test 001');
-    //   //assert
-    //   expect(noticeViewModel.commentList, commentList);
-    //   expect(noticeViewModel.commentList[1].replyCount,
-    //       noticeViewModel.commentList[1].replyList.length);
-    //   expect(statusList, [Status.updating, Status.loaded]);
-    //   verify(mockNoticeRepository.getCommentList(noticeId: '123')).called(1);
-    // });
+    test('댓글 작성하기 - 성공', () async {
+      //arrange
+      when(mockNoticeRepository.writeComment(
+              noticeId: '123', userId: 'test123', content: 'test 001'))
+          .thenAnswer((realInvocation) async => Right(null));
+      when(mockNoticeRepository.getCommentList(noticeId: '123'))
+          .thenAnswer((_) async => Right(commentList));
+      //act
+      await noticeViewModel.writeComment(
+          noticeId: '123', userId: 'test123', content: 'test 001');
+      //assert
+      expect(noticeViewModel.commentList, commentList);
+      expect(statusList, [Status.updating, Status.loaded]);
+      verify(mockNoticeRepository.getCommentList(noticeId: '123')).called(1);
+    });
 
-    // test('댓글 작성하기 - 쓰기 실패', () async {
-    //   //arrange
-    //   when(mockNoticeRepository.writeComment(
-    //           noticeId: '123', userId: 'test123', content: 'test 001'))
-    //       .thenAnswer((realInvocation) async =>
-    //           Left(ErrorModel(message: 'Firebase Error')));
-    //   //act
-    //   await noticeViewModel.writeComment(
-    //       noticeId: '123', userId: 'test123', content: 'test 001');
-    //   //assert
-    //   expect(statusList, [Status.updating, Status.error]);
-    //   verify(mockNoticeRepository.writeComment(
-    //           noticeId: '123', userId: 'test123', content: 'test 001'))
-    //       .called(1);
-    // });
+    test('댓글 작성하기 - 쓰기 실패', () async {
+      //arrange
+      when(mockNoticeRepository.writeComment(
+              noticeId: '123', userId: 'test123', content: 'test 001'))
+          .thenAnswer((realInvocation) async =>
+              Left(ErrorModel(message: 'Firebase Error')));
+      //act
+      await noticeViewModel.writeComment(
+          noticeId: '123', userId: 'test123', content: 'test 001');
+      //assert
+      expect(statusList, [Status.updating, Status.error]);
+      verify(mockNoticeRepository.writeComment(
+              noticeId: '123', userId: 'test123', content: 'test 001'))
+          .called(1);
+    });
 
-    // test('댓글 작성하기 - 읽기 실패', () async {
-    //   //arrange
-    //   when(mockNoticeRepository.writeComment(
-    //           noticeId: '123', userId: 'test123', content: 'test 001'))
-    //       .thenAnswer((realInvocation) async => Right(null));
-    //   when(mockNoticeRepository.getCommentList(noticeId: '123'))
-    //       .thenAnswer((_) async => Left(ErrorModel(message: 'Firebase Error')));
-    //   //act
-    //   await noticeViewModel.writeComment(
-    //       noticeId: '123', userId: 'test123', content: 'test 001');
-    //   //assert
-    //   expect(statusList, [Status.updating, Status.error]);
-    //   verify(mockNoticeRepository.writeComment(
-    //           noticeId: '123', userId: 'test123', content: 'test 001'))
-    //       .called(1);
-    // });
+    test('댓글 작성하기 - 읽기 실패', () async {
+      //arrange
+      when(mockNoticeRepository.writeComment(
+              noticeId: '123', userId: 'test123', content: 'test 001'))
+          .thenAnswer((realInvocation) async => Right(null));
+      when(mockNoticeRepository.getCommentList(noticeId: '123'))
+          .thenAnswer((_) async => Left(ErrorModel(message: 'Firebase Error')));
+      //act
+      await noticeViewModel.writeComment(
+          noticeId: '123', userId: 'test123', content: 'test 001');
+      //assert
+      expect(statusList, [Status.updating, Status.error]);
+      verify(mockNoticeRepository.writeComment(
+              noticeId: '123', userId: 'test123', content: 'test 001'))
+          .called(1);
+    });
   });
 
   // group('좋아요', () {
