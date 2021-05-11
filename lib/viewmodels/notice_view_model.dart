@@ -50,24 +50,24 @@ class NoticeViewModel extends GetxController {
       noticeStatus.value = Status.empty;
   }
 
-  // void getCommentList({@required String noticeId}) async {
-  //   commentStatus.value = Status.loading;
+  void getCommentList({@required String noticeId}) async {
+    commentStatus.value = Status.loading;
 
-  //   Either<ErrorModel, List<NoticeCommentModel>> either =
-  //       await _noticeRepository.getCommentList(noticeId: noticeId);
-  //   var result =
-  //       either.fold((l) => commentStatus.value = Status.error, (r) => r);
+    Either<ErrorModel, List<NoticeCommentModel>> either =
+        await _noticeRepository.getCommentList(noticeId: noticeId);
+    var result =
+        either.fold((l) => commentStatus.value = Status.error, (r) => r);
 
-  //   if (either.isLeft()) return;
+    if (either.isLeft()) return;
 
-  //   commentList.clear();
-  //   commentList.addAll(result);
+    commentList.clear();
+    commentList.addAll(result);
 
-  //   if (commentList.length > 0)
-  //     commentStatus.value = Status.loaded;
-  //   else
-  //     commentStatus.value = Status.empty;
-  // }
+    if (commentList.length > 0)
+      commentStatus.value = Status.loaded;
+    else
+      commentStatus.value = Status.empty;
+  }
 
   // void writeComment(
   //     {@required String noticeId,
