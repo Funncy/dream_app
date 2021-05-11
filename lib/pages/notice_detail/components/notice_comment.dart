@@ -125,9 +125,9 @@ class NoticeComment extends StatelessWidget {
                           if (noticeCommentModel.favoriteUserList
                               .where((userId) => userId == '123')
                               .isNotEmpty)
-                            Icon(Icons.favorite_border)
+                            Icon(Icons.favorite)
                           else
-                            Icon(Icons.favorite),
+                            Icon(Icons.favorite_border),
                           SizedBox(
                             width: 5,
                           ),
