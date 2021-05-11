@@ -90,9 +90,20 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
   @override
   Future<Either<ErrorModel, List<NoticeCommentModel>>> getCommentList(
-      {@required String noticeId}) {
-    // TODO: implement getCommentList
-    throw UnimplementedError();
+      {@required String noticeId}) async {
+    try {
+      var querySnapshot = await _firebaseFirestore
+          .collection(noticeCollectionName)
+          .doc(noticeId)
+          .collection(commentCollectionName)
+          .get();
+      List<NoticeCommentModel> result = querySnapshot.docs
+          .map((e) => NoticeCommentModel.fromFirestore(e))
+          .toList();
+      return Right(result);
+    } catch (e) {
+      return Left(ErrorModel(message: 'firebase Error'));
+    }
   }
 
   @override
