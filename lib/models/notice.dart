@@ -158,7 +158,7 @@ class NoticeCommentReplyModel extends Equatable with Core {
     var model = NoticeCommentReplyModel(
       userId: json['user_id'],
       content: json['content'],
-      favoriteUserList: json['favorite_user_list']?.cast<String>(),
+      favoriteUserList: json['favorite_user_list'],
     );
     model.createdAt = (json['created_at'] as Timestamp)?.toDate() ?? null;
     model.updatedAt = (json['updated_at'] as Timestamp)?.toDate() ?? null;
