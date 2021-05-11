@@ -154,8 +154,6 @@ void main() {
       //assert
 
       expect(noticeViewModel.commentList, commentList);
-      // expect(noticeViewModel.commentList[1].replyList,
-      //     noticeViewModel.commentList[1].replyList.length);
       expect(statusList, [Status.loading, Status.loaded]);
       verify(mockNoticeRepository.getCommentList(noticeId: '123')).called(1);
     });
