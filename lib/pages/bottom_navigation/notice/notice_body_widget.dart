@@ -3,6 +3,7 @@ import 'package:dream/pages/common/empty_widget.dart';
 import 'package:dream/pages/common/error_message_widget.dart';
 import 'package:dream/pages/common/loading_widget.dart';
 import 'package:dream/pages/common/screen_status_widget.dart';
+import 'package:dream/pages/notice_detail/notice_detail_screen.dart';
 import 'package:dream/viewmodels/notice_view_model.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
@@ -15,14 +16,14 @@ class NoticeBodyWidget extends StatefulWidget {
 }
 
 class _NoticeBodyWidgetState extends State<NoticeBodyWidget> {
-  final noticeViewmodel = Get.find<NoticeViewModel>();
+  final noticeViewModel = Get.find<NoticeViewModel>();
 
   @override
   void initState() {
     super.initState();
     //build후에 함수 실행
-    // WidgetsBinding.instance
-    //     .addPostFrameCallback((_) => noticeViewmodel.getNoticeList());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => noticeViewModel.getNoticeList());
   }
 
   @override
@@ -30,8 +31,8 @@ class _NoticeBodyWidgetState extends State<NoticeBodyWidget> {
     return Container(
       color: Colors.black12,
       child: Obx(() {
-        var dataStatus = noticeViewmodel.noticeStatus.value;
-        var noticeList = noticeViewmodel.noticeList;
+        var dataStatus = noticeViewModel.noticeStatus.value;
+        var noticeList = noticeViewModel.noticeList;
 
         return DataStatusWidget(
             body: ListView.builder(
@@ -39,8 +40,6 @@ class _NoticeBodyWidgetState extends State<NoticeBodyWidget> {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                       onTap: () {
-                        // Get.to(NoticeDetailScreen(),
-                        //     arguments: noticeList[index]);
                         Get.toNamed('/notice_detail',
                             preventDuplicates: false,
                             arguments: noticeList[index]);
