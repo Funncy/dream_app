@@ -101,42 +101,41 @@ class NoticeViewModel extends GetxController {
       commentStatus.value = Status.empty;
   }
 
-  // Future<void> writeReply(
-  //     {@required String noticeId,
-  //     @required String commentId,
-  //     @required String userId,
-  //     @required String content}) async {
-  //   replyStatus.value = Status.updating;
-  //   Either<ErrorModel, void> either = await _noticeRepository.writeReply(
-  //       commentId: commentId, userId: userId, content: content);
+  Future<void> writeReply(
+      {@required String commentId,
+      @required String userId,
+      @required String content}) async {
+    replyStatus.value = Status.updating;
+    Either<ErrorModel, void> either = await _noticeRepository.writeReply(
+        commentId: commentId, userId: userId, content: content);
 
-  //   either.fold((l) {
-  //     replyStatus.value = Status.error;
-  //     //TODO: 에러시 다이얼로그 처리 어떻게 할지?
-  //   }, (r) {});
+    either.fold((l) {
+      replyStatus.value = Status.error;
+      //TODO: 에러시 다이얼로그 처리 어떻게 할지?
+    }, (r) {});
 
-  //   //에러인 경우 아래 진행 안함
-  //   if (either.isLeft()) return;
+    //에러인 경우 아래 진행 안함
+    if (either.isLeft()) return;
 
-  //   NoticeCommentModel comment =
-  //       commentList.where((comment) => comment.docuemtnId == commentId).first;
-  //   //서버에서 댓글 갯수 증가 반영
-  //   comment.replyCount += 1;
+    //정상적으로 서버 통신 완료
+    //답글 다시 읽어 오기
+    var either2 = await _noticeRepository.getCommentById(commentId: commentId);
+    var result =
+        either2.fold((l) => commentStatus.value = Status.error, (r) => r);
 
-  //   //정상적으로 서버 통신 완료
-  //   //답글 다시 읽어 오기
-  //   var either2 =
-  //       await _noticeRepository.getReplyList(commentId: comment.docuemtnId);
-  //   var result =
-  //       either2.fold((l) => commentStatus.value = Status.error, (r) => r);
+    if (either2.isLeft()) return;
 
-  //   if (either2.isLeft()) return;
+    //기존 내용 대체
+    int index =
+        commentList.indexWhere((element) => element.documentId == commentId);
+    if (index == -1) {
+      replyStatus.value = Status.error;
+      return;
+    }
+    commentList[index] = result;
 
-  //   comment.replyList.clear();
-  //   comment.replyList.addAll(result);
-
-  //   replyStatus.value = Status.loaded;
-  // }
+    replyStatus.value = Status.loaded;
+  }
 
   // Future<void> addNoticeFavorite(
   //     {@required String noticeId, @required String userId}) async {
