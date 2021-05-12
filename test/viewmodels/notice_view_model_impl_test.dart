@@ -106,6 +106,34 @@ void main() {
         documentReference: null),
   ];
 
+  final commentModel = NoticeCommentModel(
+      documentId: '121',
+      userId: 'test1',
+      content: 'test 001',
+      replyList: [
+        NoticeCommentReplyModel(
+            userId: '123', content: 'test reply 01', favoriteUserList: []),
+        NoticeCommentReplyModel(
+            userId: '123', content: 'test reply 02', favoriteUserList: []),
+      ],
+      favoriteUserList: ['123', '245'],
+      documentReference: null);
+
+  final dummyCommentModel = NoticeCommentModel(
+      documentId: '121',
+      userId: 'test1',
+      content: 'test 001',
+      replyList: [
+        NoticeCommentReplyModel(
+            userId: '123', content: 'test reply 01', favoriteUserList: []),
+        NoticeCommentReplyModel(
+            userId: '123', content: 'test reply 02', favoriteUserList: []),
+        NoticeCommentReplyModel(
+            userId: '123', content: 'test reply 03', favoriteUserList: []),
+      ],
+      favoriteUserList: ['123', '245'],
+      documentReference: null);
+
   group('공지사항', () {
     test('공지사항 가져오기 - 성공', () async {
       //arrange
@@ -227,6 +255,59 @@ void main() {
       expect(statusList, [Status.updating, Status.error]);
       verify(mockNoticeRepository.writeComment(
               noticeId: '123', userId: 'test123', content: 'test 001'))
+          .called(1);
+    });
+
+    test('답글 작성하기 - 성공', () async {
+      //arrange
+      noticeViewModel.commentList.add(commentModel);
+      when(mockNoticeRepository.writeReply(
+              commentId: '121', userId: '123', content: 'reply 01'))
+          .thenAnswer((_) async => Right(null));
+      when(mockNoticeRepository.getCommentById(commentId: '121'))
+          .thenAnswer((_) async => Right(dummyCommentModel));
+      //act
+      await noticeViewModel.writeReply(
+          commentId: '121', userId: '123', content: 'reply 01');
+      //assert
+      expect(noticeViewModel.commentList, equals([dummyCommentModel]));
+      expect(statusList, [Status.updating, Status.loaded]);
+      verify(mockNoticeRepository.getCommentById(commentId: '121')).called(1);
+      verify(mockNoticeRepository.writeReply(
+              commentId: '121', userId: '123', content: 'reply 01'))
+          .called(1);
+    });
+
+    test('답글 작성하기 - 작성 실패', () async {
+      //arrange
+      when(mockNoticeRepository.writeReply(
+              commentId: '123', userId: '123', content: 'reply 01'))
+          .thenAnswer((_) async => Left(ErrorModel(message: 'firebase error')));
+      //act
+      await noticeViewModel.writeReply(
+          commentId: '123', userId: '123', content: 'reply 01');
+      //assert
+      expect(statusList, [Status.updating, Status.error]);
+      verify(mockNoticeRepository.writeReply(
+              commentId: '123', userId: '123', content: 'reply 01'))
+          .called(1);
+    });
+
+    test('답글 작성하기 - 읽기 실패', () async {
+      //arrange
+      when(mockNoticeRepository.writeReply(
+              commentId: '123', userId: '123', content: 'reply 01'))
+          .thenAnswer((_) async => Right(null));
+      when(mockNoticeRepository.getCommentById(commentId: '123'))
+          .thenAnswer((_) async => Left(ErrorModel(message: 'firebase error')));
+      //act
+      await noticeViewModel.writeReply(
+          commentId: '123', userId: '123', content: 'reply 01');
+      //assert
+      expect(statusList, [Status.updating, Status.error]);
+      verify(mockNoticeRepository.getCommentById(commentId: '123')).called(1);
+      verify(mockNoticeRepository.writeReply(
+              commentId: '123', userId: '123', content: 'reply 01'))
           .called(1);
     });
   });
