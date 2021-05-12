@@ -107,6 +107,10 @@ class NoticeRepositoryImpl extends NoticeRepository {
   }
 
   @override
+  Future<Either<ErrorModel, NoticeCommentModel>> getCommentById(
+      {@required String commentId}) async {}
+
+  @override
   Future<Either<ErrorModel, List<NoticeModel>>> getNoticeList() async {
     try {
       var querySnapshot =

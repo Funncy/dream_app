@@ -19,6 +19,8 @@ abstract class NoticeRepository {
   Future<Either<ErrorModel, List<NoticeModel>>> getNoticeList();
   Future<Either<ErrorModel, List<NoticeCommentModel>>> getCommentList(
       {@required String noticeId});
+      Future<Either<ErrorModel, NoticeCommentModel>> getCommentById(
+      {@required String commentId});
   Future<Either<ErrorModel, List<NoticeCommentReplyModel>>> getReplyList(
       {@required String commentId});
   Future<Either<ErrorModel, void>> writeComment(
