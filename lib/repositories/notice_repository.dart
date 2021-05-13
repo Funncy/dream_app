@@ -19,7 +19,7 @@ abstract class NoticeRepository {
   Future<Either<ErrorModel, List<NoticeModel>>> getNoticeList();
   Future<Either<ErrorModel, List<NoticeCommentModel>>> getCommentList(
       {@required String noticeId});
-      Future<Either<ErrorModel, NoticeCommentModel>> getCommentById(
+  Future<Either<ErrorModel, NoticeCommentModel>> getCommentById(
       {@required String commentId});
   Future<Either<ErrorModel, List<NoticeCommentReplyModel>>> getReplyList(
       {@required String commentId});
@@ -28,7 +28,8 @@ abstract class NoticeRepository {
       @required String userId,
       @required String content});
   Future<Either<ErrorModel, void>> writeReply(
-      {@required String commentId,
+      {@required String noticeId,
+      @required String commentId,
       @required String userId,
       @required String content});
   Future<Either<ErrorModel, void>> addFavorite(

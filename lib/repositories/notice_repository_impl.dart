@@ -160,11 +160,28 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
   @override
   Future<Either<ErrorModel, void>> writeReply(
-      {@required String commentId,
+      {@required String noticeId,
+      @required String commentId,
       @required String userId,
-      @required String content}) {
-    // TODO: implement writeReply
-    throw UnimplementedError();
+      @required String content}) async {
+    try {
+      //TODO: Notice Reference 혹은 comment Reference 필요
+      var replyModel = NoticeCommentReplyModel(
+          userId: userId, content: content, favoriteUserList: []);
+      _firebaseFirestore
+          .collection(noticeCollectionName)
+          .doc(noticeId)
+          .collection(commentCollectionName)
+          .doc(commentId)
+          .update({
+        'reply_list': [
+          ...{replyModel.toJson()}
+        ]
+      });
+      return Right(null);
+    } catch (e) {
+      return Left(ErrorModel(message: e.toString()));
+    }
   }
 
   // @override
