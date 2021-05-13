@@ -12,10 +12,10 @@ import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class NoticeReplyScreen extends StatefulWidget {
-  final String nid;
+  final String noticeId;
   final NoticeCommentModel noticeCommentModel;
 
-  const NoticeReplyScreen({Key key, this.noticeCommentModel, this.nid})
+  const NoticeReplyScreen({Key key, this.noticeCommentModel, this.noticeId})
       : super(key: key);
   @override
   _NoticeReplyScreenState createState() => _NoticeReplyScreenState();

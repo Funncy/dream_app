@@ -8,19 +8,19 @@ import 'package:get/get.dart';
 
 class NoticeComment extends StatelessWidget {
   final NoticeCommentModel noticeCommentModel;
-  final String nid;
+  final String noticeId;
   final bool isReplyScreen;
   const NoticeComment({
     Key key,
     this.noticeCommentModel,
     this.isReplyScreen,
-    this.nid,
+    this.noticeId,
   }) : super(key: key);
 
   void pageToReply() {
     Get.to(NoticeReplyScreen(
       noticeCommentModel: noticeCommentModel,
-      nid: nid,
+      nid: noticeId,
     ));
   }
 
