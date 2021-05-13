@@ -20,7 +20,7 @@ class NoticeComment extends StatelessWidget {
   void pageToReply() {
     Get.to(NoticeReplyScreen(
       noticeCommentModel: noticeCommentModel,
-      nid: noticeId,
+      noticeId: noticeId,
     ));
   }
 
