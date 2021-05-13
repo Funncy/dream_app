@@ -102,12 +102,16 @@ class NoticeViewModel extends GetxController {
   }
 
   Future<void> writeReply(
-      {@required String commentId,
+      {@required String noticeId,
+      @required String commentId,
       @required String userId,
       @required String content}) async {
     replyStatus.value = Status.updating;
     Either<ErrorModel, void> either = await _noticeRepository.writeReply(
-        commentId: commentId, userId: userId, content: content);
+        noticeId: noticeId,
+        commentId: commentId,
+        userId: userId,
+        content: content);
 
     either.fold((l) {
       replyStatus.value = Status.error;

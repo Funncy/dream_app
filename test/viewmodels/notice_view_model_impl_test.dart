@@ -262,52 +262,79 @@ void main() {
       //arrange
       noticeViewModel.commentList.add(commentModel);
       when(mockNoticeRepository.writeReply(
-              commentId: '121', userId: '123', content: 'reply 01'))
+              noticeId: '123',
+              commentId: '121',
+              userId: '123',
+              content: 'reply 01'))
           .thenAnswer((_) async => Right(null));
       when(mockNoticeRepository.getCommentById(commentId: '121'))
           .thenAnswer((_) async => Right(dummyCommentModel));
       //act
       await noticeViewModel.writeReply(
-          commentId: '121', userId: '123', content: 'reply 01');
+          noticeId: '123',
+          commentId: '121',
+          userId: '123',
+          content: 'reply 01');
       //assert
       expect(noticeViewModel.commentList, equals([dummyCommentModel]));
       expect(statusList, [Status.updating, Status.loaded]);
       verify(mockNoticeRepository.getCommentById(commentId: '121')).called(1);
       verify(mockNoticeRepository.writeReply(
-              commentId: '121', userId: '123', content: 'reply 01'))
+              noticeId: '123',
+              commentId: '121',
+              userId: '123',
+              content: 'reply 01'))
           .called(1);
     });
 
     test('답글 작성하기 - 작성 실패', () async {
       //arrange
       when(mockNoticeRepository.writeReply(
-              commentId: '123', userId: '123', content: 'reply 01'))
+              noticeId: '123',
+              commentId: '123',
+              userId: '123',
+              content: 'reply 01'))
           .thenAnswer((_) async => Left(ErrorModel(message: 'firebase error')));
       //act
       await noticeViewModel.writeReply(
-          commentId: '123', userId: '123', content: 'reply 01');
+          noticeId: '123',
+          commentId: '123',
+          userId: '123',
+          content: 'reply 01');
       //assert
       expect(statusList, [Status.updating, Status.error]);
       verify(mockNoticeRepository.writeReply(
-              commentId: '123', userId: '123', content: 'reply 01'))
+              noticeId: '123',
+              commentId: '123',
+              userId: '123',
+              content: 'reply 01'))
           .called(1);
     });
 
     test('답글 작성하기 - 읽기 실패', () async {
       //arrange
       when(mockNoticeRepository.writeReply(
-              commentId: '123', userId: '123', content: 'reply 01'))
+              noticeId: '123',
+              commentId: '123',
+              userId: '123',
+              content: 'reply 01'))
           .thenAnswer((_) async => Right(null));
       when(mockNoticeRepository.getCommentById(commentId: '123'))
           .thenAnswer((_) async => Left(ErrorModel(message: 'firebase error')));
       //act
       await noticeViewModel.writeReply(
-          commentId: '123', userId: '123', content: 'reply 01');
+          noticeId: '123',
+          commentId: '123',
+          userId: '123',
+          content: 'reply 01');
       //assert
       expect(statusList, [Status.updating, Status.error]);
       verify(mockNoticeRepository.getCommentById(commentId: '123')).called(1);
       verify(mockNoticeRepository.writeReply(
-              commentId: '123', userId: '123', content: 'reply 01'))
+              noticeId: '123',
+              commentId: '123',
+              userId: '123',
+              content: 'reply 01'))
           .called(1);
     });
   });
