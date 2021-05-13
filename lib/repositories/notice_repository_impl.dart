@@ -174,9 +174,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
           .collection(commentCollectionName)
           .doc(commentId)
           .update({
-        'reply_list': [
-          ...{replyModel.toJson()}
-        ]
+        'reply_list': FieldValue.arrayUnion([replyModel.toJson()])
       });
       return Right(null);
     } catch (e) {
