@@ -194,5 +194,34 @@ void main() {
       //assert
       expect(result.isLeft(), true);
     });
+
+    test('답글 작성하기 - 성공', () async {
+      //arrange
+      when(mockCollectionReference.add(any))
+          .thenAnswer((realInvocation) async => mockDocumentReference);
+      when(mockQueryDocumentsnapshot.data()).thenAnswer((_) => commentDataJson);
+      //act
+      var result = await noticeRepositoryImpl.writeReply(
+          noticeId: '123',
+          commentId: '123',
+          userId: '123',
+          content: 'test reply 01');
+      //assert
+      expect(result.isRight(), true);
+    });
+
+    test('답글 작성하기 - 실패', () async {
+      //arrange
+      when(mockDocumentReference.update(any))
+          .thenThrow(ErrorModel(message: 'firebase error'));
+      //act
+      var result = await noticeRepositoryImpl.writeReply(
+          noticeId: '123',
+          commentId: '123',
+          userId: '123',
+          content: 'test reply 01');
+      //assert
+      expect(result.isLeft(), true);
+    });
   });
 }
