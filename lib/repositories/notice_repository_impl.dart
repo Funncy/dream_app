@@ -108,7 +108,19 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
   @override
   Future<Either<ErrorModel, NoticeCommentModel>> getCommentById(
-      {@required String noticeId, @required String commentId}) async {}
+      {@required String noticeId, @required String commentId}) async {
+    try {
+      DocumentSnapshot documentSnapshot = await _firebaseFirestore
+          .collection(noticeCollectionName)
+          .doc(noticeId)
+          .collection(commentCollectionName)
+          .doc(commentId)
+          .get();
+      return Right(NoticeCommentModel.fromFirestore(documentSnapshot));
+    } catch (e) {
+      return Left(ErrorModel(message: e.toString()));
+    }
+  }
 
   @override
   Future<Either<ErrorModel, List<NoticeModel>>> getNoticeList() async {
