@@ -123,7 +123,8 @@ class NoticeViewModel extends GetxController {
 
     //정상적으로 서버 통신 완료
     //답글 다시 읽어 오기
-    var either2 = await _noticeRepository.getCommentById(commentId: commentId);
+    var either2 = await _noticeRepository.getCommentById(
+        noticeId: noticeId, commentId: commentId);
     var result =
         either2.fold((l) => commentStatus.value = Status.error, (r) => r);
 

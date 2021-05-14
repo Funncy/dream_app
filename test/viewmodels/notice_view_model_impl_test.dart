@@ -267,7 +267,8 @@ void main() {
               userId: '123',
               content: 'reply 01'))
           .thenAnswer((_) async => Right(null));
-      when(mockNoticeRepository.getCommentById(commentId: '121'))
+      when(mockNoticeRepository.getCommentById(
+              noticeId: '123', commentId: '121'))
           .thenAnswer((_) async => Right(dummyCommentModel));
       //act
       await noticeViewModel.writeReply(
@@ -278,7 +279,9 @@ void main() {
       //assert
       expect(noticeViewModel.commentList, equals([dummyCommentModel]));
       expect(statusList, [Status.updating, Status.loaded]);
-      verify(mockNoticeRepository.getCommentById(commentId: '121')).called(1);
+      verify(mockNoticeRepository.getCommentById(
+              noticeId: '123', commentId: '121'))
+          .called(1);
       verify(mockNoticeRepository.writeReply(
               noticeId: '123',
               commentId: '121',
@@ -319,7 +322,8 @@ void main() {
               userId: '123',
               content: 'reply 01'))
           .thenAnswer((_) async => Right(null));
-      when(mockNoticeRepository.getCommentById(commentId: '123'))
+      when(mockNoticeRepository.getCommentById(
+              noticeId: '123', commentId: '123'))
           .thenAnswer((_) async => Left(ErrorModel(message: 'firebase error')));
       //act
       await noticeViewModel.writeReply(
@@ -329,7 +333,9 @@ void main() {
           content: 'reply 01');
       //assert
       expect(statusList, [Status.updating, Status.error]);
-      verify(mockNoticeRepository.getCommentById(commentId: '123')).called(1);
+      verify(mockNoticeRepository.getCommentById(
+              noticeId: '123', commentId: '123'))
+          .called(1);
       verify(mockNoticeRepository.writeReply(
               noticeId: '123',
               commentId: '123',
