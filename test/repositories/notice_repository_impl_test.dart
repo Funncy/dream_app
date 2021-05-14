@@ -47,6 +47,7 @@ void main() {
     when(mockDocumentReference.get())
         .thenAnswer((_) async => mockDocumentSnapshot);
     when(mockQueryDocumentsnapshot.id).thenReturn('123');
+    when(mockDocumentSnapshot.id).thenReturn('123');
 
     when(mockDocumentReference.collection(any))
         .thenReturn(mockCollectionReference);
@@ -220,6 +221,29 @@ void main() {
           commentId: '123',
           userId: '123',
           content: 'test reply 01');
+      //assert
+      expect(result.isLeft(), true);
+    });
+
+    test('댓글 하나 가져오기 - 성공', () async {
+      //arrange
+      when(mockDocumentSnapshot.data()).thenAnswer((_) => commentDataJson);
+      //act
+      var result = await noticeRepositoryImpl.getCommentById(
+          noticeId: '123', commentId: '123');
+      var data = result.getOrElse(() => null);
+      //assert
+      expect(result.isRight(), true);
+      expect(data, equals(commentDataModel));
+    });
+
+    test('댓글 하나 가져오기 - 실패', () async {
+      //arrange
+      when(mockCollectionReference.get())
+          .thenThrow(ErrorModel(message: 'firebase error'));
+      //act
+      var result = await noticeRepositoryImpl.getCommentById(
+          noticeId: '123', commentId: '123');
       //assert
       expect(result.isLeft(), true);
     });
