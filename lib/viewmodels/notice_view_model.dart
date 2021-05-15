@@ -167,7 +167,7 @@ class NoticeViewModel extends GetxController {
     }
 
     var result = await _noticeRepository.addNoticeFavorite(
-        documentId: noticeId, userId: userId);
+        noticeId: noticeId, userId: userId);
 
     if (result.isLeft()) {
       return;
