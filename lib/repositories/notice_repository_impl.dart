@@ -213,21 +213,21 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
   @override
   Future<Either<ErrorModel, void>> addCommentFavorite(
-      {String documentId, String userId}) {
+      {@required String documentId, @required String userId}) {
     // TODO: implement addCommentFavorite
     throw UnimplementedError();
   }
 
   @override
   Future<Either<ErrorModel, void>> addNoticeFavorite(
-      {String documentId, String userId}) {
+      {@required String documentId, @required String userId}) {
     // TODO: implement addNoticeFavorite
     throw UnimplementedError();
   }
 
   @override
   Future<Either<ErrorModel, void>> addReplyFavorite(
-      {String documentId, String userId}) {
+      {@required String documentId, @required String userId}) {
     // TODO: implement addReplyFavorite
     throw UnimplementedError();
   }
