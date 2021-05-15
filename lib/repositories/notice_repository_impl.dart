@@ -216,9 +216,23 @@ class NoticeRepositoryImpl extends NoticeRepository {
       {@required String noticeId,
       @required String commentId,
       @required String userId,
-      @required bool isDelete}) {
-    // TODO: implement addCommentFavorite
-    throw UnimplementedError();
+      @required bool isDelete}) async {
+    try {
+      FieldValue fieldValue;
+      if (isDelete)
+        fieldValue = FieldValue.arrayUnion([userId]);
+      else
+        fieldValue = FieldValue.arrayRemove([userId]);
+      _firebaseFirestore
+          .collection(noticeCollectionName)
+          .doc(noticeId)
+          .collection(commentCollectionName)
+          .doc(commentId)
+          .update({'favorite_user_list': fieldValue});
+      return Right(null);
+    } catch (e) {
+      return Left(ErrorModel(message: e.toString()));
+    }
   }
 
   @override
