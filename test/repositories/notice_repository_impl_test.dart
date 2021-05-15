@@ -139,7 +139,7 @@ void main() {
       expect(data.length, 0);
     });
 
-    test('공지사항 좋아요 추가  - 성공', () async {
+    test('공지사항 좋아요  - 성공', () async {
       //arrange
       //act
       var result = await noticeRepositoryImpl.toggleNoticeFavorite(
@@ -148,7 +148,7 @@ void main() {
       expect(result.isRight(), true);
     });
 
-    test('공지사항 좋아요 추가  - 실패', () async {
+    test('공지사항 좋아요 - 실패', () async {
       //arrange
       when(mockDocumentReference.update(any))
           .thenThrow(ErrorModel(message: 'firebase error'));
