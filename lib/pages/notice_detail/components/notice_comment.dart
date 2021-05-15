@@ -2,11 +2,12 @@ import 'package:dream/models/notice.dart';
 import 'package:dream/pages/notice_detail/components/notice_reply.dart';
 import 'package:dream/pages/notice_reply/notice_reply_screen.dart';
 import 'package:dream/utils/time_util.dart';
+import 'package:dream/viewmodels/notice_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-class NoticeComment extends StatelessWidget {
+class NoticeComment extends StatefulWidget {
   final NoticeCommentModel noticeCommentModel;
   final String noticeId;
   final bool isReplyScreen;
@@ -17,18 +18,25 @@ class NoticeComment extends StatelessWidget {
     this.noticeId,
   }) : super(key: key);
 
+  @override
+  _NoticeCommentState createState() => _NoticeCommentState();
+}
+
+class _NoticeCommentState extends State<NoticeComment> {
+  final noticeViewModel = Get.find<NoticeViewModel>();
+
   void pageToReply() {
     Get.to(NoticeReplyScreen(
-      commentId: noticeCommentModel.documentId,
-      noticeId: noticeId,
+      commentId: widget.noticeCommentModel.documentId,
+      noticeId: widget.noticeId,
     ));
   }
 
   @override
   Widget build(BuildContext context) {
     //시간 로드
-    var date = TimeUtil.getDateString(
-        noticeCommentModel.updatedAt ?? noticeCommentModel.createdAt);
+    var date = TimeUtil.getDateString(widget.noticeCommentModel.updatedAt ??
+        widget.noticeCommentModel.createdAt);
 
     return Container(
       color: Colors.white,
@@ -63,7 +71,7 @@ class NoticeComment extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(vertical: 5),
                               child: Text(
                                 //TODO: 추후 유저 아이디가 아닌 닉네임으로 수정해야함.
-                                noticeCommentModel.userId,
+                                widget.noticeCommentModel.userId,
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -88,7 +96,7 @@ class NoticeComment extends StatelessWidget {
                     child: Container(
                       width: 230.w,
                       child: Text(
-                        noticeCommentModel.content,
+                        widget.noticeCommentModel.content,
                         overflow: TextOverflow.clip,
                       ),
                     ),
@@ -99,6 +107,14 @@ class NoticeComment extends StatelessWidget {
                       Row(
                         children: [
                           InkWell(
+                            onTap: () {
+                              //TODO: 댓글 좋아요 => userId 수정해야함.
+                              noticeViewModel.toggleCommentFavorite(
+                                  noticeId: widget.noticeId,
+                                  commentId:
+                                      widget.noticeCommentModel.documentId,
+                                  userId: '123');
+                            },
                             child: Text(
                               "공감하기",
                               style: TextStyle(fontWeight: FontWeight.bold),
@@ -107,7 +123,7 @@ class NoticeComment extends StatelessWidget {
                           SizedBox(
                             width: 10,
                           ),
-                          isReplyScreen
+                          widget.isReplyScreen
                               ? Container()
                               : InkWell(
                                   onTap: pageToReply,
@@ -119,32 +135,42 @@ class NoticeComment extends StatelessWidget {
                                 ),
                         ],
                       ),
-                      Row(
-                        children: [
-                          //TODO: 가짜 유저 아이디 실제 유저 아이디로 변경 필요
-                          if (noticeCommentModel.favoriteUserList
-                              .where((userId) => userId == '123')
-                              .isNotEmpty)
-                            Icon(Icons.favorite)
-                          else
-                            Icon(Icons.favorite_border),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Text(
-                              "${noticeCommentModel.favoriteUserList.length ?? "0"}")
-                        ],
+                      GestureDetector(
+                        onTap: () {
+                          //TODO: 댓글 좋아요 => userId 수정해야함.
+                          noticeViewModel.toggleCommentFavorite(
+                              noticeId: widget.noticeId,
+                              commentId: widget.noticeCommentModel.documentId,
+                              userId: '123');
+                        },
+                        child: Row(
+                          children: [
+                            //TODO: 가짜 유저 아이디 실제 유저 아이디로 변경 필요
+                            if (widget.noticeCommentModel.favoriteUserList
+                                .where((userId) => userId == '123')
+                                .isNotEmpty)
+                              Icon(Icons.favorite)
+                            else
+                              Icon(Icons.favorite_border),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                                "${widget.noticeCommentModel.favoriteUserList.length ?? "0"}")
+                          ],
+                        ),
                       )
                     ],
                   ),
                   //Reply List
-                  if (noticeCommentModel.replyList.length > 0)
-                    ...noticeCommentModel.replyList
+                  if (widget.noticeCommentModel.replyList.length > 0)
+                    ...widget.noticeCommentModel.replyList
                         .map((model) => NoticeReply(
                               noticeCommentReplyModel: model,
                             ))
                         .toList(),
-                  if (noticeCommentModel.replyList.length > 0 && !isReplyScreen)
+                  if (widget.noticeCommentModel.replyList.length > 0 &&
+                      !widget.isReplyScreen)
                     InkWell(
                       onTap: pageToReply,
                       child: Align(
