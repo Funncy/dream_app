@@ -1,3 +1,4 @@
+import 'package:dream/models/notice.dart';
 import 'package:dream/pages/bottom_navigation/notice/components/notice_card.dart';
 import 'package:dream/pages/common/empty_widget.dart';
 import 'package:dream/pages/common/error_message_widget.dart';
@@ -35,30 +36,39 @@ class _NoticeBodyWidgetState extends State<NoticeBodyWidget> {
         var noticeList = noticeViewModel.noticeList;
 
         return DataStatusWidget(
-            body: ListView.builder(
-                itemCount: noticeList.length,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                      onTap: () {
-                        Get.toNamed('/notice_detail',
-                            preventDuplicates: false,
-                            arguments: noticeList[index]);
-                      },
-                      child: Column(
-                        children: [
-                          NoticeCard(notice: noticeList[index]),
-                          SizedBox(
-                            height: 10.h,
-                          )
-                        ],
-                      ));
-                }),
-            error: ErrorMessageWidget(errorMessage: 'test'),
-            loading: LoadingWidget(),
-            empty: EmptyWidget(),
-            updating: Container(),
+            body: () => _noticeList(noticeList),
+            error: () => _errorWidget(),
+            loading: () => _loadingWidget(),
+            empty: () => _emptyWidget(),
+            updating: () => Container(),
             dataStatus: dataStatus);
       }),
     );
+  }
+
+  EmptyWidget _emptyWidget() => EmptyWidget();
+
+  LoadingWidget _loadingWidget() => LoadingWidget();
+
+  ErrorMessageWidget _errorWidget() => ErrorMessageWidget(errorMessage: 'test');
+
+  ListView _noticeList(RxList<NoticeModel> noticeList) {
+    return ListView.builder(
+        itemCount: noticeList.length,
+        itemBuilder: (context, index) {
+          return GestureDetector(
+              onTap: () {
+                Get.toNamed('/notice_detail',
+                    preventDuplicates: false, arguments: noticeList[index]);
+              },
+              child: Column(
+                children: [
+                  NoticeCard(notice: noticeList[index]),
+                  SizedBox(
+                    height: 10.h,
+                  )
+                ],
+              ));
+        });
   }
 }

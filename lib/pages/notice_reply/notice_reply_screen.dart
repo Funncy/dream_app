@@ -38,12 +38,12 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
 
   void inputReply() {
     //TODO: uid 실제 유저로 바꿔야함.
-    // noticeViewModel.writeReply(
-    //     noticeId: widget.nid,
-    //     commentId: widget.noticeCommentModel.docuemtnId,
-    //     userId: '123',
-    //     content: _textEditingController.text);
-    // _textEditingController.text = '';
+    noticeViewModel.writeReply(
+        noticeId: widget.noticeId,
+        commentId: widget.noticeCommentModel.documentId,
+        userId: '123',
+        content: _textEditingController.text);
+    _textEditingController.text = '';
   }
 
   @override
@@ -75,29 +75,11 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
                         var dataStatus = noticeViewModel.replyStatus.value;
 
                         return DataStatusWidget(
-                            body: NoticeComment(
-                              noticeCommentModel: widget.noticeCommentModel,
-                              isReplyScreen: true,
-                            ),
-                            error: ErrorMessageWidget(errorMessage: 'test'),
-                            loading: Padding(
-                              padding: const EdgeInsets.only(top: 50.0),
-                              child: LoadingWidget(),
-                            ),
-                            empty: EmptyWidget(),
-                            updating: Stack(
-                              children: [
-                                NoticeComment(
-                                  noticeCommentModel: widget.noticeCommentModel,
-                                  isReplyScreen: true,
-                                ),
-                                // Container(
-                                //   height: 400.h,
-                                //   child: Center(
-                                //       child: CircularProgressIndicator()),
-                                // )
-                              ],
-                            ),
+                            body: () => _commentBody(),
+                            error: () => _errorWidget(),
+                            loading: () => _loadingWidget(),
+                            empty: () => _emptyWidget(),
+                            updating: () => _updatingWidget(),
                             dataStatus: dataStatus);
                       }),
                     ),
@@ -116,6 +98,39 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
           );
         }),
       ),
+    );
+  }
+
+  ErrorMessageWidget _errorWidget() => ErrorMessageWidget(errorMessage: 'test');
+
+  EmptyWidget _emptyWidget() => EmptyWidget();
+
+  Stack _updatingWidget() {
+    return Stack(
+      children: [
+        NoticeComment(
+          noticeCommentModel: widget.noticeCommentModel,
+          isReplyScreen: true,
+        ),
+        Container(
+          height: 400.h,
+          child: Center(child: CircularProgressIndicator()),
+        )
+      ],
+    );
+  }
+
+  Padding _loadingWidget() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 50.0),
+      child: LoadingWidget(),
+    );
+  }
+
+  NoticeComment _commentBody() {
+    return NoticeComment(
+      noticeCommentModel: widget.noticeCommentModel,
+      isReplyScreen: true,
     );
   }
 }
