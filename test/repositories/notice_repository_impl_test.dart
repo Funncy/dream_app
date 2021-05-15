@@ -215,6 +215,26 @@ void main() {
       expect(result.isLeft(), true);
     });
 
+    test('댓글 좋아요  - 성공', () async {
+      //arrange
+      //act
+      var result = await noticeRepositoryImpl.toggleCommentFavorite(
+          noticeId: '123', commentId: '123', userId: '123', isDelete: false);
+      //assert
+      expect(result.isRight(), true);
+    });
+
+    test('댓글 좋아요 - 실패', () async {
+      //arrange
+      when(mockDocumentReference.update(any))
+          .thenThrow(ErrorModel(message: 'firebase error'));
+      //act
+      var result = await noticeRepositoryImpl.toggleCommentFavorite(
+          noticeId: '123', commentId: '123', userId: '123', isDelete: false);
+      //assert
+      expect(result.isLeft(), true);
+    });
+
     test('답글 작성하기 - 성공', () async {
       //arrange
       when(mockCollectionReference.add(any))
