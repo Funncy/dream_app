@@ -3,7 +3,7 @@ import 'package:dream/models/core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:equatable/equatable.dart';
 
-class NoticeModel extends Equatable with Core {
+class NoticeModel extends Core with EquatableMixin {
   final String documentId;
   final String userId;
   final String content;
@@ -19,7 +19,7 @@ class NoticeModel extends Equatable with Core {
     @required this.commentCount,
     @required this.favoriteUserList,
     @required this.documentReference,
-  });
+  }) : super(DateTime.now(), DateTime.now());
 
   factory NoticeModel.fromFirestore(DocumentSnapshot doc) {
     var json = doc.data();
@@ -70,7 +70,7 @@ class NoticeModel extends Equatable with Core {
 }
 
 //Inner Collection
-class NoticeCommentModel extends Equatable with Core {
+class NoticeCommentModel extends Core with EquatableMixin {
   final String documentId;
   final String userId;
   final String content;
@@ -84,7 +84,8 @@ class NoticeCommentModel extends Equatable with Core {
       @required this.content,
       @required this.replyList,
       @required this.favoriteUserList,
-      @required this.documentReference});
+      @required this.documentReference})
+      : super(DateTime.now(), DateTime.now());
 
   @override
   List<Object> get props => [
@@ -138,7 +139,7 @@ class NoticeCommentModel extends Equatable with Core {
       };
 }
 
-class NoticeCommentReplyModel extends Equatable with Core {
+class NoticeCommentReplyModel extends Core with EquatableMixin {
   final String userId;
   final String content;
   List<String> favoriteUserList;
@@ -146,7 +147,8 @@ class NoticeCommentReplyModel extends Equatable with Core {
   NoticeCommentReplyModel(
       {@required this.userId,
       @required this.content,
-      @required this.favoriteUserList});
+      @required this.favoriteUserList})
+      : super(DateTime.now(), DateTime.now());
 
   @override
   List<Object> get props => [userId, content, favoriteUserList];
