@@ -138,6 +138,25 @@ void main() {
       expect(result.isRight(), true);
       expect(data.length, 0);
     });
+
+    test('공지사항 좋아요 추가  - 성공', () async {
+      //arrange
+      //act
+      var result = await noticeRepositoryImpl.addNoticeFavorite(
+          noticeId: '123', userId: '123');
+      //assert
+      expect(result.isRight(), true);
+    });
+
+    test('공지사항 좋아요 추가  - 실패', () async {
+      //arrange
+      when(mockDocumentReference.update(any))
+          .thenThrow(ErrorModel(message: 'firebase error'));
+      var result = await noticeRepositoryImpl.addNoticeFavorite(
+          noticeId: '123', userId: '123');
+      //assert
+      expect(result.isLeft(), true);
+    });
   });
 
   group('댓글', () {
