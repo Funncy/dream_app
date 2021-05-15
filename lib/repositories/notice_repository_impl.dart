@@ -212,7 +212,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
   }
 
   @override
-  Future<Either<ErrorModel, void>> addCommentFavorite(
+  Future<Either<ErrorModel, void>> toggleCommentFavorite(
       {@required String commentId, @required String userId}) {
     // TODO: implement addCommentFavorite
     throw UnimplementedError();
@@ -240,7 +240,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
   }
 
   @override
-  Future<Either<ErrorModel, void>> addReplyFavorite(
+  Future<Either<ErrorModel, void>> toggleReplyFavorite(
       {@required String commentId, @required String userId}) {
     // TODO: implement addReplyFavorite
     throw UnimplementedError();
