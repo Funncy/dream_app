@@ -28,12 +28,19 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
   @override
   void initState() {
     super.initState();
-    debounce(noticeViewModel.replyStatus, (_) {
-      if (noticeViewModel.replyStatus.value == Status.loaded) {
-        _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-            duration: Duration(milliseconds: 500), curve: Curves.ease);
-      }
-    }, time: Duration(milliseconds: 500));
+    //id에 해당하는 댓글 존재 확인
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      noticeViewModel.getComment(commentId: widget.commentId);
+      //새로운 답글 추가시 아래 스크롤 애니메이션
+      debounce(noticeViewModel.replyStatus, (_) {
+        if (noticeViewModel.replyStatus.value == Status.loaded) {
+          _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: Duration(milliseconds: 500),
+              curve: Curves.ease);
+        }
+      }, time: Duration(milliseconds: 500));
+    });
   }
 
   void inputReply() {
