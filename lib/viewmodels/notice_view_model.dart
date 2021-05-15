@@ -65,10 +65,18 @@ class NoticeViewModel extends GetxController {
 
     if (commentList.length > 0) {
       commentStatus.value = Status.loaded;
-      replyStatus.value = Status.loaded;
     } else {
       commentStatus.value = Status.empty;
-      replyStatus.value = Status.empty;
+    }
+  }
+
+  void getComment({@required String commentId}) async {
+    replyStatus.value = Status.loading;
+
+    if (commentList.where((e) => e.documentId == commentId).isNotEmpty) {
+      replyStatus.value = Status.loaded;
+    } else {
+      replyStatus.value = Status.error;
     }
   }
 

@@ -212,7 +212,7 @@ void main() {
       //assert
 
       expect(noticeViewModel.commentList, commentList);
-      expect(statusList, [Status.loading, Status.loaded, Status.loaded]);
+      expect(statusList, [Status.loading, Status.loaded]);
       verify(mockNoticeRepository.getCommentList(noticeId: '123')).called(1);
     });
 
@@ -235,7 +235,7 @@ void main() {
       await noticeViewModel.getCommentList(noticeId: '123');
       //assert
       expect(noticeViewModel.commentList.length, 0);
-      expect(statusList, [Status.loading, Status.empty, Status.empty]);
+      expect(statusList, [Status.loading, Status.empty]);
       verify(mockNoticeRepository.getCommentList(noticeId: '123')).called(1);
     });
 
