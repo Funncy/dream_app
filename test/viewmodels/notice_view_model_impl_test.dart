@@ -34,6 +34,14 @@ void main() {
     replyStatusSubscription = noticeViewModel.replyStatus.listen((status) {
       statusList.add(status);
     });
+
+    noticeViewModel.noticeList.add(NoticeModel(
+        documentId: '123',
+        userId: '111',
+        content: 'test notice',
+        commentCount: 0,
+        favoriteUserList: [],
+        documentReference: null));
   });
 
   tearDown(() {
@@ -135,6 +143,27 @@ void main() {
       documentReference: null);
 
   group('공지사항', () {
+    test('공지사항 댓글 좋아요 - 성공', () async {
+      //arrange
+      when(mockNoticeRepository.addNoticeFavorite(
+              documentId: '123', userId: '123'))
+          .thenAnswer((_) async => Right(null));
+      //act
+      await noticeViewModel.addNoticeFavorite(noticeId: '123', userId: '123');
+      //assert
+      expect(
+          noticeViewModel.noticeList.first.favoriteUserList, equals(['123']));
+    });
+    test('공지사항 댓글 좋아요 - 실패', () async {
+      //arrange
+      when(mockNoticeRepository.addNoticeFavorite(
+              documentId: '123', userId: '123'))
+          .thenAnswer((_) async => Left(ErrorModel(message: 'firebase error')));
+      //act
+      await noticeViewModel.addNoticeFavorite(noticeId: '123', userId: '123');
+      //assert
+      expect(noticeViewModel.noticeList.first.favoriteUserList, equals([]));
+    });
     test('공지사항 가져오기 - 성공', () async {
       //arrange
       when(mockNoticeRepository.getNoticeList())
@@ -149,6 +178,7 @@ void main() {
 
     test('공지사항 가져오기 - 에러', () async {
       //arrange
+      noticeViewModel.noticeList.clear();
       when(mockNoticeRepository.getNoticeList())
           .thenAnswer((_) async => Left(ErrorModel(message: 'Firebase Error')));
       //act
@@ -182,7 +212,7 @@ void main() {
       //assert
 
       expect(noticeViewModel.commentList, commentList);
-      expect(statusList, [Status.loading, Status.loaded]);
+      expect(statusList, [Status.loading, Status.loaded, Status.loaded]);
       verify(mockNoticeRepository.getCommentList(noticeId: '123')).called(1);
     });
 
@@ -205,7 +235,7 @@ void main() {
       await noticeViewModel.getCommentList(noticeId: '123');
       //assert
       expect(noticeViewModel.commentList.length, 0);
-      expect(statusList, [Status.loading, Status.empty]);
+      expect(statusList, [Status.loading, Status.empty, Status.empty]);
       verify(mockNoticeRepository.getCommentList(noticeId: '123')).called(1);
     });
 
@@ -346,6 +376,6 @@ void main() {
   });
 
   // group('좋아요', () {
-  //   test('댓글 좋아요 - 성공', () async {});
+
   // });
 }
