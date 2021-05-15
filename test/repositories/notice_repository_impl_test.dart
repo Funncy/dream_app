@@ -142,8 +142,8 @@ void main() {
     test('공지사항 좋아요 추가  - 성공', () async {
       //arrange
       //act
-      var result = await noticeRepositoryImpl.addNoticeFavorite(
-          noticeId: '123', userId: '123');
+      var result = await noticeRepositoryImpl.toggleNoticeFavorite(
+          noticeId: '123', userId: '123', isDelete: false);
       //assert
       expect(result.isRight(), true);
     });
@@ -152,8 +152,8 @@ void main() {
       //arrange
       when(mockDocumentReference.update(any))
           .thenThrow(ErrorModel(message: 'firebase error'));
-      var result = await noticeRepositoryImpl.addNoticeFavorite(
-          noticeId: '123', userId: '123');
+      var result = await noticeRepositoryImpl.toggleNoticeFavorite(
+          noticeId: '123', userId: '123', isDelete: false);
       //assert
       expect(result.isLeft(), true);
     });

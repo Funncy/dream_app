@@ -145,22 +145,30 @@ void main() {
   group('공지사항', () {
     test('공지사항 댓글 좋아요 - 성공', () async {
       //arrange
-      when(mockNoticeRepository.addNoticeFavorite(
-              noticeId: '123', userId: '123'))
+      when(mockNoticeRepository.toggleNoticeFavorite(
+              noticeId: '123', userId: '123', isDelete: false))
+          .thenAnswer((_) async => Right(null));
+      when(mockNoticeRepository.toggleNoticeFavorite(
+              noticeId: '123', userId: '123', isDelete: true))
           .thenAnswer((_) async => Right(null));
       //act
-      await noticeViewModel.addNoticeFavorite(noticeId: '123', userId: '123');
+      await noticeViewModel.toggleNoticeFavorite(
+          noticeId: '123', userId: '123');
       //assert
       expect(
           noticeViewModel.noticeList.first.favoriteUserList, equals(['123']));
     });
     test('공지사항 댓글 좋아요 - 실패', () async {
       //arrange
-      when(mockNoticeRepository.addNoticeFavorite(
-              noticeId: '123', userId: '123'))
+      when(mockNoticeRepository.toggleNoticeFavorite(
+              noticeId: '123', userId: '123', isDelete: false))
+          .thenAnswer((_) async => Left(ErrorModel(message: 'firebase error')));
+      when(mockNoticeRepository.toggleNoticeFavorite(
+              noticeId: '123', userId: '123', isDelete: true))
           .thenAnswer((_) async => Left(ErrorModel(message: 'firebase error')));
       //act
-      await noticeViewModel.addNoticeFavorite(noticeId: '123', userId: '123');
+      await noticeViewModel.toggleNoticeFavorite(
+          noticeId: '123', userId: '123');
       //assert
       expect(noticeViewModel.noticeList.first.favoriteUserList, equals([]));
     });
