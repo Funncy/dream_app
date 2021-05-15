@@ -219,12 +219,20 @@ class NoticeRepositoryImpl extends NoticeRepository {
   }
 
   @override
-  Future<Either<ErrorModel, void>> addNoticeFavorite(
-      {@required String noticeId, @required String userId}) async {
+  Future<Either<ErrorModel, void>> toggleNoticeFavorite(
+      {@required String noticeId,
+      @required String userId,
+      @required bool isDelete}) async {
     try {
-      _firebaseFirestore.collection(noticeCollectionName).doc(noticeId).update({
-        'favorite_user_list': FieldValue.arrayUnion([userId])
-      });
+      FieldValue fieldValue;
+      if (isDelete)
+        fieldValue = FieldValue.arrayUnion([userId]);
+      else
+        fieldValue = FieldValue.arrayRemove([userId]);
+      _firebaseFirestore
+          .collection(noticeCollectionName)
+          .doc(noticeId)
+          .update({'favorite_user_list': fieldValue});
       return Right(null);
     } catch (e) {
       return Left(ErrorModel(message: e.toString()));

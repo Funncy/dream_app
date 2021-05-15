@@ -153,27 +153,29 @@ class NoticeViewModel extends GetxController {
     replyStatus.value = Status.loaded;
   }
 
-  Future<void> addNoticeFavorite(
+  Future<void> toggleNoticeFavorite(
       {@required String noticeId, @required String userId}) async {
     //Notice의 좋아요 리스트 가져오기 inner Collection
     NoticeModel notice =
         noticeList.where((notice) => notice.documentId == noticeId).first;
 
-    //이미 등록되있다면 무시
-    if (notice.favoriteUserList
-        .where((element) => element == userId)
-        .isNotEmpty) {
-      return;
-    }
+    //이미 등록되있다면 삭제
+    bool isDelete = false;
+    if (notice.favoriteUserList.where((element) => element == userId).isEmpty)
+      isDelete = false;
+    else
+      isDelete = true;
 
-    var result = await _noticeRepository.addNoticeFavorite(
-        noticeId: noticeId, userId: userId);
+    var result = await _noticeRepository.toggleNoticeFavorite(
+        noticeId: noticeId, userId: userId, isDelete: isDelete);
+    if (result.isLeft()) return;
 
-    if (result.isLeft()) {
-      return;
-    }
     //local에서도 증가
-    notice.favoriteUserList.add(userId);
+    if (isDelete)
+      notice.favoriteUserList.remove(userId);
+    else
+      notice.favoriteUserList.add(userId);
+    noticeList.refresh();
   }
 
   // Future<void> deleteNoticeFavorite(
