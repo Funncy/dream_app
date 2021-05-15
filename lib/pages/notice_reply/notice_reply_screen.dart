@@ -13,9 +13,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class NoticeReplyScreen extends StatefulWidget {
   final String noticeId;
-  final NoticeCommentModel noticeCommentModel;
+  final String commentId;
 
-  const NoticeReplyScreen({Key key, this.noticeCommentModel, this.noticeId})
+  const NoticeReplyScreen({Key key, this.commentId, this.noticeId})
       : super(key: key);
   @override
   _NoticeReplyScreenState createState() => _NoticeReplyScreenState();
@@ -40,7 +40,7 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
     //TODO: uid 실제 유저로 바꿔야함.
     noticeViewModel.writeReply(
         noticeId: widget.noticeId,
-        commentId: widget.noticeCommentModel.documentId,
+        commentId: widget.commentId,
         userId: '123',
         content: _textEditingController.text);
     _textEditingController.text = '';
@@ -73,13 +73,15 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
                       controller: _scrollController,
                       child: Obx(() {
                         var dataStatus = noticeViewModel.replyStatus.value;
-
+                        var comment = noticeViewModel.commentList
+                            .where((e) => e.documentId == widget.commentId)
+                            ?.first;
                         return DataStatusWidget(
-                            body: () => _commentBody(),
+                            body: () => _commentBody(comment),
                             error: () => _errorWidget(),
                             loading: () => _loadingWidget(),
                             empty: () => _emptyWidget(),
-                            updating: () => _updatingWidget(),
+                            updating: () => _updatingWidget(comment),
                             dataStatus: dataStatus);
                       }),
                     ),
@@ -105,11 +107,11 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
 
   EmptyWidget _emptyWidget() => EmptyWidget();
 
-  Stack _updatingWidget() {
+  Stack _updatingWidget(NoticeCommentModel commentModel) {
     return Stack(
       children: [
         NoticeComment(
-          noticeCommentModel: widget.noticeCommentModel,
+          noticeCommentModel: commentModel,
           isReplyScreen: true,
         ),
         Container(
@@ -127,9 +129,9 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
     );
   }
 
-  NoticeComment _commentBody() {
+  NoticeComment _commentBody(NoticeCommentModel commentModel) {
     return NoticeComment(
-      noticeCommentModel: widget.noticeCommentModel,
+      noticeCommentModel: commentModel,
       isReplyScreen: true,
     );
   }

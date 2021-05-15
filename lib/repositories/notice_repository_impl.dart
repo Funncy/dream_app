@@ -180,7 +180,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
       //TODO: Notice Reference 혹은 comment Reference 필요
       var replyModel = NoticeCommentReplyModel(
           userId: userId, content: content, favoriteUserList: []);
-      _firebaseFirestore
+      await _firebaseFirestore
           .collection(noticeCollectionName)
           .doc(noticeId)
           .collection(commentCollectionName)

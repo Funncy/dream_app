@@ -63,10 +63,13 @@ class NoticeViewModel extends GetxController {
     commentList.clear();
     commentList.addAll(result);
 
-    if (commentList.length > 0)
+    if (commentList.length > 0) {
       commentStatus.value = Status.loaded;
-    else
+      replyStatus.value = Status.loaded;
+    } else {
       commentStatus.value = Status.empty;
+      replyStatus.value = Status.empty;
+    }
   }
 
   void writeComment(
