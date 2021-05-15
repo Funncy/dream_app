@@ -164,6 +164,23 @@ class NoticeRepositoryImpl extends NoticeRepository {
           .collection(commentCollectionName)
           .add(commentModel.toSaveJson());
 
+      //notice doc에서 commentCount 증가
+      DocumentReference documentReference =
+          _firebaseFirestore.collection(noticeCollectionName).doc(noticeId);
+      await _firebaseFirestore.runTransaction((transaction) async {
+        DocumentSnapshot snapshot = await transaction.get(documentReference);
+
+        if (!snapshot.exists) {
+          throw Exception("User does not exist!");
+        }
+
+        int newCommentCount = snapshot.data()['comment_count'] + 1;
+
+        transaction
+            .update(documentReference, {'comment_count': newCommentCount});
+
+        return newCommentCount;
+      });
       return Right(null);
     } catch (e) {
       return Left(ErrorModel(message: 'firebase error'));
@@ -192,6 +209,27 @@ class NoticeRepositoryImpl extends NoticeRepository {
     } catch (e) {
       return Left(ErrorModel(message: e.toString()));
     }
+  }
+
+  @override
+  Future<Either<ErrorModel, void>> addCommentFavorite(
+      {String documentId, String userId}) {
+    // TODO: implement addCommentFavorite
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<ErrorModel, void>> addNoticeFavorite(
+      {String documentId, String userId}) {
+    // TODO: implement addNoticeFavorite
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<ErrorModel, void>> addReplyFavorite(
+      {String documentId, String userId}) {
+    // TODO: implement addReplyFavorite
+    throw UnimplementedError();
   }
 
   // @override

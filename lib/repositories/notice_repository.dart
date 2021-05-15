@@ -32,8 +32,10 @@ abstract class NoticeRepository {
       @required String commentId,
       @required String userId,
       @required String content});
-  Future<Either<ErrorModel, void>> addFavorite(
-      {@required String collectionName,
-      @required String documentId,
-      @required String userId});
+  Future<Either<ErrorModel, void>> addNoticeFavorite(
+      {@required String documentId, @required String userId});
+  Future<Either<ErrorModel, void>> addCommentFavorite(
+      {@required String documentId, @required String userId});
+  Future<Either<ErrorModel, void>> addReplyFavorite(
+      {@required String documentId, @required String userId});
 }
