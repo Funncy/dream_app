@@ -213,21 +213,27 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
   @override
   Future<Either<ErrorModel, void>> addCommentFavorite(
-      {@required String documentId, @required String userId}) {
+      {@required String commentId, @required String userId}) {
     // TODO: implement addCommentFavorite
     throw UnimplementedError();
   }
 
   @override
   Future<Either<ErrorModel, void>> addNoticeFavorite(
-      {@required String documentId, @required String userId}) {
-    // TODO: implement addNoticeFavorite
-    throw UnimplementedError();
+      {@required String noticeId, @required String userId}) async {
+    try {
+      _firebaseFirestore.collection(noticeCollectionName).doc(noticeId).update({
+        'favorite_user_list': FieldValue.arrayUnion([userId])
+      });
+      return Right(null);
+    } catch (e) {
+      return Left(ErrorModel(message: e.toString()));
+    }
   }
 
   @override
   Future<Either<ErrorModel, void>> addReplyFavorite(
-      {@required String documentId, @required String userId}) {
+      {@required String commentId, @required String userId}) {
     // TODO: implement addReplyFavorite
     throw UnimplementedError();
   }
