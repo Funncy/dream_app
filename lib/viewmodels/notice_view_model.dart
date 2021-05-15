@@ -179,6 +179,37 @@ class NoticeViewModel extends GetxController {
     noticeList.refresh();
   }
 
+  Future<void> toggleCommentFavorite(
+      {@required String noticeId,
+      @required String commentId,
+      @required String userId}) async {
+    NoticeCommentModel commentModel =
+        commentList.where((e) => e.documentId == commentId)?.first;
+    if (commentModel == null) return;
+
+    bool isDelete = false;
+    if (commentModel.favoriteUserList
+        .where((element) => element == userId)
+        .isEmpty)
+      isDelete = false;
+    else
+      isDelete = true;
+
+    var result = await _noticeRepository.toggleCommentFavorite(
+        noticeId: noticeId,
+        commentId: commentId,
+        userId: userId,
+        isDelete: isDelete);
+    if (result.isLeft()) return;
+
+    //local에서도 증가
+    if (isDelete)
+      commentModel.favoriteUserList.remove(userId);
+    else
+      commentModel.favoriteUserList.add(userId);
+    commentList.refresh();
+  }
+
   // Future<void> deleteNoticeFavorite(
   //     {@required String noticeId, @required String uid}) async {}
 
