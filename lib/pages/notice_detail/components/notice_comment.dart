@@ -168,9 +168,7 @@ class _NoticeCommentState extends State<NoticeComment> {
                         .map((model) => NoticeReply(
                               noticeCommentReplyModel: model,
                             ))
-                        .toList()
-                          ..sort((a, b) => a.noticeCommentReplyModel.updatedAt
-                              .compareTo(b.noticeCommentReplyModel.updatedAt))),
+                        .toList()),
                   if (widget.noticeCommentModel.replyList.length > 0 &&
                       !widget.isReplyScreen)
                     InkWell(

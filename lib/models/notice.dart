@@ -105,7 +105,8 @@ class NoticeCommentModel extends Core with EquatableMixin {
     List<NoticeCommentReplyModel> replyList = [];
     replyList = replyJsonList
         .map((e) => NoticeCommentReplyModel.fromJson(e, replyList.length))
-        .toList();
+        .toList()
+          ..sort((a, b) => a.updatedAt.compareTo(b.updatedAt));
 
     var model = NoticeCommentModel(
       documentId: doc.id,
