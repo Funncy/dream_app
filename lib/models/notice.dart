@@ -102,8 +102,10 @@ class NoticeCommentModel extends Core with EquatableMixin {
 
     List<Map<String, Object>> replyJsonList =
         json['reply_list']?.cast<Map<String, Object>>();
-    List<NoticeCommentReplyModel> replyList =
-        replyJsonList.map((e) => NoticeCommentReplyModel.fromJson(e)).toList();
+    List<NoticeCommentReplyModel> replyList = [];
+    replyList = replyJsonList
+        .map((e) => NoticeCommentReplyModel.fromJson(e, replyList.length))
+        .toList();
 
     var model = NoticeCommentModel(
       documentId: doc.id,
@@ -140,12 +142,14 @@ class NoticeCommentModel extends Core with EquatableMixin {
 }
 
 class NoticeCommentReplyModel extends Core with EquatableMixin {
+  final int id;
   final String userId;
   final String content;
   List<String> favoriteUserList;
 
   NoticeCommentReplyModel(
-      {@required this.userId,
+      {@required this.id,
+      @required this.userId,
       @required this.content,
       @required this.favoriteUserList})
       : super(DateTime.now(), DateTime.now());
@@ -153,8 +157,10 @@ class NoticeCommentReplyModel extends Core with EquatableMixin {
   @override
   List<Object> get props => [userId, content, favoriteUserList];
 
-  factory NoticeCommentReplyModel.fromJson(Map<String, dynamic> json) {
+  factory NoticeCommentReplyModel.fromJson(
+      Map<String, dynamic> json, int index) {
     var model = NoticeCommentReplyModel(
+      id: index,
       userId: json['user_id'],
       content: json['content'],
       favoriteUserList: json['favorite_user_list']?.cast<String>()?.toList(),

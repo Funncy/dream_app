@@ -48,9 +48,15 @@ class NoticeRepositoryImpl extends NoticeRepository {
           content: 'comment 01',
           replyList: [
             NoticeCommentReplyModel(
-                userId: '123', content: 'reply 01', favoriteUserList: []),
+                id: null,
+                userId: '123',
+                content: 'reply 01',
+                favoriteUserList: []),
             NoticeCommentReplyModel(
-                userId: '123', content: 'reply 02', favoriteUserList: []),
+                id: null,
+                userId: '123',
+                content: 'reply 02',
+                favoriteUserList: []),
           ],
           favoriteUserList: [],
           documentReference: null),
@@ -60,7 +66,10 @@ class NoticeRepositoryImpl extends NoticeRepository {
           content: 'comment 01',
           replyList: [
             NoticeCommentReplyModel(
-                userId: '123', content: 'reply 01', favoriteUserList: []),
+                id: null,
+                userId: '123',
+                content: 'reply 01',
+                favoriteUserList: []),
           ],
           favoriteUserList: [],
           documentReference: null),
@@ -196,7 +205,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
     try {
       //TODO: Notice Reference 혹은 comment Reference 필요
       var replyModel = NoticeCommentReplyModel(
-          userId: userId, content: content, favoriteUserList: []);
+          id: null, userId: userId, content: content, favoriteUserList: []);
       await _firebaseFirestore
           .collection(noticeCollectionName)
           .doc(noticeId)
