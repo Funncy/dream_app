@@ -227,6 +227,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
       @required String userId,
       @required bool isDelete}) async {
     try {
+      //TODO : orderby 추가 필요 (모든 곳에)
       FieldValue fieldValue;
       if (isDelete)
         fieldValue = FieldValue.arrayUnion([userId]);
