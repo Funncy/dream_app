@@ -230,10 +230,10 @@ class NoticeRepositoryImpl extends NoticeRepository {
       //TODO : orderby 추가 필요 (모든 곳에)
       FieldValue fieldValue;
       if (isDelete)
-        fieldValue = FieldValue.arrayUnion([userId]);
-      else
         fieldValue = FieldValue.arrayRemove([userId]);
-      _firebaseFirestore
+      else
+        fieldValue = FieldValue.arrayUnion([userId]);
+      await _firebaseFirestore
           .collection(noticeCollectionName)
           .doc(noticeId)
           .collection(commentCollectionName)
@@ -253,9 +253,9 @@ class NoticeRepositoryImpl extends NoticeRepository {
     try {
       FieldValue fieldValue;
       if (isDelete)
-        fieldValue = FieldValue.arrayUnion([userId]);
-      else
         fieldValue = FieldValue.arrayRemove([userId]);
+      else
+        fieldValue = FieldValue.arrayUnion([userId]);
       _firebaseFirestore
           .collection(noticeCollectionName)
           .doc(noticeId)
@@ -267,13 +267,43 @@ class NoticeRepositoryImpl extends NoticeRepository {
   }
 
   @override
-  Future<Either<ErrorModel, void>> toggleReplyFavorite(
-      {@required String noticeId,
-      @required String commentId,
-      @required String userId,
-      @required bool isDelete}) {
-    // TODO: implement addReplyFavorite
-    throw UnimplementedError();
+  Future<Either<ErrorModel, void>> toggleReplyFavorite({
+    @required String noticeId,
+    @required String commentId,
+    @required NoticeCommentReplyModel reply,
+    @required String userId,
+  }) async {
+    FieldValue fieldValue = FieldValue.arrayRemove([reply.toSaveJson()]);
+
+    FieldValue fieldValue2 = FieldValue.arrayUnion([reply.toSaveJson()]);
+    try {
+      var data = reply.toSaveJson();
+      await _firebaseFirestore
+          .collection(noticeCollectionName)
+          .doc(noticeId)
+          .collection(commentCollectionName)
+          .doc(commentId)
+          .update({
+        'reply_list': FieldValue.arrayRemove([reply.toSaveJson()])
+      });
+      //이미 유저 있다면 삭제 없다면 추가
+      if (reply.favoriteUserList.where((e) => e == userId).isEmpty)
+        reply.favoriteUserList.add(userId);
+      else
+        reply.favoriteUserList.remove(userId);
+      data = reply.toSaveJson();
+      await _firebaseFirestore
+          .collection(noticeCollectionName)
+          .doc(noticeId)
+          .collection(commentCollectionName)
+          .doc(commentId)
+          .update({
+        'reply_list': FieldValue.arrayUnion([reply.toSaveJson()])
+      });
+      return Right(null);
+    } catch (e) {
+      return Left(ErrorModel(message: 'firebase error'));
+    }
   }
 
   // @override
