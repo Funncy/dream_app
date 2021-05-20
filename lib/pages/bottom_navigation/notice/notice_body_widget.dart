@@ -29,20 +29,25 @@ class _NoticeBodyWidgetState extends State<NoticeBodyWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.black12,
-      child: Obx(() {
-        var dataStatus = noticeViewModel.noticeStatus.value;
-        var noticeList = noticeViewModel.noticeList;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("공지사항"),
+      ),
+      body: Container(
+        color: Colors.black12,
+        child: Obx(() {
+          var dataStatus = noticeViewModel.noticeStatus.value;
+          var noticeList = noticeViewModel.noticeList;
 
-        return DataStatusWidget(
-            body: () => _noticeList(noticeList),
-            error: () => _errorWidget(),
-            loading: () => _loadingWidget(),
-            empty: () => _emptyWidget(),
-            updating: () => Container(),
-            dataStatus: dataStatus);
-      }),
+          return DataStatusWidget(
+              body: () => _noticeList(noticeList),
+              error: () => _errorWidget(),
+              loading: () => _loadingWidget(),
+              empty: () => _emptyWidget(),
+              updating: () => Container(),
+              dataStatus: dataStatus);
+        }),
+      ),
     );
   }
 
