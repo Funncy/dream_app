@@ -210,6 +210,31 @@ class NoticeViewModel extends GetxController {
     commentList.refresh();
   }
 
+  Future<void> toggleReplyFavorite(
+      {@required String noticeId,
+      @required String commentId,
+      @required String replyId,
+      @required String userId}) async {
+    NoticeCommentModel commentModel =
+        commentList.where((e) => e.documentId == commentId)?.first;
+    if (commentModel == null) return;
+
+    NoticeCommentReplyModel replyModel =
+        commentModel.replyList.where((e) => e.id == replyId)?.first;
+    if (replyModel == null) return;
+
+    var result = await _noticeRepository.toggleReplyFavorite(
+      noticeId: noticeId,
+      commentId: commentId,
+      reply: replyModel,
+      userId: userId,
+    );
+    if (result.isLeft()) return;
+
+    //local에서도 수정
+    commentList.refresh();
+  }
+
   // Future<void> deleteNoticeFavorite(
   //     {@required String noticeId, @required String uid}) async {}
 

@@ -41,9 +41,10 @@ abstract class NoticeRepository {
       @required String commentId,
       @required String userId,
       @required bool isDelete});
-  Future<Either<ErrorModel, void>> toggleReplyFavorite(
-      {@required String noticeId,
-      @required String commentId,
-      @required String userId,
-      @required bool isDelete});
+  Future<Either<ErrorModel, void>> toggleReplyFavorite({
+    @required String noticeId,
+    @required String commentId,
+    @required NoticeCommentReplyModel reply,
+    @required String userId,
+  });
 }
