@@ -47,6 +47,7 @@ void main() {
     when(mockDocumentReference.get())
         .thenAnswer((_) async => mockDocumentSnapshot);
     when(mockQueryDocumentsnapshot.id).thenReturn('123');
+    when(mockDocumentSnapshot.id).thenReturn('123');
 
     when(mockDocumentReference.collection(any))
         .thenReturn(mockCollectionReference);
@@ -137,6 +138,25 @@ void main() {
       expect(result.isRight(), true);
       expect(data.length, 0);
     });
+
+    test('공지사항 좋아요  - 성공', () async {
+      //arrange
+      //act
+      var result = await noticeRepositoryImpl.toggleNoticeFavorite(
+          noticeId: '123', userId: '123', isDelete: false);
+      //assert
+      expect(result.isRight(), true);
+    });
+
+    test('공지사항 좋아요 - 실패', () async {
+      //arrange
+      when(mockDocumentReference.update(any))
+          .thenThrow(ErrorModel(message: 'firebase error'));
+      var result = await noticeRepositoryImpl.toggleNoticeFavorite(
+          noticeId: '123', userId: '123', isDelete: false);
+      //assert
+      expect(result.isLeft(), true);
+    });
   });
 
   group('댓글', () {
@@ -195,6 +215,26 @@ void main() {
       expect(result.isLeft(), true);
     });
 
+    test('댓글 좋아요  - 성공', () async {
+      //arrange
+      //act
+      var result = await noticeRepositoryImpl.toggleCommentFavorite(
+          noticeId: '123', commentId: '123', userId: '123', isDelete: false);
+      //assert
+      expect(result.isRight(), true);
+    });
+
+    test('댓글 좋아요 - 실패', () async {
+      //arrange
+      when(mockDocumentReference.update(any))
+          .thenThrow(ErrorModel(message: 'firebase error'));
+      //act
+      var result = await noticeRepositoryImpl.toggleCommentFavorite(
+          noticeId: '123', commentId: '123', userId: '123', isDelete: false);
+      //assert
+      expect(result.isLeft(), true);
+    });
+
     test('답글 작성하기 - 성공', () async {
       //arrange
       when(mockCollectionReference.add(any))
@@ -220,6 +260,29 @@ void main() {
           commentId: '123',
           userId: '123',
           content: 'test reply 01');
+      //assert
+      expect(result.isLeft(), true);
+    });
+
+    test('댓글 하나 가져오기 - 성공', () async {
+      //arrange
+      when(mockDocumentSnapshot.data()).thenAnswer((_) => commentDataJson);
+      //act
+      var result = await noticeRepositoryImpl.getCommentById(
+          noticeId: '123', commentId: '123');
+      var data = result.getOrElse(() => null);
+      //assert
+      expect(result.isRight(), true);
+      expect(data, equals(commentDataModel));
+    });
+
+    test('댓글 하나 가져오기 - 실패', () async {
+      //arrange
+      when(mockCollectionReference.get())
+          .thenThrow(ErrorModel(message: 'firebase error'));
+      //act
+      var result = await noticeRepositoryImpl.getCommentById(
+          noticeId: '123', commentId: '123');
       //assert
       expect(result.isLeft(), true);
     });

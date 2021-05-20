@@ -63,10 +63,21 @@ class NoticeViewModel extends GetxController {
     commentList.clear();
     commentList.addAll(result);
 
-    if (commentList.length > 0)
+    if (commentList.length > 0) {
       commentStatus.value = Status.loaded;
-    else
+    } else {
       commentStatus.value = Status.empty;
+    }
+  }
+
+  void getComment({@required String commentId}) async {
+    replyStatus.value = Status.loading;
+
+    if (commentList.where((e) => e.documentId == commentId).isNotEmpty) {
+      replyStatus.value = Status.loaded;
+    } else {
+      replyStatus.value = Status.error;
+    }
   }
 
   void writeComment(
@@ -85,7 +96,7 @@ class NoticeViewModel extends GetxController {
     if (either.isLeft()) return;
 
     //정상적으로 서버 통신 완료
-    //댓글 다시 읽어 오기
+    //댓글 다시 읽어오기
     Either<ErrorModel, List<NoticeCommentModel>> either2 =
         await _noticeRepository.getCommentList(noticeId: noticeId);
     var result =
@@ -123,7 +134,8 @@ class NoticeViewModel extends GetxController {
 
     //정상적으로 서버 통신 완료
     //답글 다시 읽어 오기
-    var either2 = await _noticeRepository.getCommentById(commentId: commentId);
+    var either2 = await _noticeRepository.getCommentById(
+        noticeId: noticeId, commentId: commentId);
     var result =
         either2.fold((l) => commentStatus.value = Status.error, (r) => r);
 
@@ -141,25 +153,62 @@ class NoticeViewModel extends GetxController {
     replyStatus.value = Status.loaded;
   }
 
-  // Future<void> addNoticeFavorite(
-  //     {@required String noticeId, @required String userId}) async {
-  //   //Notice의 좋아요 리스트 가져오기 inner Collection
-  //   NoticeModel notice =
-  //       noticeList.where((notice) => notice.documentId == noticeId).first;
+  Future<void> toggleNoticeFavorite(
+      {@required String noticeId, @required String userId}) async {
+    //Notice의 좋아요 리스트 가져오기
+    NoticeModel notice =
+        noticeList.where((notice) => notice.documentId == noticeId)?.first;
+    if (notice == null) return;
 
-  //   //이미 등록되있다면 무시
-  //   if (notice.favoriteList
-  //           .where((favorite) => favorite.userId == userId)
-  //           .length >
-  //       0) {
-  //     return;
-  //   }
+    //이미 등록되있다면 삭제
+    bool isDelete = false;
+    if (notice.favoriteUserList.where((element) => element == userId).isEmpty)
+      isDelete = false;
+    else
+      isDelete = true;
 
-  //   await _noticeRepository.addFavorite(
-  //       collectionName: _noticeRepository.noticeCollectionName,
-  //       documentId: noticeId,
-  //       userId: userId);
-  // }
+    var result = await _noticeRepository.toggleNoticeFavorite(
+        noticeId: noticeId, userId: userId, isDelete: isDelete);
+    if (result.isLeft()) return;
+
+    //local에서도 증가
+    if (isDelete)
+      notice.favoriteUserList.remove(userId);
+    else
+      notice.favoriteUserList.add(userId);
+    noticeList.refresh();
+  }
+
+  Future<void> toggleCommentFavorite(
+      {@required String noticeId,
+      @required String commentId,
+      @required String userId}) async {
+    NoticeCommentModel commentModel =
+        commentList.where((e) => e.documentId == commentId)?.first;
+    if (commentModel == null) return;
+
+    bool isDelete = false;
+    if (commentModel.favoriteUserList
+        .where((element) => element == userId)
+        .isEmpty)
+      isDelete = false;
+    else
+      isDelete = true;
+
+    var result = await _noticeRepository.toggleCommentFavorite(
+        noticeId: noticeId,
+        commentId: commentId,
+        userId: userId,
+        isDelete: isDelete);
+    if (result.isLeft()) return;
+
+    //local에서도 증가
+    if (isDelete)
+      commentModel.favoriteUserList.remove(userId);
+    else
+      commentModel.favoriteUserList.add(userId);
+    commentList.refresh();
+  }
 
   // Future<void> deleteNoticeFavorite(
   //     {@required String noticeId, @required String uid}) async {}

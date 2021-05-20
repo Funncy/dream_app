@@ -13,9 +13,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class NoticeReplyScreen extends StatefulWidget {
   final String noticeId;
-  final NoticeCommentModel noticeCommentModel;
+  final String commentId;
 
-  const NoticeReplyScreen({Key key, this.noticeCommentModel, this.noticeId})
+  const NoticeReplyScreen({Key key, this.commentId, this.noticeId})
       : super(key: key);
   @override
   _NoticeReplyScreenState createState() => _NoticeReplyScreenState();
@@ -28,22 +28,29 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
   @override
   void initState() {
     super.initState();
-    debounce(noticeViewModel.replyStatus, (_) {
-      if (noticeViewModel.replyStatus.value == Status.loaded) {
-        _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-            duration: Duration(milliseconds: 500), curve: Curves.ease);
-      }
-    }, time: Duration(milliseconds: 500));
+    //id에 해당하는 댓글 존재 확인
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      noticeViewModel.getComment(commentId: widget.commentId);
+      //새로운 답글 추가시 아래 스크롤 애니메이션
+      debounce(noticeViewModel.replyStatus, (_) {
+        if (noticeViewModel.replyStatus.value == Status.loaded) {
+          _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: Duration(milliseconds: 500),
+              curve: Curves.ease);
+        }
+      }, time: Duration(milliseconds: 500));
+    });
   }
 
   void inputReply() {
     //TODO: uid 실제 유저로 바꿔야함.
-    // noticeViewModel.writeReply(
-    //     noticeId: widget.nid,
-    //     commentId: widget.noticeCommentModel.docuemtnId,
-    //     userId: '123',
-    //     content: _textEditingController.text);
-    // _textEditingController.text = '';
+    noticeViewModel.writeReply(
+        noticeId: widget.noticeId,
+        commentId: widget.commentId,
+        userId: '123',
+        content: _textEditingController.text);
+    _textEditingController.text = '';
   }
 
   @override
@@ -73,31 +80,15 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
                       controller: _scrollController,
                       child: Obx(() {
                         var dataStatus = noticeViewModel.replyStatus.value;
-
+                        var comment = noticeViewModel.commentList
+                            .where((e) => e.documentId == widget.commentId)
+                            ?.first;
                         return DataStatusWidget(
-                            body: NoticeComment(
-                              noticeCommentModel: widget.noticeCommentModel,
-                              isReplyScreen: true,
-                            ),
-                            error: ErrorMessageWidget(errorMessage: 'test'),
-                            loading: Padding(
-                              padding: const EdgeInsets.only(top: 50.0),
-                              child: LoadingWidget(),
-                            ),
-                            empty: EmptyWidget(),
-                            updating: Stack(
-                              children: [
-                                NoticeComment(
-                                  noticeCommentModel: widget.noticeCommentModel,
-                                  isReplyScreen: true,
-                                ),
-                                // Container(
-                                //   height: 400.h,
-                                //   child: Center(
-                                //       child: CircularProgressIndicator()),
-                                // )
-                              ],
-                            ),
+                            body: () => _commentBody(comment),
+                            error: () => _errorWidget(),
+                            loading: () => _loadingWidget(),
+                            empty: () => _emptyWidget(),
+                            updating: () => _updatingWidget(comment),
                             dataStatus: dataStatus);
                       }),
                     ),
@@ -116,6 +107,39 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
           );
         }),
       ),
+    );
+  }
+
+  ErrorMessageWidget _errorWidget() => ErrorMessageWidget(errorMessage: 'test');
+
+  EmptyWidget _emptyWidget() => EmptyWidget();
+
+  Stack _updatingWidget(NoticeCommentModel commentModel) {
+    return Stack(
+      children: [
+        NoticeComment(
+          noticeCommentModel: commentModel,
+          isReplyScreen: true,
+        ),
+        Container(
+          height: 400.h,
+          child: Center(child: CircularProgressIndicator()),
+        )
+      ],
+    );
+  }
+
+  Padding _loadingWidget() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 50.0),
+      child: LoadingWidget(),
+    );
+  }
+
+  NoticeComment _commentBody(NoticeCommentModel commentModel) {
+    return NoticeComment(
+      noticeCommentModel: commentModel,
+      isReplyScreen: true,
     );
   }
 }

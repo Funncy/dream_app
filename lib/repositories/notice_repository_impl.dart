@@ -48,9 +48,15 @@ class NoticeRepositoryImpl extends NoticeRepository {
           content: 'comment 01',
           replyList: [
             NoticeCommentReplyModel(
-                userId: '123', content: 'reply 01', favoriteUserList: []),
+                id: null,
+                userId: '123',
+                content: 'reply 01',
+                favoriteUserList: []),
             NoticeCommentReplyModel(
-                userId: '123', content: 'reply 02', favoriteUserList: []),
+                id: null,
+                userId: '123',
+                content: 'reply 02',
+                favoriteUserList: []),
           ],
           favoriteUserList: [],
           documentReference: null),
@@ -60,7 +66,10 @@ class NoticeRepositoryImpl extends NoticeRepository {
           content: 'comment 01',
           replyList: [
             NoticeCommentReplyModel(
-                userId: '123', content: 'reply 01', favoriteUserList: []),
+                id: null,
+                userId: '123',
+                content: 'reply 01',
+                favoriteUserList: []),
           ],
           favoriteUserList: [],
           documentReference: null),
@@ -108,7 +117,19 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
   @override
   Future<Either<ErrorModel, NoticeCommentModel>> getCommentById(
-      {@required String commentId}) async {}
+      {@required String noticeId, @required String commentId}) async {
+    try {
+      DocumentSnapshot documentSnapshot = await _firebaseFirestore
+          .collection(noticeCollectionName)
+          .doc(noticeId)
+          .collection(commentCollectionName)
+          .doc(commentId)
+          .get();
+      return Right(NoticeCommentModel.fromFirestore(documentSnapshot));
+    } catch (e) {
+      return Left(ErrorModel(message: e.toString()));
+    }
+  }
 
   @override
   Future<Either<ErrorModel, List<NoticeModel>>> getNoticeList() async {
@@ -152,6 +173,23 @@ class NoticeRepositoryImpl extends NoticeRepository {
           .collection(commentCollectionName)
           .add(commentModel.toSaveJson());
 
+      //notice doc에서 commentCount 증가
+      DocumentReference documentReference =
+          _firebaseFirestore.collection(noticeCollectionName).doc(noticeId);
+      await _firebaseFirestore.runTransaction((transaction) async {
+        DocumentSnapshot snapshot = await transaction.get(documentReference);
+
+        if (!snapshot.exists) {
+          throw Exception("User does not exist!");
+        }
+
+        int newCommentCount = snapshot.data()['comment_count'] + 1;
+
+        transaction
+            .update(documentReference, {'comment_count': newCommentCount});
+
+        return newCommentCount;
+      });
       return Right(null);
     } catch (e) {
       return Left(ErrorModel(message: 'firebase error'));
@@ -167,8 +205,8 @@ class NoticeRepositoryImpl extends NoticeRepository {
     try {
       //TODO: Notice Reference 혹은 comment Reference 필요
       var replyModel = NoticeCommentReplyModel(
-          userId: userId, content: content, favoriteUserList: []);
-      _firebaseFirestore
+          id: null, userId: userId, content: content, favoriteUserList: []);
+      await _firebaseFirestore
           .collection(noticeCollectionName)
           .doc(noticeId)
           .collection(commentCollectionName)
@@ -180,6 +218,62 @@ class NoticeRepositoryImpl extends NoticeRepository {
     } catch (e) {
       return Left(ErrorModel(message: e.toString()));
     }
+  }
+
+  @override
+  Future<Either<ErrorModel, void>> toggleCommentFavorite(
+      {@required String noticeId,
+      @required String commentId,
+      @required String userId,
+      @required bool isDelete}) async {
+    try {
+      //TODO : orderby 추가 필요 (모든 곳에)
+      FieldValue fieldValue;
+      if (isDelete)
+        fieldValue = FieldValue.arrayUnion([userId]);
+      else
+        fieldValue = FieldValue.arrayRemove([userId]);
+      _firebaseFirestore
+          .collection(noticeCollectionName)
+          .doc(noticeId)
+          .collection(commentCollectionName)
+          .doc(commentId)
+          .update({'favorite_user_list': fieldValue});
+      return Right(null);
+    } catch (e) {
+      return Left(ErrorModel(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<ErrorModel, void>> toggleNoticeFavorite(
+      {@required String noticeId,
+      @required String userId,
+      @required bool isDelete}) async {
+    try {
+      FieldValue fieldValue;
+      if (isDelete)
+        fieldValue = FieldValue.arrayUnion([userId]);
+      else
+        fieldValue = FieldValue.arrayRemove([userId]);
+      _firebaseFirestore
+          .collection(noticeCollectionName)
+          .doc(noticeId)
+          .update({'favorite_user_list': fieldValue});
+      return Right(null);
+    } catch (e) {
+      return Left(ErrorModel(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<ErrorModel, void>> toggleReplyFavorite(
+      {@required String noticeId,
+      @required String commentId,
+      @required String userId,
+      @required bool isDelete}) {
+    // TODO: implement addReplyFavorite
+    throw UnimplementedError();
   }
 
   // @override

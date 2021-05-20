@@ -88,38 +88,11 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
                         var commentList = noticeViewModel.commentList;
 
                         return DataStatusWidget(
-                            body: ListView.builder(
-                                physics: NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: commentList.length,
-                                itemBuilder: (_, index) {
-                                  return NoticeComment(
-                                    noticeCommentModel: commentList[index],
-                                    isReplyScreen: false,
-                                  );
-                                }),
-                            error: ErrorMessageWidget(errorMessage: 'test'),
-                            loading: Padding(
-                              padding: const EdgeInsets.only(top: 50.0),
-                              child: LoadingWidget(),
-                            ),
-                            empty: EmptyWidget(),
-                            updating: Stack(
-                              children: [
-                                Column(
-                                    children: commentList
-                                        .map((comment) => NoticeComment(
-                                              noticeCommentModel: comment,
-                                              isReplyScreen: false,
-                                            ))
-                                        .toList()),
-                                Container(
-                                  height: 400.h,
-                                  child: Center(
-                                      child: CircularProgressIndicator()),
-                                )
-                              ],
-                            ),
+                            body: () => _commentList(commentList),
+                            error: () => _errorWidget(),
+                            loading: () => _loadingWidget(),
+                            empty: () => _emptyWidget(),
+                            updating: () => _updatingWidget(commentList),
                             dataStatus: dataStatus);
                       }),
                     ],
@@ -135,5 +108,42 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
         ),
       ),
     );
+  }
+
+  Stack _updatingWidget(RxList<NoticeCommentModel> commentList) {
+    return Stack(
+      children: [
+        _commentList(commentList),
+        Container(
+          height: 400.h,
+          child: Center(child: CircularProgressIndicator()),
+        )
+      ],
+    );
+  }
+
+  EmptyWidget _emptyWidget() => EmptyWidget();
+
+  Padding _loadingWidget() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 50.0),
+      child: LoadingWidget(),
+    );
+  }
+
+  ErrorMessageWidget _errorWidget() => ErrorMessageWidget(errorMessage: 'test');
+
+  ListView _commentList(RxList<NoticeCommentModel> commentList) {
+    return ListView.builder(
+        physics: NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: commentList.length,
+        itemBuilder: (_, index) {
+          return NoticeComment(
+            noticeCommentModel: commentList[index],
+            isReplyScreen: false,
+            noticeId: notice.documentId,
+          );
+        });
   }
 }

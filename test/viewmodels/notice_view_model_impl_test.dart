@@ -34,6 +34,25 @@ void main() {
     replyStatusSubscription = noticeViewModel.replyStatus.listen((status) {
       statusList.add(status);
     });
+
+    noticeViewModel.noticeList.add(NoticeModel(
+        documentId: '123',
+        userId: '111',
+        content: 'test notice',
+        commentCount: 0,
+        favoriteUserList: [],
+        documentReference: null));
+
+    noticeViewModel.commentList.add(NoticeCommentModel(
+        documentId: '123',
+        userId: '111',
+        content: 'test comment',
+        replyList: [
+          NoticeCommentReplyModel(
+              userId: '123', content: 'test reply', favoriteUserList: [])
+        ],
+        favoriteUserList: [],
+        documentReference: null));
   });
 
   tearDown(() {
@@ -135,6 +154,35 @@ void main() {
       documentReference: null);
 
   group('공지사항', () {
+    test('공지사항 댓글 좋아요 - 성공', () async {
+      //arrange
+      when(mockNoticeRepository.toggleNoticeFavorite(
+              noticeId: '123', userId: '123', isDelete: false))
+          .thenAnswer((_) async => Right(null));
+      when(mockNoticeRepository.toggleNoticeFavorite(
+              noticeId: '123', userId: '123', isDelete: true))
+          .thenAnswer((_) async => Right(null));
+      //act
+      await noticeViewModel.toggleNoticeFavorite(
+          noticeId: '123', userId: '123');
+      //assert
+      expect(
+          noticeViewModel.noticeList.first.favoriteUserList, equals(['123']));
+    });
+    test('공지사항 댓글 좋아요 - 실패', () async {
+      //arrange
+      when(mockNoticeRepository.toggleNoticeFavorite(
+              noticeId: '123', userId: '123', isDelete: false))
+          .thenAnswer((_) async => Left(ErrorModel(message: 'firebase error')));
+      when(mockNoticeRepository.toggleNoticeFavorite(
+              noticeId: '123', userId: '123', isDelete: true))
+          .thenAnswer((_) async => Left(ErrorModel(message: 'firebase error')));
+      //act
+      await noticeViewModel.toggleNoticeFavorite(
+          noticeId: '123', userId: '123');
+      //assert
+      expect(noticeViewModel.noticeList.first.favoriteUserList, equals([]));
+    });
     test('공지사항 가져오기 - 성공', () async {
       //arrange
       when(mockNoticeRepository.getNoticeList())
@@ -149,6 +197,7 @@ void main() {
 
     test('공지사항 가져오기 - 에러', () async {
       //arrange
+      noticeViewModel.noticeList.clear();
       when(mockNoticeRepository.getNoticeList())
           .thenAnswer((_) async => Left(ErrorModel(message: 'Firebase Error')));
       //act
@@ -172,6 +221,41 @@ void main() {
   });
 
   group('댓글', () {
+    test('댓글 좋아요 - 성공', () async {
+      //arrange
+      when(mockNoticeRepository.toggleCommentFavorite(
+              noticeId: '123',
+              commentId: '123',
+              userId: '123',
+              isDelete: false))
+          .thenAnswer((_) async => Right(null));
+      when(mockNoticeRepository.toggleCommentFavorite(
+              noticeId: '123', commentId: '123', userId: '123', isDelete: true))
+          .thenAnswer((_) async => Right(null));
+      //act
+      await noticeViewModel.toggleCommentFavorite(
+          noticeId: '123', commentId: '123', userId: '123');
+      //assert
+      expect(
+          noticeViewModel.commentList.first.favoriteUserList, equals(['123']));
+    });
+    test('댓글 좋아요 - 실패', () async {
+      //arrange
+      when(mockNoticeRepository.toggleCommentFavorite(
+              noticeId: '123',
+              commentId: '123',
+              userId: '123',
+              isDelete: false))
+          .thenAnswer((_) async => Left(ErrorModel(message: 'firebase error')));
+      when(mockNoticeRepository.toggleCommentFavorite(
+              noticeId: '123', commentId: '123', userId: '123', isDelete: true))
+          .thenAnswer((_) async => Left(ErrorModel(message: 'firebase error')));
+      //act
+      await noticeViewModel.toggleCommentFavorite(
+          noticeId: '123', commentId: '123', userId: '123');
+      //assert
+      expect(noticeViewModel.commentList.first.favoriteUserList, equals([]));
+    });
     test('댓글 가져오기 - 성공', () async {
       //arrange
       when(mockNoticeRepository.getCommentList(noticeId: '123'))
@@ -188,6 +272,7 @@ void main() {
 
     test('댓글 가져오기 - 에러', () async {
       //arrange
+      noticeViewModel.commentList.clear();
       when(mockNoticeRepository.getCommentList(noticeId: '123'))
           .thenAnswer((_) async => Left(ErrorModel(message: 'Firebase Error')));
       //act
@@ -199,6 +284,7 @@ void main() {
     });
     test('댓글 가져오기 - Empty', () async {
       //arrange
+      noticeViewModel.commentList.clear();
       when(mockNoticeRepository.getCommentList(noticeId: '123'))
           .thenAnswer((_) async => Right([]));
       //act
@@ -260,6 +346,7 @@ void main() {
 
     test('답글 작성하기 - 성공', () async {
       //arrange
+      noticeViewModel.commentList.clear();
       noticeViewModel.commentList.add(commentModel);
       when(mockNoticeRepository.writeReply(
               noticeId: '123',
@@ -267,7 +354,8 @@ void main() {
               userId: '123',
               content: 'reply 01'))
           .thenAnswer((_) async => Right(null));
-      when(mockNoticeRepository.getCommentById(commentId: '121'))
+      when(mockNoticeRepository.getCommentById(
+              noticeId: '123', commentId: '121'))
           .thenAnswer((_) async => Right(dummyCommentModel));
       //act
       await noticeViewModel.writeReply(
@@ -278,7 +366,9 @@ void main() {
       //assert
       expect(noticeViewModel.commentList, equals([dummyCommentModel]));
       expect(statusList, [Status.updating, Status.loaded]);
-      verify(mockNoticeRepository.getCommentById(commentId: '121')).called(1);
+      verify(mockNoticeRepository.getCommentById(
+              noticeId: '123', commentId: '121'))
+          .called(1);
       verify(mockNoticeRepository.writeReply(
               noticeId: '123',
               commentId: '121',
@@ -319,7 +409,8 @@ void main() {
               userId: '123',
               content: 'reply 01'))
           .thenAnswer((_) async => Right(null));
-      when(mockNoticeRepository.getCommentById(commentId: '123'))
+      when(mockNoticeRepository.getCommentById(
+              noticeId: '123', commentId: '123'))
           .thenAnswer((_) async => Left(ErrorModel(message: 'firebase error')));
       //act
       await noticeViewModel.writeReply(
@@ -329,7 +420,9 @@ void main() {
           content: 'reply 01');
       //assert
       expect(statusList, [Status.updating, Status.error]);
-      verify(mockNoticeRepository.getCommentById(commentId: '123')).called(1);
+      verify(mockNoticeRepository.getCommentById(
+              noticeId: '123', commentId: '123'))
+          .called(1);
       verify(mockNoticeRepository.writeReply(
               noticeId: '123',
               commentId: '123',
@@ -340,6 +433,6 @@ void main() {
   });
 
   // group('좋아요', () {
-  //   test('댓글 좋아요 - 성공', () async {});
+
   // });
 }

@@ -20,7 +20,7 @@ abstract class NoticeRepository {
   Future<Either<ErrorModel, List<NoticeCommentModel>>> getCommentList(
       {@required String noticeId});
   Future<Either<ErrorModel, NoticeCommentModel>> getCommentById(
-      {@required String commentId});
+      {@required String noticeId, @required String commentId});
   Future<Either<ErrorModel, List<NoticeCommentReplyModel>>> getReplyList(
       {@required String commentId});
   Future<Either<ErrorModel, void>> writeComment(
@@ -32,8 +32,18 @@ abstract class NoticeRepository {
       @required String commentId,
       @required String userId,
       @required String content});
-  Future<Either<ErrorModel, void>> addFavorite(
-      {@required String collectionName,
-      @required String documentId,
-      @required String userId});
+  Future<Either<ErrorModel, void>> toggleNoticeFavorite(
+      {@required String noticeId,
+      @required String userId,
+      @required bool isDelete});
+  Future<Either<ErrorModel, void>> toggleCommentFavorite(
+      {@required String noticeId,
+      @required String commentId,
+      @required String userId,
+      @required bool isDelete});
+  Future<Either<ErrorModel, void>> toggleReplyFavorite(
+      {@required String noticeId,
+      @required String commentId,
+      @required String userId,
+      @required bool isDelete});
 }
