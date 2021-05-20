@@ -140,6 +140,7 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
     return NoticeComment(
       noticeCommentModel: commentModel,
       isReplyScreen: true,
+      noticeId: widget.noticeId,
     );
   }
 }

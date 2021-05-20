@@ -1,13 +1,20 @@
 import 'package:dream/models/notice.dart';
 import 'package:dream/utils/time_util.dart';
+import 'package:dream/viewmodels/notice_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 class NoticeReply extends StatelessWidget {
+  final String noticeId;
+  final String commentId;
   final NoticeCommentReplyModel noticeCommentReplyModel;
-  const NoticeReply({
+  NoticeViewModel noticeViewModel = Get.find<NoticeViewModel>();
+  NoticeReply({
     Key key,
-    this.noticeCommentReplyModel,
+    @required this.noticeId,
+    @required this.commentId,
+    @required this.noticeCommentReplyModel,
   }) : super(key: key);
 
   @override
@@ -82,6 +89,14 @@ class NoticeReply extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       InkWell(
+                        onTap: () {
+                          //TODO: userID바꿔야함
+                          noticeViewModel.toggleReplyFavorite(
+                              noticeId: noticeId,
+                              commentId: commentId,
+                              replyId: noticeCommentReplyModel.id,
+                              userId: '123');
+                        },
                         child: Text(
                           "공감하기",
                           style: TextStyle(fontWeight: FontWeight.bold),

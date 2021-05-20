@@ -166,6 +166,8 @@ class _NoticeCommentState extends State<NoticeComment> {
                   if (widget.noticeCommentModel.replyList.length > 0)
                     ...(widget.noticeCommentModel.replyList
                         .map((model) => NoticeReply(
+                              noticeId: widget.noticeId,
+                              commentId: widget.noticeCommentModel.documentId,
                               noticeCommentReplyModel: model,
                             ))
                         .toList()),
