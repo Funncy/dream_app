@@ -273,11 +273,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
     @required NoticeCommentReplyModel reply,
     @required String userId,
   }) async {
-    FieldValue fieldValue = FieldValue.arrayRemove([reply.toSaveJson()]);
-
-    FieldValue fieldValue2 = FieldValue.arrayUnion([reply.toSaveJson()]);
     try {
-      var data = reply.toSaveJson();
       await _firebaseFirestore
           .collection(noticeCollectionName)
           .doc(noticeId)
@@ -291,14 +287,16 @@ class NoticeRepositoryImpl extends NoticeRepository {
         reply.favoriteUserList.add(userId);
       else
         reply.favoriteUserList.remove(userId);
-      data = reply.toSaveJson();
+
+      var modifyReply = reply.toSaveJson();
+
       await _firebaseFirestore
           .collection(noticeCollectionName)
           .doc(noticeId)
           .collection(commentCollectionName)
           .doc(commentId)
           .update({
-        'reply_list': FieldValue.arrayUnion([reply.toSaveJson()])
+        'reply_list': FieldValue.arrayUnion([modifyReply])
       });
       return Right(null);
     } catch (e) {
