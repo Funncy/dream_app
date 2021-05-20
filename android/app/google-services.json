@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "451320389483",
+    "project_id": "dream-app-20fc0",
+    "storage_bucket": "dream-app-20fc0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:451320389483:android:b10cb62dd326e0c8f4f62e",
+        "android_client_info": {
+          "package_name": "com.dream.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "451320389483-4qq0enjbk8uko45vnuams5139rdp7tj8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBIazKzzMVmip5424qNYIOk6aAmp4XTYXQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "451320389483-4qq0enjbk8uko45vnuams5139rdp7tj8.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "451320389483-r654i89f8b0c3g6g1h35u9jfdeu43jl6.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "dream.church.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
