@@ -143,7 +143,7 @@ class NoticeCommentModel extends Core with EquatableMixin {
 }
 
 class NoticeCommentReplyModel extends Core with EquatableMixin {
-  final int id;
+  final String id;
   final String userId;
   final String content;
   List<String> favoriteUserList;
@@ -161,7 +161,7 @@ class NoticeCommentReplyModel extends Core with EquatableMixin {
   factory NoticeCommentReplyModel.fromJson(
       Map<String, dynamic> json, int index) {
     var model = NoticeCommentReplyModel(
-      id: index,
+      id: index.toString(),
       userId: json['user_id'],
       content: json['content'],
       favoriteUserList: json['favorite_user_list']?.cast<String>()?.toList(),
@@ -172,6 +172,7 @@ class NoticeCommentReplyModel extends Core with EquatableMixin {
   }
 
   Map<String, dynamic> toJson() => {
+        'id': id,
         'user_id': userId,
         'content': content,
         'favorite_user_list': favoriteUserList,
@@ -180,6 +181,7 @@ class NoticeCommentReplyModel extends Core with EquatableMixin {
       };
 
   Map<String, dynamic> toSaveJson() => {
+        'id': id,
         'user_id': userId,
         'content': content,
         'favorite_user_list': favoriteUserList,
