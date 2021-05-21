@@ -74,6 +74,7 @@ class NoticeCard extends StatelessWidget {
                       noticeViewModel.toggleNoticeFavorite(
                           noticeId: notice.documentId, userId: userId);
                     },
+                    behavior: HitTestBehavior.opaque,
                     child: Row(
                       children: [
                         if (notice.favoriteUserList
@@ -88,7 +89,7 @@ class NoticeCard extends StatelessWidget {
                             Icons.favorite_border,
                             color: Constants.favoriteAndCommentColor,
                           ),
-                        SizedBox(
+                        Container(
                           width: 5.w,
                         ),
                         Text("좋아요 ${notice.favoriteUserList.length ?? ""}",
