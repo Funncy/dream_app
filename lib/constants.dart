@@ -11,3 +11,13 @@ class Constants {
   static TextStyle titleStyle =
       TextStyle(fontSize: 18.ssp, color: Colors.black);
 }
+
+//FireStore Name
+const String noticeCollectionName = 'notice';
+const String commentCollectionName = 'comment';
+const String replyCollectionName = 'notice_reply';
+const String noticeColumnName = 'notice_id';
+const String favoriteCollectionName = 'favorite_list';
+
+//Firebase Storage URL
+const String noticeImagePath = '/notice';
