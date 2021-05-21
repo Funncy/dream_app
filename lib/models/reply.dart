@@ -39,13 +39,4 @@ class ReplyModel extends Core with EquatableMixin {
         'created_at': createdAt,
         'updated_at': updatedAt,
       };
-
-  Map<String, dynamic> toSaveJson() => {
-        'id': id,
-        'user_id': userId,
-        'content': content,
-        'favorite_user_list': favoriteUserList,
-        'created_at': createdAt,
-        'updated_at': updatedAt,
-      };
 }

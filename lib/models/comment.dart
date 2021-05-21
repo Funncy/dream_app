@@ -60,21 +60,10 @@ class CommentModel extends Core with EquatableMixin {
   }
 
   Map<String, dynamic> toJson() => {
-        'document_id': documentId,
         'user_id': userId,
         'content': content,
         'reply_index': replyIndex,
-        'reply_list': replyList.map((e) => e.toSaveJson()).toList(),
-        'favorite_user_list': favoriteUserList,
-        'created_at': createdAt,
-        'updated_at': updatedAt,
-      };
-
-  Map<String, dynamic> toSaveJson() => {
-        'user_id': userId,
-        'content': content,
-        'reply_index': replyIndex,
-        'reply_list': replyList.map((e) => e.toSaveJson()).toList(),
+        'reply_list': replyList.map((e) => e.toJson()).toList(),
         'favorite_user_list': favoriteUserList,
         'created_at': createdAt,
         'updated_at': updatedAt,

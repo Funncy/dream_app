@@ -39,17 +39,6 @@ class NoticeModel extends Core with EquatableMixin {
   }
 
   Map<String, dynamic> toJson() => {
-        'document_id': userId,
-        'user_id': userId,
-        'content': content,
-        'images': imageList,
-        'comment_count': commentCount,
-        'favorite_user_list': favoriteUserList,
-        'created_at': createdAt,
-        'updated_at': updatedAt,
-      };
-
-  Map<String, dynamic> toSaveJson() => {
         'user_id': userId,
         'content': content,
         'comment_count': commentCount,

@@ -82,12 +82,12 @@ class NoticeRepositoryImpl extends NoticeRepository {
     for (var notice in noticeModelList) {
       var documentReference = await _firebaseFirestore
           .collection(noticeCollectionName)
-          .add(notice.toSaveJson());
+          .add(notice.toJson());
 
       for (var comment in commentList) {
         documentReference
             .collection(commentCollectionName)
-            .add(comment.toSaveJson());
+            .add(comment.toJson());
       }
     }
   }
@@ -145,7 +145,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
           .doc(noticeId)
           .collection(commentCollectionName)
           .doc(commentId)
-          .update(commentModel.toSaveJson());
+          .update(commentModel.toJson());
       return Right(null);
     } catch (e) {
       return Left(ErrorModel(message: e.toString()));
@@ -193,7 +193,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
           .collection(noticeCollectionName)
           .doc(noticeId)
           .collection(commentCollectionName)
-          .add(commentModel.toSaveJson());
+          .add(commentModel.toJson());
 
       //notice doc에서 commentCount 증가
       DocumentReference documentReference =
@@ -306,7 +306,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
           .collection(commentCollectionName)
           .doc(commentId)
           .update({
-        'reply_list': FieldValue.arrayRemove([reply.toSaveJson()])
+        'reply_list': FieldValue.arrayRemove([reply.toJson()])
       });
       //이미 유저 있다면 삭제 없다면 추가
       if (reply.favoriteUserList.where((e) => e == userId).isEmpty)
@@ -314,7 +314,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
       else
         reply.favoriteUserList.remove(userId);
 
-      var modifyReply = reply.toSaveJson();
+      var modifyReply = reply.toJson();
 
       await _firebaseFirestore
           .collection(noticeCollectionName)
@@ -466,7 +466,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
   //   try {
   //     await _firebaseFirestore
   //         .collection(commentCollectionName)
-  //         .add(model.toSaveJson());
+  //         .add(model.toJson());
 
   //     var noticeSnapshot = await _firebaseFirestore
   //         .collection(noticeCollectionName)
@@ -506,7 +506,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
   //         .collection(commentCollectionName)
   //         .doc(commentId)
   //         .collection(replyCollectionName)
-  //         .add(model.toSaveJson());
+  //         .add(model.toJson());
 
   //     //답글 갯수 증가 시키기 위한 로직
   //     var commentSnapshot = await _firebaseFirestore
@@ -540,7 +540,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
   //         .collection(collectionName)
   //         .doc(documentId)
   //         .collection(favoriteCollectionName)
-  //         .add(favoriteModel.toSaveJson());
+  //         .add(favoriteModel.toJson());
   //   } catch (e) {
   //     return Left(ErrorModel(message: 'Firebase Error'));
   //   }
