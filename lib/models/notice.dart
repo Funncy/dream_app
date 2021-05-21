@@ -75,6 +75,7 @@ class NoticeCommentModel extends Core with EquatableMixin {
   final String userId;
   final String content;
   List<NoticeCommentReplyModel> replyList;
+  int replyIndex;
   List<String> favoriteUserList;
   final DocumentReference documentReference;
 
@@ -83,6 +84,7 @@ class NoticeCommentModel extends Core with EquatableMixin {
       @required this.userId,
       @required this.content,
       @required this.replyList,
+      @required this.replyIndex,
       @required this.favoriteUserList,
       @required this.documentReference})
       : super(DateTime.now(), DateTime.now());
@@ -92,6 +94,7 @@ class NoticeCommentModel extends Core with EquatableMixin {
         documentId,
         userId,
         content,
+        replyIndex,
         replyList.map((e) => e.props).toList(),
         favoriteUserList,
         documentReference
@@ -112,6 +115,7 @@ class NoticeCommentModel extends Core with EquatableMixin {
       documentId: doc.id,
       userId: json['user_id'],
       content: json['content'],
+      replyIndex: json['reply_index'],
       replyList: replyList,
       favoriteUserList: json['favorite_user_list']?.cast<String>()?.toList(),
       documentReference: doc.reference,
@@ -126,6 +130,7 @@ class NoticeCommentModel extends Core with EquatableMixin {
         'document_id': documentId,
         'user_id': userId,
         'content': content,
+        'reply_index': replyIndex,
         'reply_list': replyList.map((e) => e.toSaveJson()).toList(),
         'favorite_user_list': favoriteUserList,
         'created_at': createdAt,
@@ -135,6 +140,7 @@ class NoticeCommentModel extends Core with EquatableMixin {
   Map<String, dynamic> toSaveJson() => {
         'user_id': userId,
         'content': content,
+        'reply_index': replyIndex,
         'reply_list': replyList.map((e) => e.toSaveJson()).toList(),
         'favorite_user_list': favoriteUserList,
         'created_at': createdAt,
