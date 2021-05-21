@@ -33,7 +33,6 @@ class NoticeCard extends StatelessWidget {
               padding: const EdgeInsets.all(10.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   //날짜 및 텍스트
                   Text(date, style: Theme.of(context).textTheme.subtitle1),
