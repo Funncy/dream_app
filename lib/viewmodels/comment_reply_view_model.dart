@@ -4,11 +4,15 @@ import 'package:dream/core/error/error_model.dart';
 import 'package:dream/models/comment.dart';
 import 'package:dream/models/reply.dart';
 import 'package:dream/repositories/comment_repository.dart';
+import 'package:dream/repositories/notice_repository.dart';
 import 'package:dream/repositories/reply_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
+import 'notice_view_model.dart';
+
 class CommentReplyViewModel extends GetxController {
+  NoticeRepository _noticeRepository;
   CommentRepository _commentRepository;
   ReplyRepository _replyRepository;
   RxList<CommentModel> commentList = <CommentModel>[].obs;
@@ -17,8 +21,10 @@ class CommentReplyViewModel extends GetxController {
   Rx<Status> replyStatus = Status.initial.obs;
 
   CommentReplyViewModel(
-      {@required CommentRepository commentRepository,
+      {@required NoticeRepository noticeRepository,
+      @required CommentRepository commentRepository,
       @required ReplyRepository replyRepository}) {
+    _noticeRepository = noticeRepository;
     _commentRepository = commentRepository;
     _replyRepository = replyRepository;
   }
@@ -59,14 +65,35 @@ class CommentReplyViewModel extends GetxController {
       @required String content}) async {
     //update 중
     commentStatus.value = Status.updating;
+    //댓글 쓰기
     Either<ErrorModel, void> either = await _commentRepository.writeComment(
         noticeId: noticeId, userId: userId, content: content);
     either.fold((l) {
       commentStatus.value = Status.error;
     }, (r) {});
-
     //에러인 경우 아래 진행 안함
     if (either.isLeft()) return;
+
+    //공지사항의 댓글 카운트 증가
+    var noticeViewModel = Get.find<NoticeViewModel>();
+    var noticeModel = noticeViewModel.noticeList
+        .where((e) => e.documentId == noticeId)
+        ?.first;
+    if (noticeModel == null) {
+      commentStatus.value = Status.error;
+      return;
+    }
+    noticeModel.commentCount++;
+    //서버 통신
+    either = await _noticeRepository.updateCommentCount(
+        noticeId, noticeModel.commentCount);
+    if (either.isLeft()) {
+      noticeModel.commentCount--;
+      commentStatus.value = Status.error;
+      return;
+    }
+    //로컬 적용
+    noticeViewModel.noticeList.refresh();
 
     //정상적으로 서버 통신 완료
     //댓글 다시 읽어오기

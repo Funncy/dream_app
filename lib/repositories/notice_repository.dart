@@ -6,10 +6,12 @@ import 'package:dream/models/reply.dart';
 import 'package:flutter/foundation.dart';
 
 abstract class NoticeRepository {
-
   Future<void> createDummyData();
 
   Future<Either<ErrorModel, List<NoticeModel>>> getNoticeList();
+
+  Future<Either<ErrorModel, void>> updateCommentCount(
+      String noticeId, int commentCount);
 
   Future<Either<ErrorModel, void>> toggleNoticeFavorite(
       {@required String noticeId,

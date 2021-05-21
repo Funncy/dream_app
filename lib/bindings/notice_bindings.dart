@@ -14,6 +14,8 @@ class NoticeBindings implements Bindings {
         noticeRepository: NoticeRepositoryImpl(
             firebaseFirestore: FirebaseFirestore.instance)));
     Get.put<CommentReplyViewModel>(CommentReplyViewModel(
+        noticeRepository:
+            NoticeRepositoryImpl(firebaseFirestore: FirebaseFirestore.instance),
         commentRepository: CommentRepositoryImpl(
             firebaseFirestore: FirebaseFirestore.instance),
         replyRepository: ReplyRepositoryImpl(

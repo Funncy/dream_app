@@ -106,6 +106,33 @@ class NoticeRepositoryImpl extends NoticeRepository {
   }
 
   @override
+  Future<Either<ErrorModel, void>> updateCommentCount(
+      String noticeId, int commentCount) async {
+    try {
+      //notice doc에서 commentCount 증가
+      DocumentReference documentReference =
+          _firebaseFirestore.collection(noticeCollectionName).doc(noticeId);
+      await _firebaseFirestore.runTransaction((transaction) async {
+        DocumentSnapshot snapshot = await transaction.get(documentReference);
+
+        if (!snapshot.exists) {
+          throw Exception("Comment does not exist!");
+        }
+
+        int newCommentCount = snapshot.data()['comment_count'] + 1;
+
+        transaction
+            .update(documentReference, {'comment_count': newCommentCount});
+
+        return newCommentCount;
+      });
+      return Right(null);
+    } catch (e) {
+      return Left(ErrorModel(message: e.toString()));
+    }
+  }
+
+  @override
   Future<Either<ErrorModel, void>> toggleNoticeFavorite(
       {@required String noticeId,
       @required String userId,

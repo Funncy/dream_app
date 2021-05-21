@@ -89,23 +89,6 @@ class CommentRepositoryImpl extends CommentRepository {
           .collection(commentCollectionName)
           .add(commentModel.toJson());
 
-      //notice doc에서 commentCount 증가
-      DocumentReference documentReference =
-          _firebaseFirestore.collection(noticeCollectionName).doc(noticeId);
-      await _firebaseFirestore.runTransaction((transaction) async {
-        DocumentSnapshot snapshot = await transaction.get(documentReference);
-
-        if (!snapshot.exists) {
-          throw Exception("User does not exist!");
-        }
-
-        int newCommentCount = snapshot.data()['comment_count'] + 1;
-
-        transaction
-            .update(documentReference, {'comment_count': newCommentCount});
-
-        return newCommentCount;
-      });
       return Right(null);
     } catch (e) {
       return Left(ErrorModel(message: 'firebase error'));

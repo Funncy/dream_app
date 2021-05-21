@@ -61,9 +61,9 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> {
         itemCount: noticeList.length,
         itemBuilder: (context, index) {
           return GestureDetector(
-              onTap: () {
-                Get.toNamed('/notice_detail',
-                    preventDuplicates: false, arguments: noticeList[index]);
+              onTap: () async {
+                await Get.toNamed('/notice_detail',
+                    arguments: noticeList[index]);
               },
               child: Column(
                 children: [
