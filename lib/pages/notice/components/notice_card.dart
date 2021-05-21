@@ -1,12 +1,12 @@
 import 'package:dream/constants.dart';
 import 'package:dream/models/notice.dart';
+import 'package:dream/pages/image_slider/image_slider_screen.dart';
 import 'package:dream/utils/time_util.dart';
 import 'package:dream/viewmodels/notice_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../image_slider/image_slider_screen.dart';
 import 'image_spliter.dart';
 
 class NoticeCard extends StatelessWidget {
