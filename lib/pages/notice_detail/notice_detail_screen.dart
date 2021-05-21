@@ -74,29 +74,28 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
               Expanded(
                 child: SingleChildScrollView(
                   controller: _scrollController,
-                  child: Column(
-                    children: [
-                      NoticeCard(
-                        notice: notice,
-                      ),
-                      Divider(
-                        thickness: 1.0,
-                        color: Colors.black26,
-                      ),
-                      Obx(() {
-                        var dataStatus = noticeViewModel.commentStatus.value;
-                        var commentList = noticeViewModel.commentList.toList();
-
-                        return DataStatusWidget(
+                  child: Obx(() {
+                    var dataStatus = noticeViewModel.commentStatus.value;
+                    var commentList = noticeViewModel.commentList.toList();
+                    return Column(
+                      children: [
+                        NoticeCard(
+                          notice: notice,
+                        ),
+                        Divider(
+                          thickness: 1.0,
+                          color: Colors.black26,
+                        ),
+                        DataStatusWidget(
                             body: () => _commentList(commentList),
                             error: () => _errorWidget(),
                             loading: () => _loadingWidget(),
                             empty: () => _emptyWidget(),
                             updating: () => _updatingWidget(commentList),
-                            dataStatus: dataStatus);
-                      }),
-                    ],
-                  ),
+                            dataStatus: dataStatus),
+                      ],
+                    );
+                  }),
                 ),
               ),
               BottonInputBar(

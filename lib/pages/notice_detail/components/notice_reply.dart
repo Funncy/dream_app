@@ -102,21 +102,31 @@ class NoticeReply extends StatelessWidget {
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
-                      Row(
-                        children: [
-                          //TODO: 가짜 유저 아이디 실제 유저 아이디로 변경 필요
-                          if (noticeCommentReplyModel.favoriteUserList
-                              .where((userId) => userId == '123')
-                              .isNotEmpty)
-                            Icon(Icons.favorite)
-                          else
-                            Icon(Icons.favorite_border),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Text(
-                              "${noticeCommentReplyModel.favoriteUserList.length ?? "0"}")
-                        ],
+                      GestureDetector(
+                        onTap: () {
+                          //TODO: userID바꿔야함
+                          noticeViewModel.toggleReplyFavorite(
+                              noticeId: noticeId,
+                              commentId: commentId,
+                              replyId: noticeCommentReplyModel.id,
+                              userId: '123');
+                        },
+                        child: Row(
+                          children: [
+                            //TODO: 가짜 유저 아이디 실제 유저 아이디로 변경 필요
+                            if (noticeCommentReplyModel.favoriteUserList
+                                .where((userId) => userId == '123')
+                                .isNotEmpty)
+                              Icon(Icons.favorite)
+                            else
+                              Icon(Icons.favorite_border),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                                "${noticeCommentReplyModel.favoriteUserList.length ?? "0"}")
+                          ],
+                        ),
                       )
                     ],
                   ),
