@@ -85,7 +85,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
                       ),
                       Obx(() {
                         var dataStatus = noticeViewModel.commentStatus.value;
-                        var commentList = noticeViewModel.commentList;
+                        var commentList = noticeViewModel.commentList.toList();
 
                         return DataStatusWidget(
                             body: () => _commentList(commentList),
@@ -110,7 +110,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
     );
   }
 
-  Stack _updatingWidget(RxList<NoticeCommentModel> commentList) {
+  Stack _updatingWidget(List<NoticeCommentModel> commentList) {
     return Stack(
       children: [
         _commentList(commentList),
@@ -133,7 +133,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
 
   ErrorMessageWidget _errorWidget() => ErrorMessageWidget(errorMessage: 'test');
 
-  ListView _commentList(RxList<NoticeCommentModel> commentList) {
+  ListView _commentList(List<NoticeCommentModel> commentList) {
     return ListView.builder(
         physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,

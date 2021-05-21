@@ -104,7 +104,13 @@ class NoticeReply extends StatelessWidget {
                       ),
                       Row(
                         children: [
-                          Icon(Icons.favorite_border),
+                          //TODO: 가짜 유저 아이디 실제 유저 아이디로 변경 필요
+                          if (noticeCommentReplyModel.favoriteUserList
+                              .where((userId) => userId == '123')
+                              .isNotEmpty)
+                            Icon(Icons.favorite)
+                          else
+                            Icon(Icons.favorite_border),
                           SizedBox(
                             width: 5,
                           ),

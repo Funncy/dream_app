@@ -36,8 +36,8 @@ class _NoticeBodyWidgetState extends State<NoticeBodyWidget> {
       body: Container(
         color: Colors.black12,
         child: Obx(() {
+          List<NoticeModel> noticeList = noticeViewModel.noticeList.toList();
           var dataStatus = noticeViewModel.noticeStatus.value;
-          var noticeList = noticeViewModel.noticeList;
 
           return DataStatusWidget(
               body: () => _noticeList(noticeList),
@@ -57,7 +57,7 @@ class _NoticeBodyWidgetState extends State<NoticeBodyWidget> {
 
   ErrorMessageWidget _errorWidget() => ErrorMessageWidget(errorMessage: 'test');
 
-  ListView _noticeList(RxList<NoticeModel> noticeList) {
+  ListView _noticeList(List<NoticeModel> noticeList) {
     return ListView.builder(
         itemCount: noticeList.length,
         itemBuilder: (context, index) {
