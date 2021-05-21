@@ -46,14 +46,15 @@ class NoticeRepositoryImpl extends NoticeRepository {
           documentId: null,
           userId: '123',
           content: 'comment 01',
+          replyIndex: 2,
           replyList: [
             NoticeCommentReplyModel(
-                id: null,
+                id: '0',
                 userId: '123',
                 content: 'reply 01',
                 favoriteUserList: []),
             NoticeCommentReplyModel(
-                id: null,
+                id: '1',
                 userId: '123',
                 content: 'reply 02',
                 favoriteUserList: []),
@@ -64,9 +65,10 @@ class NoticeRepositoryImpl extends NoticeRepository {
           documentId: null,
           userId: '123',
           content: 'comment 01',
+          replyIndex: 1,
           replyList: [
             NoticeCommentReplyModel(
-                id: null,
+                id: '0',
                 userId: '123',
                 content: 'reply 01',
                 favoriteUserList: []),
@@ -132,6 +134,24 @@ class NoticeRepositoryImpl extends NoticeRepository {
   }
 
   @override
+  Future<Either<ErrorModel, void>> updateCommentById(
+      {@required String noticeId,
+      @required String commentId,
+      @required NoticeCommentModel commentModel}) async {
+    try {
+      await _firebaseFirestore
+          .collection(noticeCollectionName)
+          .doc(noticeId)
+          .collection(commentCollectionName)
+          .doc(commentId)
+          .update(commentModel.toSaveJson());
+      return Right(null);
+    } catch (e) {
+      return Left(ErrorModel(message: e.toString()));
+    }
+  }
+
+  @override
   Future<Either<ErrorModel, List<NoticeModel>>> getNoticeList() async {
     try {
       var querySnapshot =
@@ -161,6 +181,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
           documentId: null,
           userId: userId,
           content: content,
+          replyIndex: 0,
           replyList: [],
           favoriteUserList: [],
           documentReference: null);
@@ -200,12 +221,16 @@ class NoticeRepositoryImpl extends NoticeRepository {
   Future<Either<ErrorModel, void>> writeReply(
       {@required String noticeId,
       @required String commentId,
+      @required String replyIndex,
       @required String userId,
       @required String content}) async {
     try {
       //TODO: Notice Reference 혹은 comment Reference 필요
       var replyModel = NoticeCommentReplyModel(
-          id: null, userId: userId, content: content, favoriteUserList: []);
+          id: replyIndex,
+          userId: userId,
+          content: content,
+          favoriteUserList: []);
       await _firebaseFirestore
           .collection(noticeCollectionName)
           .doc(noticeId)

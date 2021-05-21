@@ -118,9 +118,29 @@ class NoticeViewModel extends GetxController {
       @required String userId,
       @required String content}) async {
     replyStatus.value = Status.updating;
-    Either<ErrorModel, void> either = await _noticeRepository.writeReply(
+
+    //인덱스 찾기
+    var comment = commentList.where((e) => e.documentId == commentId)?.first;
+    if (comment == null) {
+      replyStatus.value = Status.error;
+      return;
+    }
+    var replyIndex = comment.replyIndex;
+    comment.replyIndex++;
+
+    //인덱스 증가
+    Either<ErrorModel, void> either = await _noticeRepository.updateCommentById(
+        noticeId: noticeId, commentId: commentId, commentModel: comment);
+
+    if (either.isLeft()) {
+      replyStatus.value = Status.error;
+      return;
+    }
+
+    either = await _noticeRepository.writeReply(
         noticeId: noticeId,
         commentId: commentId,
+        replyIndex: replyIndex.toString(),
         userId: userId,
         content: content);
 
@@ -136,9 +156,7 @@ class NoticeViewModel extends GetxController {
     //답글 다시 읽어 오기
     var either2 = await _noticeRepository.getCommentById(
         noticeId: noticeId, commentId: commentId);
-    var result =
-        either2.fold((l) => commentStatus.value = Status.error, (r) => r);
-
+    var result = either2.getOrElse(() => null);
     if (either2.isLeft()) return;
 
     //기존 내용 대체

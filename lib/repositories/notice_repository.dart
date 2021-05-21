@@ -21,6 +21,10 @@ abstract class NoticeRepository {
       {@required String noticeId});
   Future<Either<ErrorModel, NoticeCommentModel>> getCommentById(
       {@required String noticeId, @required String commentId});
+  Future<Either<ErrorModel, void>> updateCommentById(
+      {@required String noticeId,
+      @required String commentId,
+      @required NoticeCommentModel commentModel});
   Future<Either<ErrorModel, List<NoticeCommentReplyModel>>> getReplyList(
       {@required String commentId});
   Future<Either<ErrorModel, void>> writeComment(
@@ -30,6 +34,7 @@ abstract class NoticeRepository {
   Future<Either<ErrorModel, void>> writeReply(
       {@required String noticeId,
       @required String commentId,
+      @required String replyIndex,
       @required String userId,
       @required String content});
   Future<Either<ErrorModel, void>> toggleNoticeFavorite(
