@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:dream/core/error/error_model.dart';
+import 'package:dream/models/comment.dart';
 import 'package:dream/models/notice.dart';
+import 'package:dream/models/reply.dart';
 import 'package:flutter/foundation.dart';
 
 abstract class NoticeRepository {
@@ -17,15 +19,15 @@ abstract class NoticeRepository {
   Future<void> createDummyData();
 
   Future<Either<ErrorModel, List<NoticeModel>>> getNoticeList();
-  Future<Either<ErrorModel, List<NoticeCommentModel>>> getCommentList(
+  Future<Either<ErrorModel, List<CommentModel>>> getCommentList(
       {@required String noticeId});
-  Future<Either<ErrorModel, NoticeCommentModel>> getCommentById(
+  Future<Either<ErrorModel, CommentModel>> getCommentById(
       {@required String noticeId, @required String commentId});
   Future<Either<ErrorModel, void>> updateCommentById(
       {@required String noticeId,
       @required String commentId,
-      @required NoticeCommentModel commentModel});
-  Future<Either<ErrorModel, List<NoticeCommentReplyModel>>> getReplyList(
+      @required CommentModel commentModel});
+  Future<Either<ErrorModel, List<ReplyModel>>> getReplyList(
       {@required String commentId});
   Future<Either<ErrorModel, void>> writeComment(
       {@required String noticeId,
@@ -49,7 +51,7 @@ abstract class NoticeRepository {
   Future<Either<ErrorModel, void>> toggleReplyFavorite({
     @required String noticeId,
     @required String commentId,
-    @required NoticeCommentReplyModel reply,
+    @required ReplyModel reply,
     @required String userId,
   });
 }

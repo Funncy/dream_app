@@ -1,4 +1,5 @@
 import 'package:dream/models/notice.dart';
+import 'package:dream/models/reply.dart';
 import 'package:dream/utils/time_util.dart';
 import 'package:dream/viewmodels/notice_view_model.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,7 @@ import 'package:get/get.dart';
 class NoticeReply extends StatelessWidget {
   final String noticeId;
   final String commentId;
-  final NoticeCommentReplyModel noticeCommentReplyModel;
+  final ReplyModel noticeCommentReplyModel;
   NoticeViewModel noticeViewModel = Get.find<NoticeViewModel>();
   NoticeReply({
     Key key,

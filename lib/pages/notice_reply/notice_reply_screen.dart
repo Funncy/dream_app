@@ -1,4 +1,5 @@
 import 'package:dream/core/data_status/status_enum.dart';
+import 'package:dream/models/comment.dart';
 import 'package:dream/models/notice.dart';
 import 'package:dream/pages/common/empty_widget.dart';
 import 'package:dream/pages/common/error_message_widget.dart';
@@ -114,7 +115,7 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
 
   EmptyWidget _emptyWidget() => EmptyWidget();
 
-  Stack _updatingWidget(NoticeCommentModel commentModel) {
+  Stack _updatingWidget(CommentModel commentModel) {
     return Stack(
       children: [
         NoticeComment(
@@ -136,7 +137,7 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
     );
   }
 
-  NoticeComment _commentBody(NoticeCommentModel commentModel) {
+  NoticeComment _commentBody(CommentModel commentModel) {
     return NoticeComment(
       noticeCommentModel: commentModel,
       isReplyScreen: true,

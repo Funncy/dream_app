@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dream/core/error/error_model.dart';
+import 'package:dream/models/comment.dart';
 import 'package:dream/models/notice.dart';
+import 'package:dream/models/reply.dart';
 import 'package:dream/repositories/notice_repository_impl.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -94,15 +96,13 @@ void main() {
     'updatedAt': Timestamp.now(),
   };
 
-  var commentDataModel = NoticeCommentModel(
+  var commentDataModel = CommentModel(
       documentId: '123',
       userId: '123',
       content: '댓글 01',
       replyList: [
-        NoticeCommentReplyModel(
-            userId: '123', content: '답글 01', favoriteUserList: []),
-        NoticeCommentReplyModel(
-            userId: '123', content: '답글 02', favoriteUserList: []),
+        ReplyModel(userId: '123', content: '답글 01', favoriteUserList: []),
+        ReplyModel(userId: '123', content: '답글 02', favoriteUserList: []),
       ],
       favoriteUserList: [],
       documentReference: null);

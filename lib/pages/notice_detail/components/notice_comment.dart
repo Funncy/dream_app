@@ -1,3 +1,4 @@
+import 'package:dream/models/comment.dart';
 import 'package:dream/models/notice.dart';
 import 'package:dream/pages/notice_detail/components/notice_reply.dart';
 import 'package:dream/pages/notice_reply/notice_reply_screen.dart';
@@ -8,7 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class NoticeComment extends StatefulWidget {
-  final NoticeCommentModel noticeCommentModel;
+  final CommentModel noticeCommentModel;
   final String noticeId;
   final bool isReplyScreen;
   const NoticeComment({

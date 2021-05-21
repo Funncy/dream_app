@@ -1,5 +1,6 @@
 import 'package:dream/constants.dart';
 import 'package:dream/core/data_status/status_enum.dart';
+import 'package:dream/models/comment.dart';
 import 'package:dream/models/notice.dart';
 import 'package:dream/pages/common/empty_widget.dart';
 import 'package:dream/pages/common/error_message_widget.dart';
@@ -109,7 +110,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
     );
   }
 
-  Stack _updatingWidget(List<NoticeCommentModel> commentList) {
+  Stack _updatingWidget(List<CommentModel> commentList) {
     return Stack(
       children: [
         _commentList(commentList),
@@ -132,7 +133,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
 
   ErrorMessageWidget _errorWidget() => ErrorMessageWidget(errorMessage: 'test');
 
-  ListView _commentList(List<NoticeCommentModel> commentList) {
+  ListView _commentList(List<CommentModel> commentList) {
     return ListView.builder(
         physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,

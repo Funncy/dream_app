@@ -1,7 +1,9 @@
 import 'package:dartz/dartz.dart';
 import 'package:dream/core/data_status/status_enum.dart';
 import 'package:dream/core/error/error_model.dart';
+import 'package:dream/models/comment.dart';
 import 'package:dream/models/notice.dart';
+import 'package:dream/models/reply.dart';
 import 'package:dream/repositories/notice_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
@@ -13,7 +15,7 @@ class NoticeViewModel extends GetxController {
   //화면 상태가 아니라 데이터의 상태를 관리하자.
   RxList<NoticeModel> noticeList = <NoticeModel>[].obs;
   Rx<Status> noticeStatus = Status.initial.obs;
-  RxList<NoticeCommentModel> commentList = <NoticeCommentModel>[].obs;
+  RxList<CommentModel> commentList = <CommentModel>[].obs;
   Rx<Status> commentStatus = Status.initial.obs;
   //답글은 comment내부에 존재하지만 상태는 따로 관리
   Rx<Status> replyStatus = Status.initial.obs;
@@ -53,7 +55,7 @@ class NoticeViewModel extends GetxController {
   void getCommentList({@required String noticeId}) async {
     commentStatus.value = Status.loading;
 
-    Either<ErrorModel, List<NoticeCommentModel>> either =
+    Either<ErrorModel, List<CommentModel>> either =
         await _noticeRepository.getCommentList(noticeId: noticeId);
     var result =
         either.fold((l) => commentStatus.value = Status.error, (r) => r);
@@ -97,7 +99,7 @@ class NoticeViewModel extends GetxController {
 
     //정상적으로 서버 통신 완료
     //댓글 다시 읽어오기
-    Either<ErrorModel, List<NoticeCommentModel>> either2 =
+    Either<ErrorModel, List<CommentModel>> either2 =
         await _noticeRepository.getCommentList(noticeId: noticeId);
     var result =
         either2.fold((l) => commentStatus.value = Status.error, (r) => r);
@@ -201,7 +203,7 @@ class NoticeViewModel extends GetxController {
       {@required String noticeId,
       @required String commentId,
       @required String userId}) async {
-    NoticeCommentModel commentModel =
+    CommentModel commentModel =
         commentList.where((e) => e.documentId == commentId)?.first;
     if (commentModel == null) return;
 
@@ -233,11 +235,11 @@ class NoticeViewModel extends GetxController {
       @required String commentId,
       @required String replyId,
       @required String userId}) async {
-    NoticeCommentModel commentModel =
+    CommentModel commentModel =
         commentList.where((e) => e.documentId == commentId)?.first;
     if (commentModel == null) return;
 
-    NoticeCommentReplyModel replyModel =
+    ReplyModel replyModel =
         commentModel.replyList.where((e) => e.id == replyId)?.first;
     if (replyModel == null) return;
 

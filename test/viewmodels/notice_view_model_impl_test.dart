@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:dream/core/data_status/status_enum.dart';
 import 'package:dream/core/error/error_model.dart';
+import 'package:dream/models/comment.dart';
 import 'package:dream/models/notice.dart';
+import 'package:dream/models/reply.dart';
 import 'package:dream/repositories/notice_repository_impl.dart';
 import 'package:dream/viewmodels/notice_view_model.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -43,13 +45,12 @@ void main() {
         favoriteUserList: [],
         documentReference: null));
 
-    noticeViewModel.commentList.add(NoticeCommentModel(
+    noticeViewModel.commentList.add(CommentModel(
         documentId: '123',
         userId: '111',
         content: 'test comment',
         replyList: [
-          NoticeCommentReplyModel(
-              userId: '123', content: 'test reply', favoriteUserList: [])
+          ReplyModel(userId: '123', content: 'test reply', favoriteUserList: [])
         ],
         favoriteUserList: [],
         documentReference: null));
@@ -87,67 +88,67 @@ void main() {
   ];
 
   final commentList = [
-    NoticeCommentModel(
+    CommentModel(
         documentId: '121',
         userId: 'test1',
         content: 'test 001',
         replyList: [
-          NoticeCommentReplyModel(
+          ReplyModel(
               userId: '123', content: 'test reply 01', favoriteUserList: []),
-          NoticeCommentReplyModel(
+          ReplyModel(
               userId: '123', content: 'test reply 01', favoriteUserList: []),
         ],
         favoriteUserList: ['123', '245'],
         documentReference: null),
-    NoticeCommentModel(
+    CommentModel(
         documentId: '122',
         userId: 'test12',
         content: 'test 002',
         replyList: [
-          NoticeCommentReplyModel(
+          ReplyModel(
               userId: '123', content: 'test reply 01', favoriteUserList: []),
-          NoticeCommentReplyModel(
+          ReplyModel(
               userId: '123', content: 'test reply 01', favoriteUserList: []),
         ],
         favoriteUserList: ['123', '245'],
         documentReference: null),
-    NoticeCommentModel(
+    CommentModel(
         documentId: '123',
         userId: 'test1',
         content: 'test 003',
         replyList: [
-          NoticeCommentReplyModel(
+          ReplyModel(
               userId: '123', content: 'test reply 01', favoriteUserList: []),
-          NoticeCommentReplyModel(
+          ReplyModel(
               userId: '123', content: 'test reply 01', favoriteUserList: []),
         ],
         favoriteUserList: ['123', '245'],
         documentReference: null),
   ];
 
-  final commentModel = NoticeCommentModel(
+  final commentModel = CommentModel(
       documentId: '121',
       userId: 'test1',
       content: 'test 001',
       replyList: [
-        NoticeCommentReplyModel(
+        ReplyModel(
             userId: '123', content: 'test reply 01', favoriteUserList: []),
-        NoticeCommentReplyModel(
+        ReplyModel(
             userId: '123', content: 'test reply 02', favoriteUserList: []),
       ],
       favoriteUserList: ['123', '245'],
       documentReference: null);
 
-  final dummyCommentModel = NoticeCommentModel(
+  final dummyCommentModel = CommentModel(
       documentId: '121',
       userId: 'test1',
       content: 'test 001',
       replyList: [
-        NoticeCommentReplyModel(
+        ReplyModel(
             userId: '123', content: 'test reply 01', favoriteUserList: []),
-        NoticeCommentReplyModel(
+        ReplyModel(
             userId: '123', content: 'test reply 02', favoriteUserList: []),
-        NoticeCommentReplyModel(
+        ReplyModel(
             userId: '123', content: 'test reply 03', favoriteUserList: []),
       ],
       favoriteUserList: ['123', '245'],

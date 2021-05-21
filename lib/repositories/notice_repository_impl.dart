@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dream/core/error/error_model.dart';
+import 'package:dream/models/comment.dart';
 import 'package:dream/models/notice.dart';
+import 'package:dream/models/reply.dart';
 import 'package:dream/repositories/notice_repository.dart';
 import 'package:dream/services/firestore_servie.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -42,18 +44,18 @@ class NoticeRepositoryImpl extends NoticeRepository {
     ];
 
     var commentList = [
-      NoticeCommentModel(
+      CommentModel(
           documentId: null,
           userId: '123',
           content: 'comment 01',
           replyIndex: 2,
           replyList: [
-            NoticeCommentReplyModel(
+            ReplyModel(
                 id: '0',
                 userId: '123',
                 content: 'reply 01',
                 favoriteUserList: []),
-            NoticeCommentReplyModel(
+            ReplyModel(
                 id: '1',
                 userId: '123',
                 content: 'reply 02',
@@ -61,13 +63,13 @@ class NoticeRepositoryImpl extends NoticeRepository {
           ],
           favoriteUserList: [],
           documentReference: null),
-      NoticeCommentModel(
+      CommentModel(
           documentId: null,
           userId: '123',
           content: 'comment 01',
           replyIndex: 1,
           replyList: [
-            NoticeCommentReplyModel(
+            ReplyModel(
                 id: '0',
                 userId: '123',
                 content: 'reply 01',
@@ -100,7 +102,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
   }
 
   @override
-  Future<Either<ErrorModel, List<NoticeCommentModel>>> getCommentList(
+  Future<Either<ErrorModel, List<CommentModel>>> getCommentList(
       {@required String noticeId}) async {
     try {
       var querySnapshot = await _firebaseFirestore
@@ -108,9 +110,8 @@ class NoticeRepositoryImpl extends NoticeRepository {
           .doc(noticeId)
           .collection(commentCollectionName)
           .get();
-      List<NoticeCommentModel> result = querySnapshot.docs
-          .map((e) => NoticeCommentModel.fromFirestore(e))
-          .toList();
+      List<CommentModel> result =
+          querySnapshot.docs.map((e) => CommentModel.fromFirestore(e)).toList();
       return Right(result);
     } catch (e) {
       return Left(ErrorModel(message: 'firebase Error'));
@@ -118,7 +119,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
   }
 
   @override
-  Future<Either<ErrorModel, NoticeCommentModel>> getCommentById(
+  Future<Either<ErrorModel, CommentModel>> getCommentById(
       {@required String noticeId, @required String commentId}) async {
     try {
       DocumentSnapshot documentSnapshot = await _firebaseFirestore
@@ -127,7 +128,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
           .collection(commentCollectionName)
           .doc(commentId)
           .get();
-      return Right(NoticeCommentModel.fromFirestore(documentSnapshot));
+      return Right(CommentModel.fromFirestore(documentSnapshot));
     } catch (e) {
       return Left(ErrorModel(message: e.toString()));
     }
@@ -137,7 +138,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
   Future<Either<ErrorModel, void>> updateCommentById(
       {@required String noticeId,
       @required String commentId,
-      @required NoticeCommentModel commentModel}) async {
+      @required CommentModel commentModel}) async {
     try {
       await _firebaseFirestore
           .collection(noticeCollectionName)
@@ -165,7 +166,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
   }
 
   @override
-  Future<Either<ErrorModel, List<NoticeCommentReplyModel>>> getReplyList(
+  Future<Either<ErrorModel, List<ReplyModel>>> getReplyList(
       {@required String commentId}) {
     // TODO: implement getReplyList
     throw UnimplementedError();
@@ -177,7 +178,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
       @required String userId,
       @required String content}) async {
     try {
-      var commentModel = NoticeCommentModel(
+      var commentModel = CommentModel(
           documentId: null,
           userId: userId,
           content: content,
@@ -226,7 +227,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
       @required String content}) async {
     try {
       //TODO: Notice Reference 혹은 comment Reference 필요
-      var replyModel = NoticeCommentReplyModel(
+      var replyModel = ReplyModel(
           id: replyIndex,
           userId: userId,
           content: content,
@@ -295,7 +296,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
   Future<Either<ErrorModel, void>> toggleReplyFavorite({
     @required String noticeId,
     @required String commentId,
-    @required NoticeCommentReplyModel reply,
+    @required ReplyModel reply,
     @required String userId,
   }) async {
     try {
