@@ -1,6 +1,7 @@
 import 'package:dream/models/notice.dart';
 import 'package:dream/models/reply.dart';
 import 'package:dream/utils/time_util.dart';
+import 'package:dream/viewmodels/comment_reply_view_model.dart';
 import 'package:dream/viewmodels/notice_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,7 +11,8 @@ class NoticeReply extends StatelessWidget {
   final String noticeId;
   final String commentId;
   final ReplyModel noticeCommentReplyModel;
-  NoticeViewModel noticeViewModel = Get.find<NoticeViewModel>();
+  CommentReplyViewModel commentReplyViewModel =
+      Get.find<CommentReplyViewModel>();
   NoticeReply({
     Key key,
     @required this.noticeId,
@@ -92,7 +94,7 @@ class NoticeReply extends StatelessWidget {
                       InkWell(
                         onTap: () {
                           //TODO: userID바꿔야함
-                          noticeViewModel.toggleReplyFavorite(
+                          commentReplyViewModel.toggleReplyFavorite(
                               noticeId: noticeId,
                               commentId: commentId,
                               replyId: noticeCommentReplyModel.id,
@@ -106,7 +108,7 @@ class NoticeReply extends StatelessWidget {
                       GestureDetector(
                         onTap: () {
                           //TODO: userID바꿔야함
-                          noticeViewModel.toggleReplyFavorite(
+                          commentReplyViewModel.toggleReplyFavorite(
                               noticeId: noticeId,
                               commentId: commentId,
                               replyId: noticeCommentReplyModel.id,

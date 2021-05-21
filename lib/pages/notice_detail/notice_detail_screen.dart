@@ -9,6 +9,7 @@ import 'package:dream/pages/common/screen_status_widget.dart';
 import 'package:dream/pages/notice/components/notice_card.dart';
 import 'package:dream/pages/notice_detail/components/bottom_input_bar.dart';
 import 'package:dream/pages/notice_detail/components/notice_comment.dart';
+import 'package:dream/viewmodels/comment_reply_view_model.dart';
 import 'package:dream/viewmodels/notice_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -20,7 +21,7 @@ class NoticeDetailScreen extends StatefulWidget {
 }
 
 class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
-  final noticeViewModel = Get.find<NoticeViewModel>();
+  final commentReplyViewModel = Get.find<CommentReplyViewModel>();
   final TextEditingController _textEditingController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   var notice = Get.arguments as NoticeModel;
@@ -30,11 +31,11 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
     super.initState();
     //build후에 함수 실행
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      noticeViewModel.getCommentList(noticeId: notice.documentId);
+      commentReplyViewModel.getCommentList(noticeId: notice.documentId);
     });
 
     //댓글 추가 이후 스크롤 내리기
-    noticeViewModel.commentStatus.stream.reduce((preStatus, status) {
+    commentReplyViewModel.commentStatus.stream.reduce((preStatus, status) {
       //initial => loading => loaded (scroll X)
       //updating => loaded (scroll O)
       if (preStatus == Status.updating && status == Status.loaded) {
@@ -51,7 +52,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
 
   void inputComment() {
     //TODO: uid 연동해야함.
-    noticeViewModel.writeComment(
+    commentReplyViewModel.writeComment(
         noticeId: notice.documentId,
         userId: '123',
         content: _textEditingController.text);
@@ -76,8 +77,9 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
                 child: SingleChildScrollView(
                   controller: _scrollController,
                   child: Obx(() {
-                    var dataStatus = noticeViewModel.commentStatus.value;
-                    var commentList = noticeViewModel.commentList.toList();
+                    var dataStatus = commentReplyViewModel.commentStatus.value;
+                    var commentList =
+                        commentReplyViewModel.commentList.toList();
                     return Column(
                       children: [
                         NoticeCard(

@@ -7,6 +7,7 @@ import 'package:dream/pages/common/loading_widget.dart';
 import 'package:dream/pages/common/screen_status_widget.dart';
 import 'package:dream/pages/notice_detail/components/bottom_input_bar.dart';
 import 'package:dream/pages/notice_detail/components/notice_comment.dart';
+import 'package:dream/viewmodels/comment_reply_view_model.dart';
 import 'package:dream/viewmodels/notice_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,7 +24,8 @@ class NoticeReplyScreen extends StatefulWidget {
 }
 
 class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
-  final noticeViewModel = Get.find<NoticeViewModel>();
+  CommentReplyViewModel commentReplyViewModel =
+      Get.find<CommentReplyViewModel>();
   final TextEditingController _textEditingController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   @override
@@ -31,10 +33,10 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
     super.initState();
     //id에 해당하는 댓글 존재 확인
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      noticeViewModel.getComment(commentId: widget.commentId);
+      commentReplyViewModel.getComment(commentId: widget.commentId);
       //새로운 답글 추가시 아래 스크롤 애니메이션
-      debounce(noticeViewModel.replyStatus, (_) {
-        if (noticeViewModel.replyStatus.value == Status.loaded) {
+      debounce(commentReplyViewModel.replyStatus, (_) {
+        if (commentReplyViewModel.replyStatus.value == Status.loaded) {
           _scrollController.animateTo(
               _scrollController.position.maxScrollExtent,
               duration: Duration(milliseconds: 500),
@@ -46,7 +48,7 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
 
   void inputReply() {
     //TODO: uid 실제 유저로 바꿔야함.
-    noticeViewModel.writeReply(
+    commentReplyViewModel.writeReply(
         noticeId: widget.noticeId,
         commentId: widget.commentId,
         userId: '123',
@@ -70,7 +72,7 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
       ),
       body: SafeArea(
         child: Obx(() {
-          var dataStatus = noticeViewModel.replyStatus.value;
+          var dataStatus = commentReplyViewModel.replyStatus.value;
 
           return Container(
             child: Stack(children: [
@@ -80,8 +82,9 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
                     child: SingleChildScrollView(
                       controller: _scrollController,
                       child: Obx(() {
-                        var dataStatus = noticeViewModel.replyStatus.value;
-                        var comment = noticeViewModel.commentList
+                        var dataStatus =
+                            commentReplyViewModel.replyStatus.value;
+                        var comment = commentReplyViewModel.commentList
                             .where((e) => e.documentId == widget.commentId)
                             ?.first;
                         return DataStatusWidget(

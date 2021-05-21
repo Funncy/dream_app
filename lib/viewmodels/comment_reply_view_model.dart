@@ -16,7 +16,7 @@ class CommentReplyViewModel extends GetxController {
   //답글은 comment내부에 존재하지만 상태는 따로 관리
   Rx<Status> replyStatus = Status.initial.obs;
 
-  CommentViewModel(
+  CommentReplyViewModel(
       {@required CommentRepository commentRepository,
       @required ReplyRepository replyRepository}) {
     _commentRepository = commentRepository;
