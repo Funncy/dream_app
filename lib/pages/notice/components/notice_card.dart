@@ -27,14 +27,19 @@ class NoticeCard extends StatelessWidget {
       child: Container(
         color: Colors.white,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   //날짜 및 텍스트
                   Text(date, style: Theme.of(context).textTheme.subtitle1),
+                  SizedBox(
+                    height: 5.h,
+                  ),
                   Text(notice.content,
                       style: Theme.of(context).textTheme.bodyText1),
                   SizedBox(
