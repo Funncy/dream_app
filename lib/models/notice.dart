@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:equatable/equatable.dart';
 
 class NoticeModel extends Core with EquatableMixin {
-  final String documentId;
+  final String id;
   final String userId;
   final String content;
   final List<String> imageList = [];
@@ -13,7 +13,7 @@ class NoticeModel extends Core with EquatableMixin {
   final DocumentReference documentReference;
 
   NoticeModel({
-    @required this.documentId,
+    @required this.id,
     @required this.userId,
     @required this.content,
     @required this.commentCount,
@@ -25,7 +25,7 @@ class NoticeModel extends Core with EquatableMixin {
     var json = doc.data();
 
     var model = NoticeModel(
-      documentId: doc.id,
+      id: doc.id,
       userId: json['user_id'],
       content: json['content'],
       commentCount: json['comment_count'],
@@ -48,7 +48,7 @@ class NoticeModel extends Core with EquatableMixin {
       };
   @override
   List<Object> get props => [
-        documentId,
+        id,
         userId,
         content,
         imageList,

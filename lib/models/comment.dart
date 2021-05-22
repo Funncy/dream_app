@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 
 //Inner Collection
 class CommentModel extends Core with EquatableMixin {
-  final String documentId;
+  final String id;
   final String userId;
   final String content;
   List<ReplyModel> replyList;
@@ -15,7 +15,7 @@ class CommentModel extends Core with EquatableMixin {
   final DocumentReference documentReference;
 
   CommentModel(
-      {@required this.documentId,
+      {@required this.id,
       @required this.userId,
       @required this.content,
       @required this.replyList,
@@ -26,7 +26,7 @@ class CommentModel extends Core with EquatableMixin {
 
   @override
   List<Object> get props => [
-        documentId,
+        id,
         userId,
         content,
         replyIndex,
@@ -45,7 +45,7 @@ class CommentModel extends Core with EquatableMixin {
       ..sort((a, b) => a.updatedAt.compareTo(b.updatedAt));
 
     var model = CommentModel(
-      documentId: doc.id,
+      id: doc.id,
       userId: json['user_id'],
       content: json['content'],
       replyIndex: json['reply_index'],
