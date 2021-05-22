@@ -95,8 +95,10 @@ class NoticeRepositoryImpl extends NoticeRepository {
   @override
   Future<Either<ErrorModel, List<NoticeModel>>> getNoticeList() async {
     try {
-      var querySnapshot =
-          await _firebaseFirestore.collection(noticeCollectionName).get();
+      var querySnapshot = await _firebaseFirestore
+          .collection(noticeCollectionName)
+          .orderBy('updated_at')
+          .get();
       List<NoticeModel> result =
           querySnapshot.docs.map((e) => NoticeModel.fromFirestore(e)).toList();
       return Right(result);

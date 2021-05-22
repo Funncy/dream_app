@@ -23,6 +23,7 @@ class CommentRepositoryImpl extends CommentRepository {
           .collection(noticeCollectionName)
           .doc(noticeId)
           .collection(commentCollectionName)
+          .orderBy('updated_at')
           .get();
       List<CommentModel> result =
           querySnapshot.docs.map((e) => CommentModel.fromFirestore(e)).toList();
