@@ -51,12 +51,17 @@ class NoticeViewModel extends GetxController {
 
     Either<ErrorModel, List<NoticeModel>> either = await _noticeRepository
         .getMoreNoticeList(noticeList.last.documentReference);
-    var result = either.fold((l) {
-      noticeStatus.value = Status.error;
-    }, (r) => r);
 
     //에러인 경우 종료
-    if (either.isLeft()) return;
+    if (either.isLeft()) {
+      noticeStatus.value = Status.error;
+      return;
+    }
+    List<NoticeModel> result = either.getOrElse(() => null);
+    if (result.isEmpty) {
+      noticeStatus.value = Status.loaded;
+      return;
+    }
 
     //Right이면 List로 반환됨.
     noticeList.addAll(result);

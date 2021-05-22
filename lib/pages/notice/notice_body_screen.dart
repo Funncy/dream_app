@@ -47,11 +47,11 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> {
           var dataStatus = noticeViewModel.noticeStatus.value;
 
           return DataStatusWidget(
-              body: () => _noticeList(noticeList),
-              error: () => _errorWidget(),
-              loading: () => _loadingWidget(),
-              empty: () => _emptyWidget(),
-              updating: () => _updatingWidget(noticeList),
+              body: _noticeList(noticeList),
+              error: _errorWidget(),
+              loading: _loadingWidget(),
+              empty: _emptyWidget(),
+              updating: _updatingWidget(noticeList),
               dataStatus: dataStatus);
         }),
       ),
@@ -81,6 +81,7 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> {
 
   ListView _noticeList(List<NoticeModel> noticeList) {
     return ListView.builder(
+        key: PageStorageKey("notice_listview"),
         controller: _scrollController,
         itemCount: noticeList.length,
         itemBuilder: (context, index) {

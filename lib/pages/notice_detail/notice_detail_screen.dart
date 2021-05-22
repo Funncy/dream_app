@@ -158,11 +158,11 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
                           color: Colors.black26,
                         ),
                         DataStatusWidget(
-                            body: () => _commentList(commentList),
-                            error: () => _errorWidget(),
-                            loading: () => _loadingWidget(),
-                            empty: () => _emptyWidget(),
-                            updating: () => _updatingWidget(commentList),
+                            body: _commentList(commentList),
+                            error: _errorWidget(),
+                            loading: _loadingWidget(),
+                            empty: _emptyWidget(),
+                            updating: _updatingWidget(commentList),
                             dataStatus: dataStatus),
                       ],
                     );

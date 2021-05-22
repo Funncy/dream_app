@@ -146,11 +146,11 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
                         var comment = commentReplyViewModel.commentList
                             .firstWhere((e) => e.id == widget.commentId);
                         return DataStatusWidget(
-                            body: () => _commentBody(comment),
-                            error: () => _errorWidget(),
-                            loading: () => _loadingWidget(),
-                            empty: () => _emptyWidget(),
-                            updating: () => _updatingWidget(comment),
+                            body: _commentBody(comment),
+                            error: _errorWidget(),
+                            loading: _loadingWidget(),
+                            empty: _emptyWidget(),
+                            updating: _updatingWidget(comment),
                             dataStatus: dataStatus);
                       }),
                     ),

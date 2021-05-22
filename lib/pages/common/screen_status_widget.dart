@@ -2,11 +2,11 @@ import 'package:dream/core/data_status/status_enum.dart';
 import 'package:flutter/material.dart';
 
 class DataStatusWidget extends StatelessWidget {
-  final Function body;
-  final Function error;
-  final Function loading;
-  final Function empty;
-  final Function updating;
+  final Widget body;
+  final Widget error;
+  final Widget loading;
+  final Widget empty;
+  final Widget updating;
   final Status dataStatus;
 
   const DataStatusWidget(
@@ -24,20 +24,20 @@ class DataStatusWidget extends StatelessWidget {
     switch (dataStatus) {
       case Status.initial:
       case Status.loading:
-        return loading();
+        return loading;
         break;
       case Status.error:
-        return error();
+        return error;
         break;
       case Status.empty:
-        return empty();
+        return empty;
         break;
       case Status.updating:
-        return updating();
+        return updating;
         break;
       case Status.loaded:
-        return body();
+        return body;
     }
-    return error();
+    return error;
   }
 }
