@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:dream/core/data_status/status_enum.dart';
 import 'package:dream/core/error/error_model.dart';
 import 'package:dream/models/comment.dart';
+import 'package:dream/models/notice.dart';
 import 'package:dream/models/reply.dart';
 import 'package:dream/repositories/comment_repository.dart';
 import 'package:dream/repositories/notice_repository.dart';
@@ -60,14 +61,14 @@ class CommentReplyViewModel extends GetxController {
   }
 
   void writeComment(
-      {@required String noticeId,
+      {@required NoticeModel noticeModel,
       @required String userId,
       @required String content}) async {
     //update 중
     commentStatus.value = Status.updating;
     //댓글 쓰기
     Either<ErrorModel, void> either = await _commentRepository.writeComment(
-        noticeId: noticeId, userId: userId, content: content);
+        noticeId: noticeModel.documentId, userId: userId, content: content);
     either.fold((l) {
       commentStatus.value = Status.error;
     }, (r) {});
@@ -75,30 +76,21 @@ class CommentReplyViewModel extends GetxController {
     if (either.isLeft()) return;
 
     //공지사항의 댓글 카운트 증가
-    var noticeViewModel = Get.find<NoticeViewModel>();
-    var noticeModel = noticeViewModel.noticeList
-        .where((e) => e.documentId == noticeId)
-        ?.first;
-    if (noticeModel == null) {
-      commentStatus.value = Status.error;
-      return;
-    }
     noticeModel.commentCount++;
     //서버 통신
     either = await _noticeRepository.updateCommentCount(
-        noticeId, noticeModel.commentCount);
+        noticeModel.documentId, noticeModel.commentCount);
     if (either.isLeft()) {
       noticeModel.commentCount--;
+      //TODO: 댓글도 지워야함.
       commentStatus.value = Status.error;
       return;
     }
-    //로컬 적용
-    noticeViewModel.noticeList.refresh();
 
     //정상적으로 서버 통신 완료
     //댓글 다시 읽어오기
-    Either<ErrorModel, List<CommentModel>> either2 =
-        await _commentRepository.getCommentList(noticeId: noticeId);
+    Either<ErrorModel, List<CommentModel>> either2 = await _commentRepository
+        .getCommentList(noticeId: noticeModel.documentId);
     var result =
         either2.fold((l) => commentStatus.value = Status.error, (r) => r);
 
