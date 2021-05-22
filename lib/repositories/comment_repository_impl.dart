@@ -98,7 +98,7 @@ class CommentRepositoryImpl extends CommentRepository {
   Future<Either<ErrorModel, void>> deleteComment(
       {@required String noticeId, @required String commentId}) async {
     try {
-      _firebaseFirestore
+      await _firebaseFirestore
           .collection(noticeCollectionName)
           .doc(noticeId)
           .collection(commentCollectionName)
