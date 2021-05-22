@@ -1,6 +1,7 @@
 import 'package:dream/core/data_status/status_enum.dart';
 import 'package:dream/models/comment.dart';
 import 'package:dream/models/notice.dart';
+import 'package:dream/models/reply.dart';
 import 'package:dream/pages/common/empty_widget.dart';
 import 'package:dream/pages/common/error_message_widget.dart';
 import 'package:dream/pages/common/loading_widget.dart';
@@ -46,7 +47,7 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
     });
   }
 
-  void inputReply() {
+  void writeReply() {
     //TODO: uid 실제 유저로 바꿔야함.
     commentReplyViewModel.writeReply(
         noticeId: widget.noticeId,
@@ -54,6 +55,50 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
         userId: '123',
         content: _textEditingController.text);
     _textEditingController.text = '';
+  }
+
+  void deleteReply(String commentId, ReplyModel replyModel) {
+    showAlert(
+        title: '답글 삭제',
+        content: '정말 답글을 삭제하시겠습니까?',
+        isFunction: true,
+        function: () => commentReplyViewModel.deleteReply(
+            noticeId: widget.noticeId,
+            commentId: commentId,
+            replyModel: replyModel));
+  }
+
+  void showAlert(
+      {@required String title,
+      @required String content,
+      bool isFunction = false,
+      Function function}) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: <Widget>[
+            if (isFunction)
+              FlatButton(
+                child: Text('OK'),
+                onPressed: () async {
+                  function();
+                  Navigator.pop(context, "OK");
+                },
+              ),
+            FlatButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.pop(context, "Cancel");
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -98,7 +143,7 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
                   ),
                   BottonInputBar(
                     textEditingController: _textEditingController,
-                    inputFunction: inputReply,
+                    writeFunction: writeReply,
                   ),
                 ],
               ),
@@ -144,6 +189,7 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
       noticeCommentModel: commentModel,
       isReplyScreen: true,
       noticeId: widget.noticeId,
+      deleteReply: deleteReply,
     );
   }
 }

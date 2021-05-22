@@ -212,6 +212,28 @@ class CommentReplyViewModel extends GetxController {
     replyStatus.value = Status.loaded;
   }
 
+  Future<void> deleteReply(
+      {@required String noticeId,
+      @required String commentId,
+      @required ReplyModel replyModel}) async {
+    replyStatus.value = Status.updating;
+    commentStatus.value = Status.updating;
+
+    var either = await _replyRepository.deleteReply(
+        noticeId: noticeId, commentId: commentId, replyModel: replyModel);
+    if (either.isLeft()) {
+      //TODO: RxAlert을 만들어야함.
+      return;
+    }
+    //로컬에서도 삭제 필요
+    CommentModel commentModel = getModel(commentList, commentId);
+    commentModel.replyList.removeWhere((e) => e.id == replyModel.id);
+    replaceModel(commentList, commentModel);
+
+    replyStatus.value = Status.loaded;
+    commentStatus.value = Status.loaded;
+  }
+
   Future<void> toggleReplyFavorite(
       {@required String noticeId,
       @required String commentId,

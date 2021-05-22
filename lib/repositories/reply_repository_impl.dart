@@ -44,6 +44,27 @@ class ReplyRepositoryImpl extends ReplyRepository {
   }
 
   @override
+  Future<Either<ErrorModel, void>> deleteReply({
+    @required String noticeId,
+    @required String commentId,
+    @required ReplyModel replyModel,
+  }) async {
+    try {
+      await _firebaseFirestore
+          .collection(noticeCollectionName)
+          .doc(noticeId)
+          .collection(commentCollectionName)
+          .doc(commentId)
+          .update({
+        'reply_list': FieldValue.arrayRemove([replyModel.toJson()])
+      });
+      return Right(null);
+    } catch (e) {
+      return Left(ErrorModel(message: e.toString()));
+    }
+  }
+
+  @override
   Future<Either<ErrorModel, void>> toggleReplyFavorite({
     @required String noticeId,
     @required String commentId,

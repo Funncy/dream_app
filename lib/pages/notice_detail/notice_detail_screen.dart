@@ -2,6 +2,7 @@ import 'package:dream/constants.dart';
 import 'package:dream/core/data_status/status_enum.dart';
 import 'package:dream/models/comment.dart';
 import 'package:dream/models/notice.dart';
+import 'package:dream/models/reply.dart';
 import 'package:dream/pages/common/empty_widget.dart';
 import 'package:dream/pages/common/error_message_widget.dart';
 import 'package:dream/pages/common/loading_widget.dart';
@@ -66,6 +67,15 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
         isFunction: true,
         function: () => commentReplyViewModel.deleteComment(
             notcieModel: notice, commentId: commentId));
+  }
+
+  void deleteReply(String commentId, ReplyModel replyModel) {
+    showAlert(
+        title: '답글 삭제',
+        content: '정말 답글을 삭제하시겠습니까?',
+        isFunction: true,
+        function: () => commentReplyViewModel.deleteReply(
+            noticeId: notice.id, commentId: commentId, replyModel: replyModel));
   }
 
   void showAlert(
@@ -146,7 +156,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
               ),
               BottonInputBar(
                 textEditingController: _textEditingController,
-                inputFunction: inputComment,
+                writeFunction: inputComment,
               )
             ],
           ),
@@ -189,6 +199,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
             isReplyScreen: false,
             noticeId: notice.id,
             deleteComment: deleteComment,
+            deleteReply: deleteReply,
           );
         });
   }

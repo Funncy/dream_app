@@ -5,11 +5,11 @@ class BottonInputBar extends StatelessWidget {
   const BottonInputBar({
     Key key,
     @required this.textEditingController,
-    @required this.inputFunction,
+    @required this.writeFunction,
   }) : super(key: key);
 
   final TextEditingController textEditingController;
-  final Function inputFunction;
+  final Function writeFunction;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +47,7 @@ class BottonInputBar extends StatelessWidget {
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30), color: Colors.amber),
             child: InkWell(
-                onTap: inputFunction,
+                onTap: writeFunction,
                 child: Icon(
                   Icons.arrow_forward_rounded,
                   color: Colors.white,

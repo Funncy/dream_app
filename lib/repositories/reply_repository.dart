@@ -12,6 +12,12 @@ abstract class ReplyRepository {
       @required String userId,
       @required String content});
 
+  Future<Either<ErrorModel, void>> deleteReply({
+    @required String noticeId,
+    @required String commentId,
+    @required ReplyModel replyModel,
+  });
+
   Future<Either<ErrorModel, void>> toggleReplyFavorite({
     @required String noticeId,
     @required String commentId,

@@ -11,6 +11,7 @@ class NoticeReply extends StatelessWidget {
   final String noticeId;
   final String commentId;
   final ReplyModel replyModel;
+  final Function deleteReply;
   CommentReplyViewModel commentReplyViewModel =
       Get.find<CommentReplyViewModel>();
   NoticeReply({
@@ -18,6 +19,7 @@ class NoticeReply extends StatelessWidget {
     @required this.noticeId,
     @required this.commentId,
     @required this.replyModel,
+    @required this.deleteReply,
   }) : super(key: key);
 
   @override
@@ -74,7 +76,10 @@ class NoticeReply extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: InkWell(
-                              onTap: () {}, child: Icon(Icons.more_vert)),
+                              onTap: () {
+                                deleteReply(commentId, replyModel);
+                              },
+                              child: Icon(Icons.more_vert)),
                         ),
                       ],
                     ),

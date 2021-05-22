@@ -14,13 +14,15 @@ class NoticeComment extends StatefulWidget {
   final String noticeId;
   final bool isReplyScreen;
   final Function deleteComment;
-  const NoticeComment({
-    Key key,
-    this.noticeCommentModel,
-    this.isReplyScreen,
-    this.noticeId,
-    this.deleteComment,
-  }) : super(key: key);
+  final Function deleteReply;
+  const NoticeComment(
+      {Key key,
+      this.noticeCommentModel,
+      this.isReplyScreen,
+      this.noticeId,
+      this.deleteComment,
+      this.deleteReply})
+      : super(key: key);
 
   @override
   _NoticeCommentState createState() => _NoticeCommentState();
@@ -178,7 +180,8 @@ class _NoticeCommentState extends State<NoticeComment> {
                         .map((model) => NoticeReply(
                               noticeId: widget.noticeId,
                               commentId: widget.noticeCommentModel.id,
-                              noticeCommentReplyModel: model,
+                              replyModel: model,
+                              deleteReply: widget.deleteReply,
                             ))
                         .toList()),
                   if (widget.noticeCommentModel.replyList.length > 0 &&
