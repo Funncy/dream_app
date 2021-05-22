@@ -95,6 +95,22 @@ class CommentRepositoryImpl extends CommentRepository {
     }
   }
 
+  Future<Either<ErrorModel, void>> deleteComment(
+      {@required String noticeId, @required String commentId}) async {
+    try {
+      _firebaseFirestore
+          .collection(noticeCollectionName)
+          .doc(noticeId)
+          .collection(commentCollectionName)
+          .doc(commentId)
+          .delete();
+
+      return Right(null);
+    } catch (e) {
+      return Left(ErrorModel(message: 'firebase error'));
+    }
+  }
+
   @override
   Future<Either<ErrorModel, void>> toggleCommentFavorite(
       {@required String noticeId,

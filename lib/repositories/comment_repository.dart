@@ -18,6 +18,9 @@ abstract class CommentRepository {
       @required String userId,
       @required String content});
 
+  Future<Either<ErrorModel, void>> deleteComment(
+      {@required String noticeId, @required String commentId});
+
   Future<Either<ErrorModel, void>> toggleCommentFavorite(
       {@required String noticeId,
       @required String commentId,
