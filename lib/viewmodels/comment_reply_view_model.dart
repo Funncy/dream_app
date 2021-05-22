@@ -53,7 +53,7 @@ class CommentReplyViewModel extends GetxController {
   void getComment({@required String commentId}) async {
     replyStatus.value = Status.loading;
 
-    if (commentList.where((e) => e.documentId == commentId).isNotEmpty) {
+    if (commentList.where((e) => e.id == commentId).isNotEmpty) {
       replyStatus.value = Status.loaded;
     } else {
       replyStatus.value = Status.error;
@@ -68,7 +68,7 @@ class CommentReplyViewModel extends GetxController {
     commentStatus.value = Status.updating;
     //댓글 쓰기
     Either<ErrorModel, void> either = await _commentRepository.writeComment(
-        noticeId: noticeModel.documentId, userId: userId, content: content);
+        noticeId: noticeModel.id, userId: userId, content: content);
     either.fold((l) {
       commentStatus.value = Status.error;
     }, (r) {});
@@ -79,7 +79,7 @@ class CommentReplyViewModel extends GetxController {
     noticeModel.commentCount++;
     //서버 통신
     either = await _noticeRepository.updateCommentCount(
-        noticeModel.documentId, noticeModel.commentCount);
+        noticeModel.id, noticeModel.commentCount);
     if (either.isLeft()) {
       noticeModel.commentCount--;
       //TODO: 댓글도 지워야함.
@@ -89,8 +89,8 @@ class CommentReplyViewModel extends GetxController {
 
     //정상적으로 서버 통신 완료
     //댓글 다시 읽어오기
-    Either<ErrorModel, List<CommentModel>> either2 = await _commentRepository
-        .getCommentList(noticeId: noticeModel.documentId);
+    Either<ErrorModel, List<CommentModel>> either2 =
+        await _commentRepository.getCommentList(noticeId: noticeModel.id);
     var result =
         either2.fold((l) => commentStatus.value = Status.error, (r) => r);
 
@@ -109,7 +109,7 @@ class CommentReplyViewModel extends GetxController {
       @required String commentId,
       @required String userId}) async {
     CommentModel commentModel =
-        commentList.where((e) => e.documentId == commentId)?.first;
+        commentList.where((e) => e.id == commentId)?.first;
     if (commentModel == null) return;
 
     bool isDelete = false;
@@ -143,7 +143,7 @@ class CommentReplyViewModel extends GetxController {
     replyStatus.value = Status.updating;
 
     //인덱스 찾기
-    var comment = commentList.where((e) => e.documentId == commentId)?.first;
+    var comment = commentList.where((e) => e.id == commentId)?.first;
     if (comment == null) {
       replyStatus.value = Status.error;
       return;
@@ -184,8 +184,7 @@ class CommentReplyViewModel extends GetxController {
     if (either2.isLeft()) return;
 
     //기존 내용 대체
-    int index =
-        commentList.indexWhere((element) => element.documentId == commentId);
+    int index = commentList.indexWhere((element) => element.id == commentId);
     if (index == -1) {
       replyStatus.value = Status.error;
       return;
@@ -200,12 +199,11 @@ class CommentReplyViewModel extends GetxController {
       @required String commentId,
       @required String replyId,
       @required String userId}) async {
-    CommentModel commentModel =
-        commentList.where((e) => e.documentId == commentId)?.first;
+    CommentModel commentModel = getModel(commentList, commentId, commentStatus);
     if (commentModel == null) return;
 
     ReplyModel replyModel =
-        commentModel.replyList.where((e) => e.id == replyId)?.first;
+        getModel(commentModel.replyList, replyId, commentStatus);
     if (replyModel == null) return;
 
     var result = await _replyRepository.toggleReplyFavorite(
@@ -214,9 +212,21 @@ class CommentReplyViewModel extends GetxController {
       reply: replyModel,
       userId: userId,
     );
-    if (result.isLeft()) return;
+    if (result.isLeft()) {
+      commentStatus.value = Status.error;
+      return;
+    }
 
     //local에서도 수정
     commentList.refresh();
+  }
+
+  Object getModel(List modelList, String modelId, Rx<Status> status) {
+    var model = modelList.where((e) => e.id == modelId)?.first;
+    if (model != null) {
+      status.value = Status.error;
+      return null;
+    }
+    return model;
   }
 }
