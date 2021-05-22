@@ -85,7 +85,7 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
                         var dataStatus =
                             commentReplyViewModel.replyStatus.value;
                         var comment = commentReplyViewModel.commentList
-                            .where((e) => e.documentId == widget.commentId)
+                            .where((e) => e.id == widget.commentId)
                             ?.first;
                         return DataStatusWidget(
                             body: () => _commentBody(comment),

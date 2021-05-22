@@ -73,7 +73,7 @@ class CommentRepositoryImpl extends CommentRepository {
       @required String content}) async {
     try {
       var commentModel = CommentModel(
-          documentId: null,
+          id: null,
           userId: userId,
           content: content,
           replyIndex: 0,

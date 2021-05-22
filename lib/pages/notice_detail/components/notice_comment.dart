@@ -30,7 +30,7 @@ class _NoticeCommentState extends State<NoticeComment> {
 
   void pageToReply() {
     Get.to(NoticeReplyScreen(
-      commentId: widget.noticeCommentModel.documentId,
+      commentId: widget.noticeCommentModel.id,
       noticeId: widget.noticeId,
     ));
   }
@@ -114,8 +114,7 @@ class _NoticeCommentState extends State<NoticeComment> {
                               //TODO: 댓글 좋아요 => userId 수정해야함.
                               commentReplyViewModel.toggleCommentFavorite(
                                   noticeId: widget.noticeId,
-                                  commentId:
-                                      widget.noticeCommentModel.documentId,
+                                  commentId: widget.noticeCommentModel.id,
                                   userId: '123');
                             },
                             child: Text(
@@ -143,7 +142,7 @@ class _NoticeCommentState extends State<NoticeComment> {
                           //TODO: 댓글 좋아요 => userId 수정해야함.
                           commentReplyViewModel.toggleCommentFavorite(
                               noticeId: widget.noticeId,
-                              commentId: widget.noticeCommentModel.documentId,
+                              commentId: widget.noticeCommentModel.id,
                               userId: '123');
                         },
                         child: Row(
@@ -170,7 +169,7 @@ class _NoticeCommentState extends State<NoticeComment> {
                     ...(widget.noticeCommentModel.replyList
                         .map((model) => NoticeReply(
                               noticeId: widget.noticeId,
-                              commentId: widget.noticeCommentModel.documentId,
+                              commentId: widget.noticeCommentModel.id,
                               noticeCommentReplyModel: model,
                             ))
                         .toList()),

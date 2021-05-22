@@ -49,7 +49,7 @@ class NoticeViewModel extends GetxController {
       {@required String noticeId, @required String userId}) async {
     //Notice의 좋아요 리스트 가져오기
     NoticeModel notice =
-        noticeList.where((notice) => notice.documentId == noticeId)?.first;
+        noticeList.where((notice) => notice.id == noticeId)?.first;
     if (notice == null) return;
 
     //이미 등록되있다면 삭제

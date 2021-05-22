@@ -31,7 +31,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
     super.initState();
     //build후에 함수 실행
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      commentReplyViewModel.getCommentList(noticeId: notice.documentId);
+      commentReplyViewModel.getCommentList(noticeId: notice.id);
     });
 
     //댓글 추가 이후 스크롤 내리기
@@ -145,7 +145,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
           return NoticeComment(
             noticeCommentModel: commentList[index],
             isReplyScreen: false,
-            noticeId: notice.documentId,
+            noticeId: notice.id,
           );
         });
   }

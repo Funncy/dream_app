@@ -76,7 +76,7 @@ class NoticeCard extends StatelessWidget {
                   GestureDetector(
                     onTap: () {
                       noticeViewModel.toggleNoticeFavorite(
-                          noticeId: notice.documentId, userId: userId);
+                          noticeId: notice.id, userId: userId);
                       if (isCommentScreen) {
                         Get.find<CommentReplyViewModel>()
                             .commentStatus

@@ -21,21 +21,21 @@ class NoticeRepositoryImpl extends NoticeRepository {
   Future<void> createDummyData() async {
     var noticeModelList = [
       NoticeModel(
-          documentId: null,
+          id: null,
           userId: '123',
           content: '공지사항 01',
           commentCount: 0,
           favoriteUserList: ['245', '356'],
           documentReference: null),
       NoticeModel(
-          documentId: null,
+          id: null,
           userId: '123',
           content: '공지사항 02',
           commentCount: 0,
           favoriteUserList: ['245', '356'],
           documentReference: null),
       NoticeModel(
-          documentId: null,
+          id: null,
           userId: '123',
           content: '공지사항 03',
           commentCount: 0,
@@ -45,7 +45,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
     var commentList = [
       CommentModel(
-          documentId: null,
+          id: null,
           userId: '123',
           content: 'comment 01',
           replyIndex: 2,
@@ -64,7 +64,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
           favoriteUserList: [],
           documentReference: null),
       CommentModel(
-          documentId: null,
+          id: null,
           userId: '123',
           content: 'comment 01',
           replyIndex: 1,
