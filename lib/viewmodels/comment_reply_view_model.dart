@@ -106,8 +106,6 @@ class CommentReplyViewModel extends GetxController {
 
   Future<void> deleteComment(
       {@required NoticeModel notcieModel, @required commentId}) async {
-    commentStatus.value = Status.updating;
-
     Either<ErrorModel, void> either = await _commentRepository.deleteComment(
         noticeId: notcieModel.id, commentId: commentId);
     if (either.isLeft()) {
@@ -216,9 +214,6 @@ class CommentReplyViewModel extends GetxController {
       {@required String noticeId,
       @required String commentId,
       @required ReplyModel replyModel}) async {
-    replyStatus.value = Status.updating;
-    commentStatus.value = Status.updating;
-
     var either = await _replyRepository.deleteReply(
         noticeId: noticeId, commentId: commentId, replyModel: replyModel);
     if (either.isLeft()) {

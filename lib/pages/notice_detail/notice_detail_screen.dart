@@ -39,6 +39,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
     commentReplyViewModel.commentStatus.stream.reduce((preStatus, status) {
       //initial => loading => loaded (scroll X)
       //updating => loaded (scroll O)
+
       if (preStatus == Status.updating && status == Status.loaded) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _scrollController.animateTo(
