@@ -16,14 +16,22 @@ class NoticeBodyScreen extends StatefulWidget {
 }
 
 class _NoticeBodyScreenState extends State<NoticeBodyScreen> {
+  final ScrollController _scrollController = ScrollController();
   final noticeViewModel = Get.find<NoticeViewModel>();
 
   @override
   void initState() {
     super.initState();
     //build후에 함수 실행
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => noticeViewModel.getNoticeList());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      noticeViewModel.getNoticeList();
+      _scrollController.addListener(() {
+        if (_scrollController.position.pixels ==
+            _scrollController.position.maxScrollExtent) {
+          noticeViewModel.addNoticeList();
+        }
+      });
+    });
   }
 
   @override
@@ -43,7 +51,7 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> {
               error: () => _errorWidget(),
               loading: () => _loadingWidget(),
               empty: () => _emptyWidget(),
-              updating: () => Container(),
+              updating: () => _updatingWidget(noticeList),
               dataStatus: dataStatus);
         }),
       ),
@@ -56,8 +64,24 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> {
 
   ErrorMessageWidget _errorWidget() => ErrorMessageWidget(errorMessage: 'test');
 
+  _updatingWidget(List<NoticeModel> noticeList) {
+    return Stack(
+      children: [
+        _noticeList(noticeList),
+        Align(
+          alignment: Alignment.center,
+          child: Container(
+            height: 400.h,
+            child: Center(child: CircularProgressIndicator()),
+          ),
+        )
+      ],
+    );
+  }
+
   ListView _noticeList(List<NoticeModel> noticeList) {
     return ListView.builder(
+        controller: _scrollController,
         itemCount: noticeList.length,
         itemBuilder: (context, index) {
           return GestureDetector(

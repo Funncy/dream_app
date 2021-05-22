@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dream/core/error/error_model.dart';
 import 'package:dream/models/comment.dart';
@@ -9,6 +10,9 @@ abstract class NoticeRepository {
   Future<void> createDummyData();
 
   Future<Either<ErrorModel, List<NoticeModel>>> getNoticeList();
+
+  Future<Either<ErrorModel, List<NoticeModel>>> getMoreNoticeList(
+      DocumentReference documentReference);
 
   Future<Either<ErrorModel, void>> updateCommentCount(
       String noticeId, int commentCount);

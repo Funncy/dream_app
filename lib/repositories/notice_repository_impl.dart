@@ -102,6 +102,36 @@ class NoticeRepositoryImpl extends NoticeRepository {
       var querySnapshot = await _firebaseFirestore
           .collection(noticeCollectionName)
           .orderBy('updated_at')
+          .limit(5)
+          .get();
+      List<NoticeModel> result =
+          querySnapshot.docs.map((e) => NoticeModel.fromFirestore(e)).toList();
+      //FireStorage 이미지 가져오기
+      for (var noticeModel in result) {
+        var images =
+            await _firebaseStorage.ref('/notice/${noticeModel.id}').listAll();
+        for (var item in images.items) {
+          var url = await item.getDownloadURL();
+          noticeModel.imageList.add(url);
+        }
+      }
+
+      return Right(result);
+    } catch (e) {
+      return Left(ErrorModel(message: 'firebase Error'));
+    }
+  }
+
+  @override
+  Future<Either<ErrorModel, List<NoticeModel>>> getMoreNoticeList(
+      DocumentReference documentReference) async {
+    try {
+      DocumentSnapshot documentSnapshot = await documentReference.get();
+      var querySnapshot = await _firebaseFirestore
+          .collection(noticeCollectionName)
+          .orderBy('updated_at')
+          .startAfterDocument(documentSnapshot)
+          .limit(5)
           .get();
       List<NoticeModel> result =
           querySnapshot.docs.map((e) => NoticeModel.fromFirestore(e)).toList();
