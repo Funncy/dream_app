@@ -104,6 +104,19 @@ class CommentReplyViewModel extends GetxController {
       commentStatus.value = Status.empty;
   }
 
+  Future<void> deleteComment(
+      {@required String noticeId, @required commentId}) async {
+    commentStatus.value = Status.updating;
+
+    var either = await _commentRepository.deleteComment(
+        noticeId: noticeId, commentId: commentId);
+    if (either.isLeft()) {
+      commentStatus.value = Status.error;
+      return;
+    }
+    commentStatus.value = Status.loaded;
+  }
+
   Future<void> toggleCommentFavorite(
       {@required String noticeId,
       @required String commentId,
