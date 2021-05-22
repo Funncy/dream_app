@@ -176,21 +176,12 @@ class CommentReplyViewModel extends GetxController {
     replyStatus.value = Status.updating;
 
     CommentModel commentModel = getModel(commentList, commentId);
-    if (commentModel == null) {
-      alert.update((alertModel) {
-        alertModel.title = '서버 오류';
-        alertModel.content = "답글 작성중 문제가 발생했습니다.\n다시 시도해주세요.";
-        alertModel.isAlert = false;
-      });
-      replyStatus.value = Status.loaded;
-      return;
-    }
     //Comment 내부 replyIndex 증가
     bool result = await increaseReplyIndex(
         noticeId: noticeId, commentId: commentId, commentModel: commentModel);
 
     if (!result) {
-      replyStatus.value = Status.error;
+      sendAlert('서버 오류', '댓글 작성 중 오류가 발생했습니다.\n다시 시도해주세요.');
       return;
     }
 
@@ -202,7 +193,7 @@ class CommentReplyViewModel extends GetxController {
         content: content);
 
     if (either.isLeft()) {
-      replyStatus.value = Status.error;
+      sendAlert('서버 오류', '댓글 작성 중 오류가 발생했습니다.\n다시 시도해주세요.');
       return;
     }
 
@@ -211,7 +202,7 @@ class CommentReplyViewModel extends GetxController {
     Either<ErrorModel, CommentModel> either2 = await _commentRepository
         .getCommentById(noticeId: noticeId, commentId: commentId);
     if (either2.isLeft()) {
-      replyStatus.value = Status.error;
+      sendAlert('서버 오류', '댓글 작성 중 오류가 발생했습니다.\n다시 시도해주세요.');
       return;
     }
     commentModel = either2.getOrElse(() => null);
@@ -276,6 +267,7 @@ class CommentReplyViewModel extends GetxController {
       {@required String noticeId,
       @required String commentId,
       @required CommentModel commentModel}) async {
+    if (commentModel == null) return false;
     //인덱스 찾기
     commentModel.replyIndex++;
 
@@ -287,7 +279,6 @@ class CommentReplyViewModel extends GetxController {
             commentModel: commentModel);
     if (either.isLeft()) {
       commentModel.replyIndex--;
-      replyStatus.value = Status.error;
       return false;
     }
     return true;
@@ -307,4 +298,10 @@ class CommentReplyViewModel extends GetxController {
 
   void deleteModelInList(RxList modelList, String modelId) =>
       modelList.removeWhere((e) => e.id == modelId);
+
+  void sendAlert(String title, String content) => alert.update((alertModel) {
+        alertModel.title = title;
+        alertModel.content = content;
+        alertModel.isAlert = false;
+      });
 }
