@@ -2,6 +2,7 @@ import 'package:dream/constants.dart';
 import 'package:dream/models/notice.dart';
 import 'package:dream/pages/image_slider/image_slider_screen.dart';
 import 'package:dream/utils/time_util.dart';
+import 'package:dream/viewmodels/comment_reply_view_model.dart';
 import 'package:dream/viewmodels/notice_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,10 +12,13 @@ import 'image_spliter.dart';
 
 class NoticeCard extends StatelessWidget {
   final NoticeModel notice;
+  final bool isCommentScreen;
   //TODO: 실제 유저 아이디로 변경해야함.
   final String userId = '123';
 
-  const NoticeCard({Key key, @required this.notice}) : super(key: key);
+  const NoticeCard(
+      {Key key, @required this.notice, this.isCommentScreen = false})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -73,6 +77,11 @@ class NoticeCard extends StatelessWidget {
                     onTap: () {
                       noticeViewModel.toggleNoticeFavorite(
                           noticeId: notice.documentId, userId: userId);
+                      if (isCommentScreen) {
+                        Get.find<CommentReplyViewModel>()
+                            .commentStatus
+                            .refresh();
+                      }
                     },
                     behavior: HitTestBehavior.opaque,
                     child: Row(

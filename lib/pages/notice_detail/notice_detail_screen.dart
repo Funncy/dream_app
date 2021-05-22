@@ -84,6 +84,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
                       children: [
                         NoticeCard(
                           notice: notice,
+                          isCommentScreen: true,
                         ),
                         Divider(
                           thickness: 1.0,
