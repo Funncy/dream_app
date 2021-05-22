@@ -135,6 +135,27 @@ class CommentReplyViewModel extends GetxController {
     commentList.refresh();
   }
 
+  Future<bool> increaseReplyIndex(
+      {@required String noticeId,
+      @required String commentId,
+      @required CommentModel commentModel}) async {
+    //인덱스 찾기
+    commentModel.replyIndex++;
+
+    //인덱스 증가
+    Either<ErrorModel, void> either =
+        await _commentRepository.updateCommentById(
+            noticeId: noticeId,
+            commentId: commentId,
+            commentModel: commentModel);
+    if (either.isLeft()) {
+      commentModel.replyIndex--;
+      replyStatus.value = Status.error;
+      return false;
+    }
+    return true;
+  }
+
   Future<void> writeReply(
       {@required String noticeId,
       @required String commentId,
@@ -142,54 +163,43 @@ class CommentReplyViewModel extends GetxController {
       @required String content}) async {
     replyStatus.value = Status.updating;
 
-    //인덱스 찾기
-    var comment = commentList.where((e) => e.id == commentId)?.first;
-    if (comment == null) {
+    CommentModel commentModel = getModel(commentList, commentId);
+    if (commentModel == null) {
       replyStatus.value = Status.error;
       return;
     }
-    var replyIndex = comment.replyIndex;
-    comment.replyIndex++;
+    //Comment 내부 replyIndex 증가
+    bool result = await increaseReplyIndex(
+        noticeId: noticeId, commentId: commentId, commentModel: commentModel);
 
-    //인덱스 증가
-    Either<ErrorModel, void> either =
-        await _commentRepository.updateCommentById(
-            noticeId: noticeId, commentId: commentId, commentModel: comment);
+    if (!result) {
+      replyStatus.value = Status.error;
+      return;
+    }
+
+    Either<ErrorModel, void> either = await _replyRepository.writeReply(
+        noticeId: noticeId,
+        commentId: commentId,
+        replyIndex: commentModel.replyIndex.toString(),
+        userId: userId,
+        content: content);
 
     if (either.isLeft()) {
       replyStatus.value = Status.error;
       return;
     }
 
-    either = await _replyRepository.writeReply(
-        noticeId: noticeId,
-        commentId: commentId,
-        replyIndex: replyIndex.toString(),
-        userId: userId,
-        content: content);
-
-    either.fold((l) {
-      replyStatus.value = Status.error;
-      //TODO: 에러시 다이얼로그 처리 어떻게 할지?
-    }, (r) {});
-
-    //에러인 경우 아래 진행 안함
-    if (either.isLeft()) return;
-
     //정상적으로 서버 통신 완료
     //답글 다시 읽어 오기
-    var either2 = await _commentRepository.getCommentById(
-        noticeId: noticeId, commentId: commentId);
-    var result = either2.getOrElse(() => null);
-    if (either2.isLeft()) return;
-
-    //기존 내용 대체
-    int index = commentList.indexWhere((element) => element.id == commentId);
-    if (index == -1) {
+    Either<ErrorModel, CommentModel> either2 = await _commentRepository
+        .getCommentById(noticeId: noticeId, commentId: commentId);
+    if (either2.isLeft()) {
       replyStatus.value = Status.error;
       return;
     }
-    commentList[index] = result;
+    commentModel = either2.getOrElse(() => null);
+    //화면 모델 리스트에 삽입
+    replaceModel(commentList, commentModel);
 
     replyStatus.value = Status.loaded;
   }
@@ -199,12 +209,17 @@ class CommentReplyViewModel extends GetxController {
       @required String commentId,
       @required String replyId,
       @required String userId}) async {
-    CommentModel commentModel = getModel(commentList, commentId, commentStatus);
-    if (commentModel == null) return;
+    CommentModel commentModel = getModel(commentList, commentId);
+    if (commentModel == null) {
+      commentStatus.value = Status.error;
+      return;
+    }
 
-    ReplyModel replyModel =
-        getModel(commentModel.replyList, replyId, commentStatus);
-    if (replyModel == null) return;
+    ReplyModel replyModel = getModel(commentModel.replyList, replyId);
+    if (replyModel == null) {
+      commentStatus.value = Status.error;
+      return;
+    }
 
     var result = await _replyRepository.toggleReplyFavorite(
       noticeId: noticeId,
@@ -221,12 +236,15 @@ class CommentReplyViewModel extends GetxController {
     commentList.refresh();
   }
 
-  Object getModel(List modelList, String modelId, Rx<Status> status) {
-    var model = modelList.where((e) => e.id == modelId)?.first;
-    if (model != null) {
-      status.value = Status.error;
-      return null;
+  Object getModel(List modelList, String modelId) =>
+      modelList.where((e) => e.id == modelId)?.first;
+
+  bool replaceModel(RxList modelList, dynamic model) {
+    int index = modelList.indexWhere((e) => e.id == model.id);
+    if (index == -1) {
+      return false;
     }
-    return model;
+    modelList[index] = model;
+    return true;
   }
 }
