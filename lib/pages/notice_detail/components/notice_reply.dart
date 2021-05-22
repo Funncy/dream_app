@@ -10,21 +10,21 @@ import 'package:get/get.dart';
 class NoticeReply extends StatelessWidget {
   final String noticeId;
   final String commentId;
-  final ReplyModel noticeCommentReplyModel;
+  final ReplyModel replyModel;
   CommentReplyViewModel commentReplyViewModel =
       Get.find<CommentReplyViewModel>();
   NoticeReply({
     Key key,
     @required this.noticeId,
     @required this.commentId,
-    @required this.noticeCommentReplyModel,
+    @required this.replyModel,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     //시간 로드
-    var date = TimeUtil.getDateString(
-        noticeCommentReplyModel.updatedAt ?? noticeCommentReplyModel.createdAt);
+    var date =
+        TimeUtil.getDateString(replyModel.updatedAt ?? replyModel.createdAt);
 
     return Container(
       color: Colors.white,
@@ -58,7 +58,7 @@ class NoticeReply extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(vertical: 5),
                               child: Text(
                                 //TODO: 추후에 닉네임으로 변경해야함.
-                                noticeCommentReplyModel.userId,
+                                replyModel.userId,
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -73,7 +73,8 @@ class NoticeReply extends StatelessWidget {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
-                          child: InkWell(child: Icon(Icons.more_vert)),
+                          child: InkWell(
+                              onTap: () {}, child: Icon(Icons.more_vert)),
                         ),
                       ],
                     ),
@@ -83,7 +84,7 @@ class NoticeReply extends StatelessWidget {
                     child: Container(
                       width: 180.w,
                       child: Text(
-                        noticeCommentReplyModel.content,
+                        replyModel.content,
                         overflow: TextOverflow.clip,
                       ),
                     ),
@@ -97,7 +98,7 @@ class NoticeReply extends StatelessWidget {
                           commentReplyViewModel.toggleReplyFavorite(
                               noticeId: noticeId,
                               commentId: commentId,
-                              replyId: noticeCommentReplyModel.id,
+                              replyId: replyModel.id,
                               userId: '123');
                         },
                         child: Text(
@@ -111,13 +112,13 @@ class NoticeReply extends StatelessWidget {
                           commentReplyViewModel.toggleReplyFavorite(
                               noticeId: noticeId,
                               commentId: commentId,
-                              replyId: noticeCommentReplyModel.id,
+                              replyId: replyModel.id,
                               userId: '123');
                         },
                         child: Row(
                           children: [
                             //TODO: 가짜 유저 아이디 실제 유저 아이디로 변경 필요
-                            if (noticeCommentReplyModel.favoriteUserList
+                            if (replyModel.favoriteUserList
                                 .where((userId) => userId == '123')
                                 .isNotEmpty)
                               Icon(Icons.favorite)
@@ -126,8 +127,7 @@ class NoticeReply extends StatelessWidget {
                             SizedBox(
                               width: 5,
                             ),
-                            Text(
-                                "${noticeCommentReplyModel.favoriteUserList.length ?? "0"}")
+                            Text("${replyModel.favoriteUserList.length ?? "0"}")
                           ],
                         ),
                       )
