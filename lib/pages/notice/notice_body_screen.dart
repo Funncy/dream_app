@@ -64,6 +64,8 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> {
               onTap: () async {
                 await Get.toNamed('/notice_detail',
                     arguments: noticeList[index]);
+
+                noticeViewModel.noticeList.refresh();
               },
               child: Column(
                 children: [

@@ -53,7 +53,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
   void inputComment() {
     //TODO: uid 연동해야함.
     commentReplyViewModel.writeComment(
-        noticeId: notice.documentId,
+        noticeModel: notice,
         userId: '123',
         content: _textEditingController.text);
     _textEditingController.text = '';
