@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dream/constants.dart';
 import 'package:dream/core/data_status/status_enum.dart';
 import 'package:dream/models/comment.dart';
@@ -26,6 +28,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
   final TextEditingController _textEditingController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   var notice = Get.arguments as NoticeModel;
+  StreamSubscription alertSubscription;
 
   @override
   void initState() {
@@ -33,6 +36,11 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
     //build후에 함수 실행
     WidgetsBinding.instance.addPostFrameCallback((_) {
       commentReplyViewModel.getCommentList(noticeId: notice.id);
+      alertSubscription = commentReplyViewModel.alert.listen((alertModel) {
+        if (alertModel.isAlert) return;
+        alertModel.isAlert = true;
+        showAlert(title: alertModel.title, content: alertModel.content);
+      });
     });
 
     //댓글 추가 이후 스크롤 내리기
@@ -50,6 +58,12 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
       }
       return status;
     });
+  }
+
+  @override
+  void dispose() {
+    alertSubscription.cancel();
+    super.dispose();
   }
 
   void inputComment() {

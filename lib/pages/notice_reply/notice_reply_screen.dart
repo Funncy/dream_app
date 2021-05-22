@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dream/core/data_status/status_enum.dart';
 import 'package:dream/models/comment.dart';
 import 'package:dream/models/notice.dart';
@@ -29,12 +31,18 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
       Get.find<CommentReplyViewModel>();
   final TextEditingController _textEditingController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  StreamSubscription alertSubscription;
   @override
   void initState() {
     super.initState();
     //id에 해당하는 댓글 존재 확인
     WidgetsBinding.instance.addPostFrameCallback((_) {
       commentReplyViewModel.getComment(commentId: widget.commentId);
+      alertSubscription = commentReplyViewModel.alert.listen((alertModel) {
+        if (alertModel.isAlert) return;
+        alertModel.isAlert = true;
+        showAlert(title: alertModel.title, content: alertModel.content);
+      });
       //새로운 답글 추가시 아래 스크롤 애니메이션
       debounce(commentReplyViewModel.replyStatus, (_) {
         if (commentReplyViewModel.replyStatus.value == Status.loaded) {
@@ -45,6 +53,12 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
         }
       }, time: Duration(milliseconds: 500));
     });
+  }
+
+  @override
+  void dispose() {
+    alertSubscription.cancel();
+    super.dispose();
   }
 
   void writeReply() {

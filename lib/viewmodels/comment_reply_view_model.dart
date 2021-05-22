@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:dream/core/data_status/status_enum.dart';
+import 'package:dream/core/error/alert_model.dart';
 import 'package:dream/core/error/error_model.dart';
 import 'package:dream/models/comment.dart';
 import 'package:dream/models/notice.dart';
@@ -20,6 +21,7 @@ class CommentReplyViewModel extends GetxController {
   Rx<Status> commentStatus = Status.initial.obs;
   //답글은 comment내부에 존재하지만 상태는 따로 관리
   Rx<Status> replyStatus = Status.initial.obs;
+  Rx<AlertModel> alert = AlertModel(title: '', content: '').obs;
 
   CommentReplyViewModel(
       {@required NoticeRepository noticeRepository,
@@ -70,7 +72,11 @@ class CommentReplyViewModel extends GetxController {
     Either<ErrorModel, void> either = await _commentRepository.writeComment(
         noticeId: noticeModel.id, userId: userId, content: content);
     either.fold((l) {
-      commentStatus.value = Status.error;
+      alert.update((alertModel) {
+        alertModel.title = '서버 오류';
+        alertModel.content = "댓글 작성중 문제가 발생했습니다.\n다시 시도해주세요.";
+      });
+      commentStatus.value = Status.loaded;
     }, (r) {});
     //에러인 경우 아래 진행 안함
     if (either.isLeft()) return;
@@ -171,7 +177,12 @@ class CommentReplyViewModel extends GetxController {
 
     CommentModel commentModel = getModel(commentList, commentId);
     if (commentModel == null) {
-      replyStatus.value = Status.error;
+      alert.update((alertModel) {
+        alertModel.title = '서버 오류';
+        alertModel.content = "답글 작성중 문제가 발생했습니다.\n다시 시도해주세요.";
+        alertModel.isAlert = false;
+      });
+      replyStatus.value = Status.loaded;
       return;
     }
     //Comment 내부 replyIndex 증가
