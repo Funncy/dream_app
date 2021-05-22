@@ -105,15 +105,31 @@ class CommentReplyViewModel extends GetxController {
   }
 
   Future<void> deleteComment(
-      {@required String noticeId, @required commentId}) async {
+      {@required NoticeModel notcieModel, @required commentId}) async {
     commentStatus.value = Status.updating;
 
-    var either = await _commentRepository.deleteComment(
-        noticeId: noticeId, commentId: commentId);
+    Either<ErrorModel, void> either = await _commentRepository.deleteComment(
+        noticeId: notcieModel.id, commentId: commentId);
     if (either.isLeft()) {
       commentStatus.value = Status.error;
       return;
     }
+    //로컬에서도 삭제
+    deleteModelInList(commentList, commentId);
+    //댓글 카운트 감소 해야함.
+    notcieModel.commentCount--;
+    if (notcieModel.commentCount < 0) {
+      commentStatus.value = Status.loaded;
+      return;
+    }
+
+    either = await _noticeRepository.updateCommentCount(
+        notcieModel.id, notcieModel.commentCount);
+    if (either.isLeft()) {
+      commentStatus.value = Status.error;
+      return;
+    }
+
     commentStatus.value = Status.loaded;
   }
 
@@ -260,4 +276,7 @@ class CommentReplyViewModel extends GetxController {
     modelList[index] = model;
     return true;
   }
+
+  void deleteModelInList(RxList modelList, String modelId) =>
+      modelList.removeWhere((e) => e.id == modelId);
 }

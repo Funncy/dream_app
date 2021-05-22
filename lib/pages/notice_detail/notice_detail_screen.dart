@@ -59,6 +59,48 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
     _textEditingController.text = '';
   }
 
+  void deleteComment(String commentId) {
+    showAlert(
+        title: '댓글 삭제',
+        content: '정말 댓글을 삭제하시겠습니까?',
+        isFunction: true,
+        function: () => commentReplyViewModel.deleteComment(
+            notcieModel: notice, commentId: commentId));
+  }
+
+  void showAlert(
+      {@required String title,
+      @required String content,
+      bool isFunction = false,
+      Function function}) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: <Widget>[
+            if (isFunction)
+              FlatButton(
+                child: Text('OK'),
+                onPressed: () async {
+                  function();
+                  Navigator.pop(context, "OK");
+                },
+              ),
+            FlatButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.pop(context, "Cancel");
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -146,6 +188,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
             noticeCommentModel: commentList[index],
             isReplyScreen: false,
             noticeId: notice.id,
+            deleteComment: deleteComment,
           );
         });
   }

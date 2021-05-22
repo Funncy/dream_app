@@ -13,11 +13,13 @@ class NoticeComment extends StatefulWidget {
   final CommentModel noticeCommentModel;
   final String noticeId;
   final bool isReplyScreen;
+  final Function deleteComment;
   const NoticeComment({
     Key key,
     this.noticeCommentModel,
     this.isReplyScreen,
     this.noticeId,
+    this.deleteComment,
   }) : super(key: key);
 
   @override
@@ -88,9 +90,15 @@ class _NoticeCommentState extends State<NoticeComment> {
                           ],
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: InkWell(child: Icon(Icons.more_vert)),
+                      //TODO: 유저 아이디가 내 아이디일때만 띄움 (삭제를 위함)
+                      GestureDetector(
+                        onTap: () {
+                          widget.deleteComment(widget.noticeCommentModel.id);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: InkWell(child: Icon(Icons.more_vert_rounded)),
+                        ),
                       ),
                     ],
                   ),
