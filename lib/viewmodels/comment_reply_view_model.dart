@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
+import 'package:dream/constants.dart';
 import 'package:dream/core/data_status/status_enum.dart';
 import 'package:dream/core/error/alert_model.dart';
+import 'package:dream/core/error/error_constants.dart';
 import 'package:dream/core/error/error_model.dart';
 import 'package:dream/models/comment.dart';
 import 'package:dream/models/notice.dart';
@@ -21,7 +23,7 @@ class CommentReplyViewModel extends GetxController {
   Rx<Status> commentStatus = Status.initial.obs;
   //답글은 comment내부에 존재하지만 상태는 따로 관리
   Rx<Status> replyStatus = Status.initial.obs;
-  Rx<AlertModel> alert = AlertModel(title: '', content: '').obs;
+  Rx<AlertModel> alert = AlertModel().obs;
 
   CommentReplyViewModel(
       {@required NoticeRepository noticeRepository,
@@ -72,10 +74,7 @@ class CommentReplyViewModel extends GetxController {
     Either<ErrorModel, void> either = await _commentRepository.writeComment(
         noticeId: noticeModel.id, userId: userId, content: content);
     either.fold((l) {
-      alert.update((alertModel) {
-        alertModel.title = '서버 오류';
-        alertModel.content = "댓글 작성중 문제가 발생했습니다.\n다시 시도해주세요.";
-      });
+      sendAlert(ErrorConstants.commentWriteServerError);
       commentStatus.value = Status.loaded;
     }, (r) {});
     //에러인 경우 아래 진행 안함
@@ -89,7 +88,8 @@ class CommentReplyViewModel extends GetxController {
     if (either.isLeft()) {
       noticeModel.commentCount--;
       //TODO: 댓글도 지워야함.
-      commentStatus.value = Status.error;
+      sendAlert(ErrorConstants.commentWriteServerError);
+      commentStatus.value = Status.loaded;
       return;
     }
 
@@ -97,10 +97,13 @@ class CommentReplyViewModel extends GetxController {
     //댓글 다시 읽어오기
     Either<ErrorModel, List<CommentModel>> either2 =
         await _commentRepository.getCommentList(noticeId: noticeModel.id);
-    var result =
-        either2.fold((l) => commentStatus.value = Status.error, (r) => r);
+    var result = either2.getOrElse(() => null);
 
-    if (either2.isLeft()) return;
+    if (either2.isLeft()) {
+      sendAlert(ErrorConstants.commentWriteServerError);
+      commentStatus.value = Status.loaded;
+      return;
+    }
 
     commentList.clear();
     commentList.addAll(result);
@@ -115,7 +118,8 @@ class CommentReplyViewModel extends GetxController {
     Either<ErrorModel, void> either = await _commentRepository.deleteComment(
         noticeId: notcieModel.id, commentId: commentId);
     if (either.isLeft()) {
-      commentStatus.value = Status.error;
+      sendAlert(ErrorConstants.commentDeleteServerError);
+      commentStatus.value = Status.loaded;
       return;
     }
     //로컬에서도 삭제
@@ -130,7 +134,8 @@ class CommentReplyViewModel extends GetxController {
     either = await _noticeRepository.updateCommentCount(
         notcieModel.id, notcieModel.commentCount);
     if (either.isLeft()) {
-      commentStatus.value = Status.error;
+      sendAlert(ErrorConstants.commentDeleteServerError);
+      commentStatus.value = Status.loaded;
       return;
     }
 
@@ -158,7 +163,10 @@ class CommentReplyViewModel extends GetxController {
         commentId: commentId,
         userId: userId,
         isDelete: isDelete);
-    if (result.isLeft()) return;
+    if (result.isLeft()) {
+      sendAlert(ErrorConstants.serverError);
+      return;
+    }
 
     //local에서도 증가
     if (isDelete)
@@ -181,7 +189,7 @@ class CommentReplyViewModel extends GetxController {
         noticeId: noticeId, commentId: commentId, commentModel: commentModel);
 
     if (!result) {
-      sendAlert('서버 오류', '댓글 작성 중 오류가 발생했습니다.\n다시 시도해주세요.');
+      sendAlert(ErrorConstants.commentWriteServerError);
       return;
     }
 
@@ -193,7 +201,7 @@ class CommentReplyViewModel extends GetxController {
         content: content);
 
     if (either.isLeft()) {
-      sendAlert('서버 오류', '댓글 작성 중 오류가 발생했습니다.\n다시 시도해주세요.');
+      sendAlert(ErrorConstants.commentWriteServerError);
       return;
     }
 
@@ -202,7 +210,7 @@ class CommentReplyViewModel extends GetxController {
     Either<ErrorModel, CommentModel> either2 = await _commentRepository
         .getCommentById(noticeId: noticeId, commentId: commentId);
     if (either2.isLeft()) {
-      sendAlert('서버 오류', '댓글 작성 중 오류가 발생했습니다.\n다시 시도해주세요.');
+      sendAlert(ErrorConstants.commentWriteServerError);
       return;
     }
     commentModel = either2.getOrElse(() => null);
@@ -219,7 +227,7 @@ class CommentReplyViewModel extends GetxController {
     var either = await _replyRepository.deleteReply(
         noticeId: noticeId, commentId: commentId, replyModel: replyModel);
     if (either.isLeft()) {
-      //TODO: RxAlert을 만들어야함.
+      sendAlert(ErrorConstants.commentWriteServerError);
       return;
     }
     //로컬에서도 삭제 필요
@@ -238,13 +246,13 @@ class CommentReplyViewModel extends GetxController {
       @required String userId}) async {
     CommentModel commentModel = getModel(commentList, commentId);
     if (commentModel == null) {
-      commentStatus.value = Status.error;
+      sendAlert(ErrorConstants.serverError);
       return;
     }
 
     ReplyModel replyModel = getModel(commentModel.replyList, replyId);
     if (replyModel == null) {
-      commentStatus.value = Status.error;
+      sendAlert(ErrorConstants.serverError);
       return;
     }
 
@@ -255,7 +263,7 @@ class CommentReplyViewModel extends GetxController {
       userId: userId,
     );
     if (result.isLeft()) {
-      commentStatus.value = Status.error;
+      sendAlert(ErrorConstants.serverError);
       return;
     }
 
@@ -299,9 +307,6 @@ class CommentReplyViewModel extends GetxController {
   void deleteModelInList(RxList modelList, String modelId) =>
       modelList.removeWhere((e) => e.id == modelId);
 
-  void sendAlert(String title, String content) => alert.update((alertModel) {
-        alertModel.title = title;
-        alertModel.content = content;
-        alertModel.isAlert = false;
-      });
+  void sendAlert(String code) =>
+      alert.update((alertModel) => alertModel.update(code: code));
 }
