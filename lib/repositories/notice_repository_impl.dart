@@ -5,16 +5,20 @@ import 'package:dream/models/comment.dart';
 import 'package:dream/models/notice.dart';
 import 'package:dream/models/reply.dart';
 import 'package:dream/repositories/notice_repository.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:dream/constants.dart';
 
 class NoticeRepositoryImpl extends NoticeRepository {
   FirebaseFirestore _firebaseFirestore;
-  // FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
+  FirebaseStorage _firebaseStorage;
 
-  NoticeRepositoryImpl({@required FirebaseFirestore firebaseFirestore}) {
+  NoticeRepositoryImpl(
+      {@required FirebaseFirestore firebaseFirestore,
+      @required FirebaseStorage firebaseStorage}) {
     _firebaseFirestore = firebaseFirestore;
+    _firebaseStorage = firebaseStorage;
   }
 
   @override
@@ -101,6 +105,16 @@ class NoticeRepositoryImpl extends NoticeRepository {
           .get();
       List<NoticeModel> result =
           querySnapshot.docs.map((e) => NoticeModel.fromFirestore(e)).toList();
+      //FireStorage 이미지 가져오기
+      for (var noticeModel in result) {
+        var images =
+            await _firebaseStorage.ref('/notice/${noticeModel.id}').listAll();
+        for (var item in images.items) {
+          var url = await item.getDownloadURL();
+          noticeModel.imageList.add(url);
+        }
+      }
+
       return Right(result);
     } catch (e) {
       return Left(ErrorModel(message: 'firebase Error'));
