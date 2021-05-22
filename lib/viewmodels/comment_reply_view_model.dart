@@ -135,27 +135,6 @@ class CommentReplyViewModel extends GetxController {
     commentList.refresh();
   }
 
-  Future<bool> increaseReplyIndex(
-      {@required String noticeId,
-      @required String commentId,
-      @required CommentModel commentModel}) async {
-    //인덱스 찾기
-    commentModel.replyIndex++;
-
-    //인덱스 증가
-    Either<ErrorModel, void> either =
-        await _commentRepository.updateCommentById(
-            noticeId: noticeId,
-            commentId: commentId,
-            commentModel: commentModel);
-    if (either.isLeft()) {
-      commentModel.replyIndex--;
-      replyStatus.value = Status.error;
-      return false;
-    }
-    return true;
-  }
-
   Future<void> writeReply(
       {@required String noticeId,
       @required String commentId,
@@ -234,6 +213,27 @@ class CommentReplyViewModel extends GetxController {
 
     //local에서도 수정
     commentList.refresh();
+  }
+
+  Future<bool> increaseReplyIndex(
+      {@required String noticeId,
+      @required String commentId,
+      @required CommentModel commentModel}) async {
+    //인덱스 찾기
+    commentModel.replyIndex++;
+
+    //인덱스 증가
+    Either<ErrorModel, void> either =
+        await _commentRepository.updateCommentById(
+            noticeId: noticeId,
+            commentId: commentId,
+            commentModel: commentModel);
+    if (either.isLeft()) {
+      commentModel.replyIndex--;
+      replyStatus.value = Status.error;
+      return false;
+    }
+    return true;
   }
 
   Object getModel(List modelList, String modelId) =>
