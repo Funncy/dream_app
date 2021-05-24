@@ -9,6 +9,7 @@ import 'package:dream/pages/common/empty_widget.dart';
 import 'package:dream/pages/common/error_message_widget.dart';
 import 'package:dream/pages/common/loading_widget.dart';
 import 'package:dream/pages/common/screen_status_widget.dart';
+import 'package:dream/pages/mixin/alert_mixin.dart';
 import 'package:dream/pages/notice/components/notice_card.dart';
 import 'package:dream/pages/notice_detail/components/bottom_input_bar.dart';
 import 'package:dream/pages/notice_detail/components/notice_comment.dart';
@@ -23,7 +24,8 @@ class NoticeDetailScreen extends StatefulWidget {
   _NoticeDetailScreenState createState() => _NoticeDetailScreenState();
 }
 
-class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
+class _NoticeDetailScreenState extends State<NoticeDetailScreen>
+    with AlertMixin {
   final commentReplyViewModel = Get.find<CommentReplyViewModel>();
   final TextEditingController _textEditingController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
@@ -91,39 +93,6 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
         isFunction: true,
         function: () => commentReplyViewModel.deleteReply(
             noticeId: notice.id, commentId: commentId, replyModel: replyModel));
-  }
-
-  void showAlert(
-      {@required String title,
-      @required String content,
-      bool isFunction = false,
-      Function function}) {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(content),
-          actions: <Widget>[
-            if (isFunction)
-              FlatButton(
-                child: Text('OK'),
-                onPressed: () async {
-                  function();
-                  Navigator.pop(context, "OK");
-                },
-              ),
-            FlatButton(
-              child: Text('Cancel'),
-              onPressed: () {
-                Navigator.pop(context, "Cancel");
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override

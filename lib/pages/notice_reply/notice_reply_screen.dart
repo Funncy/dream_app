@@ -8,6 +8,7 @@ import 'package:dream/pages/common/empty_widget.dart';
 import 'package:dream/pages/common/error_message_widget.dart';
 import 'package:dream/pages/common/loading_widget.dart';
 import 'package:dream/pages/common/screen_status_widget.dart';
+import 'package:dream/pages/mixin/alert_mixin.dart';
 import 'package:dream/pages/notice_detail/components/bottom_input_bar.dart';
 import 'package:dream/pages/notice_detail/components/notice_comment.dart';
 import 'package:dream/viewmodels/comment_reply_view_model.dart';
@@ -26,7 +27,7 @@ class NoticeReplyScreen extends StatefulWidget {
   _NoticeReplyScreenState createState() => _NoticeReplyScreenState();
 }
 
-class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
+class _NoticeReplyScreenState extends State<NoticeReplyScreen> with AlertMixin {
   CommentReplyViewModel commentReplyViewModel =
       Get.find<CommentReplyViewModel>();
   final TextEditingController _textEditingController = TextEditingController();
@@ -80,39 +81,6 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> {
             noticeId: widget.noticeId,
             commentId: commentId,
             replyModel: replyModel));
-  }
-
-  void showAlert(
-      {@required String title,
-      @required String content,
-      bool isFunction = false,
-      Function function}) {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(content),
-          actions: <Widget>[
-            if (isFunction)
-              FlatButton(
-                child: Text('OK'),
-                onPressed: () async {
-                  function();
-                  Navigator.pop(context, "OK");
-                },
-              ),
-            FlatButton(
-              child: Text('Cancel'),
-              onPressed: () {
-                Navigator.pop(context, "Cancel");
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override
