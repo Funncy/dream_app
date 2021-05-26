@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dream/bindings/notice_bindings.dart';
 import 'package:dream/pages/bottom_navigation/main_screen.dart';
 import 'package:dream/pages/notice_detail/notice_detail_screen.dart';
+import 'package:dream/pages/pray/pray_send_screen.dart';
 import 'package:dream/utils/time_util.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -96,7 +97,8 @@ class MyApp extends StatelessWidget {
           GetPage(
               name: NoticeDetailScreen.routeName,
               page: () => NoticeDetailScreen(),
-              binding: NoticeBindings())
+              binding: NoticeBindings()),
+          GetPage(name: PraySendScreen.routeName, page: () => PraySendScreen()),
         ],
       ),
     );
