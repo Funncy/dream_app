@@ -94,7 +94,7 @@ class MyApp extends StatelessWidget {
           GetPage(
               name: '/', page: () => MainScreen(), binding: NoticeBindings()),
           GetPage(
-              name: '/notice_detail',
+              name: NoticeDetailScreen.routeName,
               page: () => NoticeDetailScreen(),
               binding: NoticeBindings())
         ],

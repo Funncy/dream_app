@@ -20,6 +20,7 @@ import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class NoticeDetailScreen extends StatefulWidget {
+  static final routeName = '/notice_detail';
   @override
   _NoticeDetailScreenState createState() => _NoticeDetailScreenState();
 }
