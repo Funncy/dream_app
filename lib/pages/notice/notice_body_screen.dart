@@ -34,26 +34,33 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> {
     });
   }
 
+  Future<void> refreshNoticeList() async {
+    noticeViewModel.getNoticeList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("공지사항"),
       ),
-      body: Container(
-        color: Colors.black12,
-        child: Obx(() {
-          List<NoticeModel> noticeList = noticeViewModel.noticeList.toList();
-          var dataStatus = noticeViewModel.noticeStatus.value;
+      body: RefreshIndicator(
+        onRefresh: refreshNoticeList,
+        child: Container(
+          color: Colors.black12,
+          child: Obx(() {
+            List<NoticeModel> noticeList = noticeViewModel.noticeList.toList();
+            var dataStatus = noticeViewModel.noticeStatus.value;
 
-          return DataStatusWidget(
-              body: _noticeList(noticeList),
-              error: _errorWidget(),
-              loading: _loadingWidget(),
-              empty: _emptyWidget(),
-              updating: _updatingWidget(noticeList),
-              dataStatus: dataStatus);
-        }),
+            return DataStatusWidget(
+                body: _noticeList(noticeList),
+                error: _errorWidget(),
+                loading: _loadingWidget(),
+                empty: _emptyWidget(),
+                updating: _updatingWidget(noticeList),
+                dataStatus: dataStatus);
+          }),
+        ),
       ),
     );
   }
