@@ -1,3 +1,5 @@
+import 'package:dream/core/data_status/status_enum.dart';
+import 'package:dream/viewmodels/pray_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,8 +13,20 @@ class _PraySendScreenState extends State<PraySendScreen> {
   bool isPublic = Get.arguments;
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
+  PrayViewModel prayViewModel = Get.find<PrayViewModel>();
 
-  void sendPray() {}
+  void sendPray() async {
+    await prayViewModel.sendPray(
+        userId: '123',
+        title: titleController.text,
+        content: contentController.text,
+        isPublic: isPublic);
+
+    if (prayViewModel.sendStatus.value == Status.loaded) {
+      //전송 완료 뒤로가기
+      Get.back();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
