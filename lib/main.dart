@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dream/bindings/notice_bindings.dart';
+import 'package:dream/bindings/pray_bindings.dart';
 import 'package:dream/pages/bottom_navigation/main_screen.dart';
 import 'package:dream/pages/notice_detail/notice_detail_screen.dart';
 import 'package:dream/pages/pray/pray_send_screen.dart';
@@ -98,7 +99,10 @@ class MyApp extends StatelessWidget {
               name: NoticeDetailScreen.routeName,
               page: () => NoticeDetailScreen(),
               binding: NoticeBindings()),
-          GetPage(name: PraySendScreen.routeName, page: () => PraySendScreen()),
+          GetPage(
+              name: PraySendScreen.routeName,
+              page: () => PraySendScreen(),
+              binding: PrayBindings()),
         ],
       ),
     );
