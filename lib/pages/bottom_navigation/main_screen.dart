@@ -1,5 +1,6 @@
 import 'package:dream/constants.dart';
 import 'package:dream/pages/notice/notice_body_screen.dart';
+import 'package:dream/pages/pray/pray_list_screen.dart';
 import 'package:dream/pages/pray/pray_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -28,9 +29,9 @@ class _MainScreenState extends State<MainScreen> {
           //TODO: 다른 메뉴들 넣어야함.
           items: [
             BottomNavigationBarItem(label: "공지사항", icon: Icon(Icons.favorite)),
-            BottomNavigationBarItem(label: "공지사항2", icon: Icon(Icons.favorite)),
-            BottomNavigationBarItem(label: "공지사항3", icon: Icon(Icons.favorite)),
-            BottomNavigationBarItem(label: "공지사항4", icon: Icon(Icons.favorite)),
+            BottomNavigationBarItem(
+                label: "기도 보내기", icon: Icon(Icons.favorite)),
+            BottomNavigationBarItem(label: "중보 기도", icon: Icon(Icons.favorite)),
           ],
         ),
         body: IndexedStack(
@@ -43,7 +44,6 @@ class _MainScreenState extends State<MainScreen> {
   List<Widget> _bodyWidgetList = [
     NoticeBodyScreen(),
     PrayScreen(),
-    Text("공지사항3"),
-    Text("공지사항4"),
+    PrayListScreen(),
   ];
 }
