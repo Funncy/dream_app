@@ -41,7 +41,7 @@ class PrayCard extends StatelessWidget {
                   SizedBox(
                     height: 5.h,
                   ),
-                  Text(prayModel.content,
+                  Text(prayModel.title,
                       style: Theme.of(context).textTheme.bodyText1),
                   SizedBox(
                     height: 8.h,
