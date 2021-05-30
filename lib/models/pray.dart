@@ -7,10 +7,14 @@ class PrayModel extends Core {
   String userId;
   String title;
   String content;
+  List<String> prayUserList;
   DocumentReference documentReference;
 
   PrayModel(
-      {@required this.userId, @required this.title, @required this.content})
+      {@required this.userId,
+      @required this.title,
+      @required this.content,
+      this.prayUserList = const []})
       : super(DateTime.now(), DateTime.now());
 
   factory PrayModel.fromFirestore(DocumentSnapshot documentSnapshot) {
@@ -19,6 +23,7 @@ class PrayModel extends Core {
       userId: json['user_id'],
       title: json['title'],
       content: json['content'],
+      prayUserList: json['pray_user_list']?.cast<String>()?.toList(),
     );
     model.id = documentSnapshot.id;
     model.documentReference = documentSnapshot.reference;
@@ -31,6 +36,7 @@ class PrayModel extends Core {
         'user_id': userId,
         'title': title,
         'content': content,
+        'pray_user_list': prayUserList,
         'created_at': createdAt,
         'updated_at': updatedAt,
       };
