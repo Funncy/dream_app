@@ -29,7 +29,7 @@ class PrayCard extends StatelessWidget {
       content = content.substring(0, 80);
       content += "....";
     }
-
+    //TODO: User 정보 및 아이콘 필요
     return Padding(
       padding: const EdgeInsets.only(bottom: 0.0),
       child: Container(
