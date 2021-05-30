@@ -18,7 +18,7 @@ class DataStatusWidget extends StatelessWidget {
       @required this.dataStatus,
       @required this.updating})
       : super(key: key);
-
+//TODO: Empty or Error Widget에서 새로 고침 가능하게 해야함. refreshIndicator 등
   @override
   Widget build(BuildContext context) {
     switch (dataStatus) {
