@@ -24,6 +24,12 @@ class PrayCard extends StatelessWidget {
         TimeUtil.getDateString(prayModel.updatedAt ?? prayModel.createdAt);
     PrayViewModel prayViewModel = Get.find<PrayViewModel>();
 
+    String content = prayModel.content;
+    if (content.length > 80) {
+      content = content.substring(0, 80);
+      content += "....";
+    }
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 0.0),
       child: Container(
@@ -41,11 +47,11 @@ class PrayCard extends StatelessWidget {
                   SizedBox(
                     height: 5.h,
                   ),
-                  Text(prayModel.title,
-                      style: Theme.of(context).textTheme.bodyText1),
+                  Text(prayModel.title, style: Constants.titleStyle),
                   SizedBox(
                     height: 8.h,
                   ),
+                  Text(content, style: Constants.contentStyle),
                 ],
               ),
             ),

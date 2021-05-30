@@ -10,6 +10,9 @@ class Constants {
 
   static TextStyle titleStyle =
       TextStyle(fontSize: 18.ssp, color: Colors.black);
+
+  static TextStyle contentStyle =
+      TextStyle(fontSize: 16.ssp, color: Colors.black);
 }
 
 //FireStore Name
