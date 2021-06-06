@@ -12,7 +12,7 @@ class NoticeViewModel extends GetxController {
   NoticeRepository _noticeRepository;
   //obs는 observer로 Rx로 데이터 관리되게 됩니다.
   //화면 상태가 아니라 데이터의 상태를 관리하자.
-  RxList<NoticeModel> noticeList = <NoticeModel>[].obs;
+  List<NoticeModel> noticeList = <NoticeModel>[];
   Rx<Status> noticeStatus = Status.initial.obs;
 
   NoticeViewModel({@required NoticeRepository noticeRepository}) {
@@ -94,6 +94,10 @@ class NoticeViewModel extends GetxController {
       notice.favoriteUserList.remove(userId);
     else
       notice.favoriteUserList.add(userId);
-    noticeList.refresh();
+    refreshNotice();
+  }
+
+  void refreshNotice() {
+    noticeStatus.refresh();
   }
 }
