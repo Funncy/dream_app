@@ -49,8 +49,8 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> {
         child: Container(
           color: Colors.black12,
           child: Obx(() {
-            List<NoticeModel> noticeList = noticeViewModel.noticeList.toList();
             var dataStatus = noticeViewModel.noticeStatus.value;
+            List<NoticeModel> noticeList = noticeViewModel.noticeList;
 
             return DataStatusWidget(
                 body: _noticeList(noticeList),
@@ -97,7 +97,7 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> {
                 await Get.toNamed('/notice_detail',
                     arguments: noticeList[index]);
 
-                noticeViewModel.noticeList.refresh();
+                noticeViewModel.refreshNotice();
               },
               child: Column(
                 children: [
