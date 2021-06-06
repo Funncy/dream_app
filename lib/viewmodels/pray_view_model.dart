@@ -9,8 +9,13 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 
 class PrayViewModel extends GetxController {
   PrayRepository _prayRepository;
-  Rx<Status> sendStatus = Status.initial.obs;
-  Rx<Status> listStatus = Status.initial.obs;
+  Rx<Status> _sendStatus = Status.initial.obs;
+  get sendStatus => _sendStatus.value;
+  set sendStatus(Status status) => _sendStatus.value = status;
+  Rx<Status> _listStatus = Status.initial.obs;
+  get listStatus => _listStatus.value;
+  set listStatus(Status status) => _listStatus.value = status;
+
   List<PrayModel> prayList = [];
 
   PrayViewModel({@required PrayRepository prayRepository}) {
@@ -60,6 +65,14 @@ class PrayViewModel extends GetxController {
       //TODO: Alert 보내기
       return;
     }
-    sendStatus.value = Status.loaded;
+    sendStatus = Status.loaded;
+  }
+
+  void sendRefresh() {
+    sendStatus.refresh();
+  }
+
+  void listRefresh() {
+    listStatus.refresh();
   }
 }
