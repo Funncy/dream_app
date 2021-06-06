@@ -13,7 +13,9 @@ class NoticeViewModel extends GetxController {
   //obs는 observer로 Rx로 데이터 관리되게 됩니다.
   //화면 상태가 아니라 데이터의 상태를 관리하자.
   List<NoticeModel> noticeList = <NoticeModel>[];
-  Rx<Status> noticeStatus = Status.initial.obs;
+  Rx<Status> _noticeStatus = Status.initial.obs;
+  get noticeStatus => _noticeStatus.value;
+  set noticeStatus(Status status) => _noticeStatus.value = status;
 
   NoticeViewModel({@required NoticeRepository noticeRepository}) {
     _noticeRepository = noticeRepository;

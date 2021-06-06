@@ -20,9 +20,13 @@ class CommentReplyViewModel extends GetxController {
   CommentRepository _commentRepository;
   ReplyRepository _replyRepository;
   List<CommentModel> commentList = <CommentModel>[];
-  Rx<Status> commentStatus = Status.initial.obs;
+  Rx<Status> _commentStatus = Status.initial.obs;
+  get commentStatus => _commentStatus.value;
+  set commentStatus(Status status) => _commentStatus.value = status;
   //답글은 comment내부에 존재하지만 상태는 따로 관리
-  Rx<Status> replyStatus = Status.initial.obs;
+  Rx<Status> _replyStatus = Status.initial.obs;
+  get replyStatus => _replyStatus.value;
+  set replyStatus(Status status) => _replyStatus.value = status;
   Rx<AlertModel> alert = AlertModel().obs;
 
   CommentReplyViewModel(
