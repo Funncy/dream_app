@@ -19,7 +19,7 @@ class CommentReplyViewModel extends GetxController {
   NoticeRepository _noticeRepository;
   CommentRepository _commentRepository;
   ReplyRepository _replyRepository;
-  RxList<CommentModel> commentList = <CommentModel>[].obs;
+  List<CommentModel> commentList = <CommentModel>[];
   Rx<Status> commentStatus = Status.initial.obs;
   //답글은 comment내부에 존재하지만 상태는 따로 관리
   Rx<Status> replyStatus = Status.initial.obs;
@@ -173,7 +173,7 @@ class CommentReplyViewModel extends GetxController {
       commentModel.favoriteUserList.remove(userId);
     else
       commentModel.favoriteUserList.add(userId);
-    commentList.refresh();
+    refreshComment();
   }
 
   Future<void> writeReply(
@@ -268,7 +268,7 @@ class CommentReplyViewModel extends GetxController {
     }
 
     //local에서도 수정
-    commentList.refresh();
+    refreshComment();
   }
 
   Future<bool> increaseReplyIndex(
@@ -292,10 +292,18 @@ class CommentReplyViewModel extends GetxController {
     return true;
   }
 
+  void refreshComment() {
+    commentStatus.refresh();
+  }
+
+  void refreshReply() {
+    replyStatus.refresh();
+  }
+
   Object getModel(List modelList, String modelId) =>
       modelList.where((e) => e.id == modelId)?.first;
 
-  bool replaceModel(RxList modelList, dynamic model) {
+  bool replaceModel(List modelList, dynamic model) {
     int index = modelList.indexWhere((e) => e.id == model.id);
     if (index == -1) {
       return false;
@@ -304,7 +312,7 @@ class CommentReplyViewModel extends GetxController {
     return true;
   }
 
-  void deleteModelInList(RxList modelList, String modelId) =>
+  void deleteModelInList(List modelList, String modelId) =>
       modelList.removeWhere((e) => e.id == modelId);
 
   void sendAlert(String code) =>
