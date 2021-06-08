@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:dream/constants.dart';
 import 'package:dream/core/data_status/status_enum.dart';
 import 'package:dream/core/error/alert_model.dart';
 import 'package:dream/core/error/error_constants.dart';
@@ -12,8 +11,6 @@ import 'package:dream/repositories/notice_repository.dart';
 import 'package:dream/repositories/reply_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-
-import 'notice_view_model.dart';
 
 class CommentReplyViewModel extends GetxController {
   NoticeRepository _noticeRepository;
