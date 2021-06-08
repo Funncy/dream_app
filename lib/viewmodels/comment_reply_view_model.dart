@@ -36,15 +36,17 @@ class CommentReplyViewModel extends GetxController {
     _replyRepository = replyRepository;
   }
 
-  void getCommentList({@required String noticeId}) async {
+  Future<DataResult> getCommentList({@required String noticeId}) async {
     commentStatus.value = Status.loading;
 
     Either<ErrorModel, List<CommentModel>> either =
         await _commentRepository.getCommentList(noticeId: noticeId);
-    var result =
-        either.fold((l) => commentStatus.value = Status.error, (r) => r);
+    var result = either.fold((l) => l, (r) => r);
 
-    if (either.isLeft()) return;
+    if (either.isLeft()) {
+      commentStatus.value = Status.error;
+      return DataResult(isCompleted: false, errorModel: result);
+    }
 
     commentList.clear();
     commentList.addAll(result);
@@ -54,6 +56,8 @@ class CommentReplyViewModel extends GetxController {
     } else {
       commentStatus.value = Status.empty;
     }
+
+    return DataResult(isCompleted: true);
   }
 
   void getComment({@required String commentId}) async {
@@ -90,22 +94,10 @@ class CommentReplyViewModel extends GetxController {
 
     //정상적으로 서버 통신 완료
     //댓글 다시 읽어오기
-    Either<ErrorModel, List<CommentModel>> either2 =
-        await _commentRepository.getCommentList(noticeId: noticeModel.id);
-    var result3 = either2.getOrElse(() => null);
+    DataResult getCommentListResult =
+        await getCommentList(noticeId: noticeModel.id);
+    if (!getCommentListResult.isCompleted) return getCommentListResult;
 
-    if (either2.isLeft()) {
-      sendAlert(ErrorConstants.commentWriteServerError);
-      commentStatus.value = Status.loaded;
-      return DataResult(isCompleted: false, errorModel: result3 as ErrorModel);
-    }
-
-    commentList.clear();
-    commentList.addAll(result3);
-    if (commentList.length > 0)
-      commentStatus.value = Status.loaded;
-    else
-      commentStatus.value = Status.empty;
     return DataResult(isCompleted: true);
   }
 
