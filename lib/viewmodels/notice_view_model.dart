@@ -29,11 +29,11 @@ class NoticeViewModel extends GetxController {
     //데이터 상태와 데이터를 가져오는 함수를 전달
     //추가로 리스트 형태인지를 전달
     // 리스트 형태인경우 데이터의 길이에 따라 Empty위젯을 보여줘야 함.
-    noticeStatus.value = Status.loading;
+    noticeStatus = Status.loading;
     Either<ErrorModel, List<NoticeModel>> either =
         await _noticeRepository.getNoticeList();
     var result = either.fold((l) {
-      noticeStatus.value = Status.error;
+      noticeStatus = Status.error;
     }, (r) => r);
 
     //에러인 경우 종료
@@ -43,34 +43,34 @@ class NoticeViewModel extends GetxController {
     noticeList.clear();
     noticeList.addAll(result);
     if (noticeList.length > 0)
-      noticeStatus.value = Status.loaded;
+      noticeStatus = Status.loaded;
     else
-      noticeStatus.value = Status.empty;
+      noticeStatus = Status.empty;
   }
 
   void addNoticeList() async {
-    noticeStatus.value = Status.updating;
+    noticeStatus = Status.updating;
 
     Either<ErrorModel, List<NoticeModel>> either = await _noticeRepository
         .getMoreNoticeList(noticeList.last.documentReference);
 
     //에러인 경우 종료
     if (either.isLeft()) {
-      noticeStatus.value = Status.error;
+      noticeStatus = Status.error;
       return;
     }
     List<NoticeModel> result = either.getOrElse(() => null);
     if (result.isEmpty) {
-      noticeStatus.value = Status.loaded;
+      noticeStatus = Status.loaded;
       return;
     }
 
     //Right이면 List로 반환됨.
     noticeList.addAll(result);
     if (noticeList.length > 0)
-      noticeStatus.value = Status.loaded;
+      noticeStatus = Status.loaded;
     else
-      noticeStatus.value = Status.empty;
+      noticeStatus = Status.empty;
   }
 
   Future<void> toggleNoticeFavorite(

@@ -50,7 +50,7 @@ class _PrayListScreenState extends State<PrayListScreen> {
             color: Colors.black12,
             child: Obx(() {
               List<PrayModel> prayList = prayViewModel.prayList;
-              var dataStatus = prayViewModel.listStatus.value;
+              var dataStatus = prayViewModel.listStatus;
 
               return DataStatusWidget(
                   body: _prayList(prayList),

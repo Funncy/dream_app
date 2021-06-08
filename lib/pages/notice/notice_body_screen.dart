@@ -49,7 +49,7 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> {
         child: Container(
           color: Colors.black12,
           child: Obx(() {
-            var dataStatus = noticeViewModel.noticeStatus.value;
+            var dataStatus = noticeViewModel.noticeStatus;
             List<NoticeModel> noticeList = noticeViewModel.noticeList;
 
             return DataStatusWidget(

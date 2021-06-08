@@ -23,34 +23,34 @@ class PrayViewModel extends GetxController {
   }
 
   Future<void> initPrayList() async {
-    listStatus.value = Status.loading;
+    listStatus = Status.loading;
     Either<ErrorModel, List<PrayModel>> either =
         await _prayRepository.initPublicPrayList();
     if (either.isLeft()) {
-      listStatus.value = Status.error;
+      listStatus = Status.error;
       return;
     }
 
     prayList.clear();
     prayList.addAll(either.getOrElse(() => null));
     if (prayList.length == 0)
-      listStatus.value = Status.empty;
+      listStatus = Status.empty;
     else
-      listStatus.value = Status.loaded;
+      listStatus = Status.loaded;
   }
 
   Future<void> addPrayList() async {
-    listStatus.value = Status.loading;
+    listStatus = Status.loading;
     Either<ErrorModel, List<PrayModel>> either = await _prayRepository
         .addPublicPrayList(prayList.last.documentReference);
     if (either.isLeft()) {
-      listStatus.value = Status.error;
+      listStatus = Status.error;
       return;
     }
 
     prayList.addAll(either.getOrElse(() => null));
 
-    listStatus.value = Status.loaded;
+    listStatus = Status.loaded;
   }
 
   Future<void> sendPray(
