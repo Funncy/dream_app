@@ -37,8 +37,8 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
   void initState() {
     super.initState();
     //build후에 함수 실행
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      commentReplyViewModel.getCommentList(noticeId: notice.id);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await commentReplyViewModel.getCommentList(noticeId: notice.id);
       alertSubscription = commentReplyViewModel.alert.listen((alertModel) {
         if (alertModel.isAlert) return;
         alertModel.isAlert = true;

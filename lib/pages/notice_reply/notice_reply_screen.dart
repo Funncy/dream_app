@@ -109,8 +109,7 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> with AlertMixin {
                     child: SingleChildScrollView(
                       controller: _scrollController,
                       child: Obx(() {
-                        var dataStatus =
-                            commentReplyViewModel.replyStatus.value;
+                        var dataStatus = commentReplyViewModel.replyStatus;
                         var comment = commentReplyViewModel.commentList
                             .firstWhere((e) => e.id == widget.commentId);
                         return DataStatusWidget(
