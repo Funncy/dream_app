@@ -85,18 +85,8 @@ class CommentReplyViewModel extends GetxController {
     }
 
     //공지사항의 댓글 카운트 증가
-    noticeModel.commentCount++;
-    //서버 통신
-    either = await _noticeRepository.updateCommentCount(
-        noticeModel.id, noticeModel.commentCount);
-    var result2 = either.fold((l) => l, (r) => r);
-    if (either.isLeft()) {
-      noticeModel.commentCount--;
-      //TODO: 댓글도 지워야함.
-      sendAlert(ErrorConstants.commentWriteServerError);
-      commentStatus.value = Status.loaded;
-      return DataResult(isCompleted: false, errorModel: result2 as ErrorModel);
-    }
+    DataResult increaseResult = await increaseCommentCount(noticeModel);
+    if (!increaseResult.isCompleted) return increaseResult;
 
     //정상적으로 서버 통신 완료
     //댓글 다시 읽어오기
@@ -116,6 +106,22 @@ class CommentReplyViewModel extends GetxController {
       commentStatus.value = Status.loaded;
     else
       commentStatus.value = Status.empty;
+    return DataResult(isCompleted: true);
+  }
+
+  Future<DataResult> increaseCommentCount(NoticeModel noticeModel) async {
+    noticeModel.commentCount++;
+    //서버 통신
+    Either<ErrorModel, void> either = await _noticeRepository
+        .updateCommentCount(noticeModel.id, noticeModel.commentCount);
+    var result2 = either.fold((l) => l, (r) => r);
+    if (either.isLeft()) {
+      noticeModel.commentCount--;
+      //TODO: 댓글도 지워야함.
+      // sendAlert(ErrorConstants.commentWriteServerError);
+      commentStatus.value = Status.loaded;
+      return DataResult(isCompleted: false, errorModel: result2 as ErrorModel);
+    }
     return DataResult(isCompleted: true);
   }
 
