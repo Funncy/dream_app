@@ -166,7 +166,8 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> with AlertMixin {
     );
   }
 
-  NoticeComment _commentBody(CommentModel commentModel) {
+  Widget _commentBody(CommentModel commentModel) {
+    if (commentModel == null) return ErrorMessageWidget(errorMessage: 'test');
     return NoticeComment(
       noticeCommentModel: commentModel,
       isReplyScreen: true,

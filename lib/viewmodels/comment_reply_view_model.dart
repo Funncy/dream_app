@@ -149,34 +149,27 @@ class CommentReplyViewModel extends GetxController {
       {@required String noticeId,
       @required String commentId,
       @required String userId}) async {
-    CommentModel commentModel =
-        commentList.where((e) => e.id == commentId)?.first;
+    CommentModel commentModel = getModel(commentList, commentId);
     if (commentModel == null) return DataResult(isCompleted: false);
 
-    bool isDelete = false;
-    if (commentModel.favoriteUserList
-        .where((element) => element == userId)
-        .isEmpty)
-      isDelete = false;
-    else
-      isDelete = true;
+    bool isExist = favoriteUserisExist(commentModel.favoriteUserList, userId);
 
     Either<ErrorModel, void> either =
         await _commentRepository.toggleCommentFavorite(
             noticeId: noticeId,
             commentId: commentId,
             userId: userId,
-            isDelete: isDelete);
+            isDelete: !isExist);
     var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
       return DataResult(isCompleted: false, errorModel: result as ErrorModel);
     }
 
     //local에서도 증가
-    if (isDelete)
-      commentModel.favoriteUserList.remove(userId);
-    else
+    if (isExist)
       commentModel.favoriteUserList.add(userId);
+    else
+      commentModel.favoriteUserList.remove(userId);
     refreshComment();
     return DataResult(isCompleted: true);
   }
@@ -316,6 +309,9 @@ class CommentReplyViewModel extends GetxController {
     modelList[index] = model;
     return true;
   }
+
+  bool favoriteUserisExist(List favoriteList, String userId) =>
+      favoriteList.where((e) => e == userId).isEmpty;
 
   void deleteModelInList(List modelList, String modelId) =>
       modelList.removeWhere((e) => e.id == modelId);
