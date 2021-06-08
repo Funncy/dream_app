@@ -47,7 +47,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
     });
 
     //댓글 추가 이후 스크롤 내리기
-    commentReplyViewModel.commentStatus.stream.reduce((preStatus, status) {
+    commentReplyViewModel.commentStatusStream().reduce((preStatus, status) {
       //initial => loading => loaded (scroll X)
       //updating => loaded (scroll O)
 
@@ -114,9 +114,8 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
                 child: SingleChildScrollView(
                   controller: _scrollController,
                   child: Obx(() {
-                    var dataStatus = commentReplyViewModel.commentStatus.value;
-                    var commentList =
-                        commentReplyViewModel.commentList.toList();
+                    var dataStatus = commentReplyViewModel.commentStatus;
+                    var commentList = commentReplyViewModel.commentList;
                     return Column(
                       children: [
                         NoticeCard(

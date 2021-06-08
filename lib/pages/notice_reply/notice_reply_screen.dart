@@ -46,7 +46,7 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> with AlertMixin {
       });
       //새로운 답글 추가시 아래 스크롤 애니메이션
       debounce(commentReplyViewModel.replyStatus, (_) {
-        if (commentReplyViewModel.replyStatus.value == Status.loaded) {
+        if (commentReplyViewModel.replyStatus == Status.loaded) {
           _scrollController.animateTo(
               _scrollController.position.maxScrollExtent,
               duration: Duration(milliseconds: 500),
@@ -99,7 +99,7 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> with AlertMixin {
       ),
       body: SafeArea(
         child: Obx(() {
-          var dataStatus = commentReplyViewModel.replyStatus.value;
+          var dataStatus = commentReplyViewModel.replyStatus;
 
           return Container(
             child: Stack(children: [

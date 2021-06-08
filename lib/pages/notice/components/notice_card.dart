@@ -78,9 +78,7 @@ class NoticeCard extends StatelessWidget {
                       noticeViewModel.toggleNoticeFavorite(
                           noticeId: notice.id, userId: userId);
                       if (isCommentScreen) {
-                        Get.find<CommentReplyViewModel>()
-                            .commentStatus
-                            .refresh();
+                        Get.find<CommentReplyViewModel>().refreshComment();
                       }
                     },
                     behavior: HitTestBehavior.opaque,

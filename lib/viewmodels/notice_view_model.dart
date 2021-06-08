@@ -100,6 +100,6 @@ class NoticeViewModel extends GetxController {
   }
 
   void refreshNotice() {
-    noticeStatus.refresh();
+    _noticeStatus.refresh();
   }
 }
