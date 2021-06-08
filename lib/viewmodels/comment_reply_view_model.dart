@@ -61,13 +61,9 @@ class CommentReplyViewModel extends GetxController {
   }
 
   DataResult isExistCommentById({@required String commentId}) {
-    replyStatus.value = Status.loading;
-
     if (commentList.where((e) => e.id == commentId).isNotEmpty) {
-      replyStatus.value = Status.loaded;
       return DataResult(isCompleted: true);
     } else {
-      replyStatus.value = Status.error;
       return DataResult(isCompleted: false);
     }
   }
@@ -85,7 +81,6 @@ class CommentReplyViewModel extends GetxController {
     var result = either.fold((l) => l, (r) => r);
     //에러인 경우 아래 진행 안함
     if (either.isLeft()) {
-      // sendAlert(ErrorConstants.commentWriteServerError);
       commentStatus.value = Status.loaded;
       return DataResult(isCompleted: false, errorModel: result as ErrorModel);
     }
@@ -112,7 +107,6 @@ class CommentReplyViewModel extends GetxController {
     if (either.isLeft()) {
       noticeModel.commentCount--;
       //TODO: 댓글도 지워야함.
-      // sendAlert(ErrorConstants.commentWriteServerError);
       commentStatus.value = Status.loaded;
       return DataResult(isCompleted: false, errorModel: result as ErrorModel);
     }
@@ -125,7 +119,6 @@ class CommentReplyViewModel extends GetxController {
         noticeId: notcieModel.id, commentId: commentId);
     var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
-      // sendAlert(ErrorConstants.commentDeleteServerError);
       commentStatus.value = Status.loaded;
       return DataResult(isCompleted: false, errorModel: result as ErrorModel);
     }
@@ -152,13 +145,13 @@ class CommentReplyViewModel extends GetxController {
     return DataResult(isCompleted: true);
   }
 
-  Future<void> toggleCommentFavorite(
+  Future<DataResult> toggleCommentFavorite(
       {@required String noticeId,
       @required String commentId,
       @required String userId}) async {
     CommentModel commentModel =
         commentList.where((e) => e.id == commentId)?.first;
-    if (commentModel == null) return;
+    if (commentModel == null) return DataResult(isCompleted: false);
 
     bool isDelete = false;
     if (commentModel.favoriteUserList
@@ -168,14 +161,15 @@ class CommentReplyViewModel extends GetxController {
     else
       isDelete = true;
 
-    var result = await _commentRepository.toggleCommentFavorite(
-        noticeId: noticeId,
-        commentId: commentId,
-        userId: userId,
-        isDelete: isDelete);
-    if (result.isLeft()) {
-      sendAlert(ErrorConstants.serverError);
-      return;
+    Either<ErrorModel, void> either =
+        await _commentRepository.toggleCommentFavorite(
+            noticeId: noticeId,
+            commentId: commentId,
+            userId: userId,
+            isDelete: isDelete);
+    var result = either.fold((l) => l, (r) => r);
+    if (either.isLeft()) {
+      return DataResult(isCompleted: false, errorModel: result as ErrorModel);
     }
 
     //local에서도 증가
@@ -184,6 +178,7 @@ class CommentReplyViewModel extends GetxController {
     else
       commentModel.favoriteUserList.add(userId);
     refreshComment();
+    return DataResult(isCompleted: true);
   }
 
   Future<void> writeReply(
