@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:dream/core/data_status/data_result.dart';
 import 'package:dream/core/data_status/status_enum.dart';
 import 'package:dream/core/error/alert_model.dart';
 import 'package:dream/core/error/error_constants.dart';
@@ -65,7 +66,7 @@ class CommentReplyViewModel extends GetxController {
     }
   }
 
-  void writeComment(
+  Future<DataResult> writeComment(
       {@required NoticeModel noticeModel,
       @required String userId,
       @required String content}) async {
@@ -74,44 +75,48 @@ class CommentReplyViewModel extends GetxController {
     //댓글 쓰기
     Either<ErrorModel, void> either = await _commentRepository.writeComment(
         noticeId: noticeModel.id, userId: userId, content: content);
-    either.fold((l) {
-      sendAlert(ErrorConstants.commentWriteServerError);
-      commentStatus.value = Status.loaded;
-    }, (r) {});
+
+    var result = either.fold((l) => l, (r) => r);
     //에러인 경우 아래 진행 안함
-    if (either.isLeft()) return;
+    if (either.isLeft()) {
+      // sendAlert(ErrorConstants.commentWriteServerError);
+      commentStatus.value = Status.loaded;
+      return DataResult(isCompleted: false, errorModel: result as ErrorModel);
+    }
 
     //공지사항의 댓글 카운트 증가
     noticeModel.commentCount++;
     //서버 통신
     either = await _noticeRepository.updateCommentCount(
         noticeModel.id, noticeModel.commentCount);
+    var result2 = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
       noticeModel.commentCount--;
       //TODO: 댓글도 지워야함.
       sendAlert(ErrorConstants.commentWriteServerError);
       commentStatus.value = Status.loaded;
-      return;
+      return DataResult(isCompleted: false, errorModel: result2 as ErrorModel);
     }
 
     //정상적으로 서버 통신 완료
     //댓글 다시 읽어오기
     Either<ErrorModel, List<CommentModel>> either2 =
         await _commentRepository.getCommentList(noticeId: noticeModel.id);
-    var result = either2.getOrElse(() => null);
+    var result3 = either2.getOrElse(() => null);
 
     if (either2.isLeft()) {
       sendAlert(ErrorConstants.commentWriteServerError);
       commentStatus.value = Status.loaded;
-      return;
+      return DataResult(isCompleted: false, errorModel: result3 as ErrorModel);
     }
 
     commentList.clear();
-    commentList.addAll(result);
+    commentList.addAll(result3);
     if (commentList.length > 0)
       commentStatus.value = Status.loaded;
     else
       commentStatus.value = Status.empty;
+    return DataResult(isCompleted: true);
   }
 
   Future<void> deleteComment(
