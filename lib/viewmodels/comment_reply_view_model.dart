@@ -227,6 +227,7 @@ class CommentReplyViewModel extends GetxController {
       {@required String noticeId,
       @required String commentId,
       @required ReplyModel replyModel}) async {
+    replyStatus = Status.updating;
     var either = await _replyRepository.deleteReply(
         noticeId: noticeId, commentId: commentId, replyModel: replyModel);
     if (either.isLeft()) {

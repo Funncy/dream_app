@@ -99,7 +99,7 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> with AlertMixin {
       ),
       body: SafeArea(
         child: Obx(() {
-          var dataStatus = commentReplyViewModel.replyStatus;
+          Status dataStatus = commentReplyViewModel.replyStatus;
 
           return Container(
             child: Stack(children: [
