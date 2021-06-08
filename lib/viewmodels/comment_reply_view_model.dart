@@ -106,44 +106,48 @@ class CommentReplyViewModel extends GetxController {
     //서버 통신
     Either<ErrorModel, void> either = await _noticeRepository
         .updateCommentCount(noticeModel.id, noticeModel.commentCount);
-    var result2 = either.fold((l) => l, (r) => r);
+    var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
       noticeModel.commentCount--;
       //TODO: 댓글도 지워야함.
       // sendAlert(ErrorConstants.commentWriteServerError);
       commentStatus.value = Status.loaded;
-      return DataResult(isCompleted: false, errorModel: result2 as ErrorModel);
+      return DataResult(isCompleted: false, errorModel: result as ErrorModel);
     }
     return DataResult(isCompleted: true);
   }
 
-  Future<void> deleteComment(
+  Future<DataResult> deleteComment(
       {@required NoticeModel notcieModel, @required commentId}) async {
     Either<ErrorModel, void> either = await _commentRepository.deleteComment(
         noticeId: notcieModel.id, commentId: commentId);
+    var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
-      sendAlert(ErrorConstants.commentDeleteServerError);
+      // sendAlert(ErrorConstants.commentDeleteServerError);
       commentStatus.value = Status.loaded;
-      return;
+      return DataResult(isCompleted: false, errorModel: result as ErrorModel);
     }
     //로컬에서도 삭제
     deleteModelInList(commentList, commentId);
-    //댓글 카운트 감소 해야함.
-    notcieModel.commentCount--;
-    if (notcieModel.commentCount < 0) {
-      commentStatus.value = Status.loaded;
-      return;
-    }
 
-    either = await _noticeRepository.updateCommentCount(
-        notcieModel.id, notcieModel.commentCount);
-    if (either.isLeft()) {
-      sendAlert(ErrorConstants.commentDeleteServerError);
-      commentStatus.value = Status.loaded;
-      return;
-    }
-
+    DataResult updateCommentCountResult =
+        await updateCommentCount(notcieModel.id, notcieModel.commentCount);
     commentStatus.value = Status.loaded;
+    if (!updateCommentCountResult.isCompleted) {
+      return updateCommentCountResult;
+    }
+
+    return DataResult(isCompleted: true);
+  }
+
+  Future<DataResult> updateCommentCount(String id, int count) async {
+    Either<ErrorModel, void> either =
+        await _noticeRepository.updateCommentCount(id, count);
+    var result = either.fold((l) => l, (r) => r);
+    if (either.isLeft()) {
+      return DataResult(isCompleted: false, errorModel: result as ErrorModel);
+    }
+    return DataResult(isCompleted: true);
   }
 
   Future<void> toggleCommentFavorite(
