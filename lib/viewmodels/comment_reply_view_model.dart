@@ -60,13 +60,15 @@ class CommentReplyViewModel extends GetxController {
     return DataResult(isCompleted: true);
   }
 
-  void getComment({@required String commentId}) async {
+  DataResult isExistCommentById({@required String commentId}) {
     replyStatus.value = Status.loading;
 
     if (commentList.where((e) => e.id == commentId).isNotEmpty) {
       replyStatus.value = Status.loaded;
+      return DataResult(isCompleted: true);
     } else {
       replyStatus.value = Status.error;
+      return DataResult(isCompleted: false);
     }
   }
 
