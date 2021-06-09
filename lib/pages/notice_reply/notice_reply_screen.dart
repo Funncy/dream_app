@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:dream/core/data_status/status_enum.dart';
 import 'package:dream/models/comment.dart';
-import 'package:dream/models/notice.dart';
 import 'package:dream/models/reply.dart';
 import 'package:dream/pages/common/empty_widget.dart';
 import 'package:dream/pages/common/error_message_widget.dart';
@@ -12,7 +11,6 @@ import 'package:dream/pages/mixin/alert_mixin.dart';
 import 'package:dream/pages/notice_detail/components/bottom_input_bar.dart';
 import 'package:dream/pages/notice_detail/components/notice_comment.dart';
 import 'package:dream/viewmodels/comment_reply_view_model.dart';
-import 'package:dream/viewmodels/notice_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -39,13 +37,13 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> with AlertMixin {
     //id에 해당하는 댓글 존재 확인
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       commentReplyViewModel.isExistCommentById(commentId: widget.commentId);
-      alertSubscription = commentReplyViewModel.alert.listen((alertModel) {
-        if (alertModel.isAlert) return;
-        alertModel.isAlert = true;
-        showAlert(title: alertModel.title, content: alertModel.content);
-      });
+      // alertSubscription = commentReplyViewModel.alert.listen((alertModel) {
+      //   if (alertModel.isAlert) return;
+      //   alertModel.isAlert = true;
+      //   showAlert(title: alertModel.title, content: alertModel.content);
+      // });
       //새로운 답글 추가시 아래 스크롤 애니메이션
-      debounce(commentReplyViewModel.replyStatus, (dynamic _) {
+      debounce(commentReplyViewModel.replyStatusStream, (dynamic _) {
         if (commentReplyViewModel.replyStatus == Status.loaded) {
           _scrollController.animateTo(
               _scrollController.position.maxScrollExtent,
