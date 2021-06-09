@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/foundation.dart';
 
 class FirebaseService {
   FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
 
-  Future<Map<String, dynamic>> getData(
+  Future<Map<String, dynamic>?> getData(
       {required collectionName, required String did}) async {
     var result =
         await _firebaseFirestore.collection(collectionName).doc(did).get();
@@ -18,7 +17,9 @@ class FirebaseService {
       required Function toModelFunction}) async {
     var querySnapshot =
         await _firebaseFirestore.collection(collectionName).get();
-    return querySnapshot.docs.map<T>(toModelFunction as T Function(QueryDocumentSnapshot)).toList();
+    return querySnapshot.docs
+        .map<T>(toModelFunction as T Function(QueryDocumentSnapshot))
+        .toList();
   }
 
   Future<List<T>> getAllDataByDid<T>(
@@ -32,7 +33,9 @@ class FirebaseService {
         .orderBy('updatedAt')
         .get();
 
-    return querySnapshot.docs.map<T>(toModelFunction as T Function(QueryDocumentSnapshot)).toList();
+    return querySnapshot.docs
+        .map<T>(toModelFunction as T Function(QueryDocumentSnapshot))
+        .toList();
   }
 
   Future<List<T>> getAllDataInnerCollectionByReference<T>(
@@ -43,7 +46,9 @@ class FirebaseService {
         .collection(collectionName)
         .orderBy('updatedAt')
         .get();
-    return querySnapshot.docs.map<T>(toModelFunction as T Function(QueryDocumentSnapshot)).toList();
+    return querySnapshot.docs
+        .map<T>(toModelFunction as T Function(QueryDocumentSnapshot))
+        .toList();
   }
 
   Future<List<T>> getAllDataInnerCollectionById<T>(
@@ -57,7 +62,9 @@ class FirebaseService {
         .collection(childCollectionName)
         .orderBy('updatedAt')
         .get();
-    return querySnapshot.docs.map<T>(toModelFunction as T Function(QueryDocumentSnapshot)).toList();
+    return querySnapshot.docs
+        .map<T>(toModelFunction as T Function(QueryDocumentSnapshot))
+        .toList();
   }
 
   Future<List<String>> getAllImageUrl(
