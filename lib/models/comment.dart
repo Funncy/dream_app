@@ -36,7 +36,7 @@ class CommentModel extends Core with EquatableMixin {
       ];
 
   factory CommentModel.fromFirestore(DocumentSnapshot doc) {
-    var json = doc.data();
+    Map<String, dynamic>? json = doc.data() as Map<String, dynamic>;
 
     List<Map<String, Object>> replyJsonList =
         json['reply_list']?.cast<Map<String, Object>>();

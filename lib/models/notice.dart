@@ -22,7 +22,7 @@ class NoticeModel extends Core with EquatableMixin {
   }) : super(DateTime.now(), DateTime.now());
 
   factory NoticeModel.fromFirestore(DocumentSnapshot doc) {
-    var json = doc.data();
+    Map<String, dynamic> json = doc.data() as Map<String, dynamic>;
 
     var model = NoticeModel(
       id: doc.id,

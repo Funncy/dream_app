@@ -18,7 +18,7 @@ class PrayModel extends Core {
       : super(DateTime.now(), DateTime.now());
 
   factory PrayModel.fromFirestore(DocumentSnapshot documentSnapshot) {
-    var json = documentSnapshot.data();
+    Map<String, dynamic> json = documentSnapshot.data() as Map<String, dynamic>;
     var model = PrayModel(
       userId: json['user_id'],
       title: json['title'],
