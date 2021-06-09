@@ -22,7 +22,7 @@ class _PraySendScreenState extends State<PraySendScreen> {
         content: contentController.text,
         isPublic: isPublic);
 
-    if (prayViewModel.sendStatus.value == Status.loaded) {
+    if (prayViewModel.sendStatus == Status.loaded) {
       //전송 완료 뒤로가기
       Get.back();
     }
