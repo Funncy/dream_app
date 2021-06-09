@@ -280,6 +280,7 @@ class CommentReplyViewModel extends GetxController {
 
     //local에서도 수정
     refreshComment();
+    return DataResult(isCompleted: true);
   }
 
   Future<DataResult> increaseReplyIndex(
