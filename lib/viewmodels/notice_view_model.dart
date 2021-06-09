@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:dream/core/data_status/data_result.dart';
 import 'package:dream/core/data_status/status_enum.dart';
 import 'package:dream/core/error/error_model.dart';
 import 'package:dream/models/notice.dart';
@@ -23,46 +24,47 @@ class NoticeViewModel extends GetxController {
     _noticeRepository.createDummyData();
   }
 
-  void getNoticeList() async {
+  Future<DataResult> getNoticeList() async {
     //데이터 상태와 데이터를 가져오는 함수를 전달
     //추가로 리스트 형태인지를 전달
     // 리스트 형태인경우 데이터의 길이에 따라 Empty위젯을 보여줘야 함.
     noticeStatus = Status.loading;
     Either<ErrorModel, List<NoticeModel>> either =
         await _noticeRepository.getNoticeList();
-    var result = either.fold(
-        (l) {
-          noticeStatus = Status.error;
-        } as List<NoticeModel> Function(ErrorModel),
-        (r) => r);
-
-    //에러인 경우 종료
-    if (either.isLeft()) return;
-
-    //Right이면 List로 반환됨.
-    noticeList.clear();
-    noticeList.addAll(result);
-    if (noticeList.length > 0)
-      noticeStatus = Status.loaded;
-    else
-      noticeStatus = Status.empty;
-  }
-
-  void addNoticeList() async {
-    noticeStatus = Status.updating;
-
-    Either<ErrorModel, List<NoticeModel>?> either = await _noticeRepository
-        .getMoreNoticeList(noticeList.last.documentReference);
+    var result = either.fold((l) => l, (r) => r);
 
     //에러인 경우 종료
     if (either.isLeft()) {
       noticeStatus = Status.error;
-      return;
+      return DataResult(isCompleted: false, errorModel: result as ErrorModel);
     }
-    List<NoticeModel> result = either.getOrElse(() => null)!;
-    if (result.isEmpty) {
+
+    //Right이면 List로 반환됨.
+    noticeList.clear();
+    noticeList.addAll(result as List<NoticeModel>);
+    if (noticeList.length > 0)
       noticeStatus = Status.loaded;
-      return;
+    else
+      noticeStatus = Status.empty;
+    return DataResult(isCompleted: true);
+  }
+
+  Future<DataResult> addNoticeList() async {
+    noticeStatus = Status.updating;
+
+    Either<ErrorModel, List<NoticeModel>?> either = await _noticeRepository
+        .getMoreNoticeList(noticeList.last.documentReference);
+    var result = either.fold((l) => l, (r) => r);
+    //에러인 경우 종료
+    if (either.isLeft()) {
+      noticeStatus = Status.error;
+      return DataResult(isCompleted: false, errorModel: result as ErrorModel);
+    }
+    if ((result as List<NoticeModel>).isEmpty) {
+      noticeStatus = Status.loaded;
+      return DataResult(
+          isCompleted: false,
+          errorModel: ErrorModel(message: 'notice is null'));
     }
 
     //Right이면 List로 반환됨.
@@ -71,9 +73,11 @@ class NoticeViewModel extends GetxController {
       noticeStatus = Status.loaded;
     else
       noticeStatus = Status.empty;
+
+    return DataResult(isCompleted: true);
   }
 
-  Future<void> toggleNoticeFavorite(
+  Future<DataResult> toggleNoticeFavorite(
       {required String? noticeId, required String userId}) async {
     //Notice의 좋아요 리스트 가져오기
     NoticeModel notice =
@@ -84,9 +88,12 @@ class NoticeViewModel extends GetxController {
         .where((element) => element == userId)
         .isNotEmpty;
 
-    var result = await _noticeRepository.toggleNoticeFavorite(
+    var either = await _noticeRepository.toggleNoticeFavorite(
         noticeId: noticeId, userId: userId, isDelete: isExist);
-    if (result.isLeft()) return;
+    var result = either.fold((l) => l, (r) => r);
+    if (either.isLeft()) {
+      return DataResult(isCompleted: false, errorModel: result as ErrorModel);
+    }
 
     //local에서도 증가
     if (isExist)
@@ -94,6 +101,7 @@ class NoticeViewModel extends GetxController {
     else
       notice.favoriteUserList!.add(userId);
     refreshNotice();
+    return DataResult(isCompleted: true);
   }
 
   void refreshNotice() {
