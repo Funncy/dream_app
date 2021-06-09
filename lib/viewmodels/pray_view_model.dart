@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 
 class PrayViewModel extends GetxController {
-  PrayRepository _prayRepository;
+  late PrayRepository _prayRepository;
   Rx<Status> _sendStatus = Status.initial.obs;
   get sendStatus => _sendStatus.value;
   set sendStatus(Status status) => _sendStatus.value = status;
@@ -18,13 +18,13 @@ class PrayViewModel extends GetxController {
 
   List<PrayModel> prayList = [];
 
-  PrayViewModel({@required PrayRepository prayRepository}) {
+  PrayViewModel({required PrayRepository prayRepository}) {
     _prayRepository = prayRepository;
   }
 
   Future<void> initPrayList() async {
     listStatus = Status.loading;
-    Either<ErrorModel, List<PrayModel>> either =
+    Either<ErrorModel, List<PrayModel>?> either =
         await _prayRepository.initPublicPrayList();
     if (either.isLeft()) {
       listStatus = Status.error;
@@ -32,7 +32,7 @@ class PrayViewModel extends GetxController {
     }
 
     prayList.clear();
-    prayList.addAll(either.getOrElse(() => null));
+    prayList.addAll(either.getOrElse(() => null)!);
     if (prayList.length == 0)
       listStatus = Status.empty;
     else
@@ -41,23 +41,23 @@ class PrayViewModel extends GetxController {
 
   Future<void> addPrayList() async {
     listStatus = Status.loading;
-    Either<ErrorModel, List<PrayModel>> either = await _prayRepository
+    Either<ErrorModel, List<PrayModel>?> either = await _prayRepository
         .addPublicPrayList(prayList.last.documentReference);
     if (either.isLeft()) {
       listStatus = Status.error;
       return;
     }
 
-    prayList.addAll(either.getOrElse(() => null));
+    prayList.addAll(either.getOrElse(() => null)!);
 
     listStatus = Status.loaded;
   }
 
   Future<void> sendPray(
-      {@required String userId,
-      @required String title,
-      @required String content,
-      @required bool isPublic}) async {
+      {required String userId,
+      required String title,
+      required String content,
+      required bool? isPublic}) async {
     sendStatus.value = Status.loading;
     Either<ErrorModel, void> either =
         await _prayRepository.sendPray(userId, title, content, isPublic);

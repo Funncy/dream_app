@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 
 class DataResult {
   bool isCompleted;
-  ErrorModel errorModel;
+  ErrorModel? errorModel;
 
-  DataResult({@required this.isCompleted, this.errorModel});
+  DataResult({required this.isCompleted, this.errorModel});
 }

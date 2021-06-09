@@ -9,7 +9,7 @@ import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 
 class NoticeViewModel extends GetxController {
-  NoticeRepository _noticeRepository;
+  late NoticeRepository _noticeRepository;
   //obs는 observer로 Rx로 데이터 관리되게 됩니다.
   //화면 상태가 아니라 데이터의 상태를 관리하자.
   List<NoticeModel> noticeList = <NoticeModel>[];
@@ -17,7 +17,7 @@ class NoticeViewModel extends GetxController {
   get noticeStatus => _noticeStatus.value;
   set noticeStatus(Status status) => _noticeStatus.value = status;
 
-  NoticeViewModel({@required NoticeRepository noticeRepository}) {
+  NoticeViewModel({required NoticeRepository noticeRepository}) {
     _noticeRepository = noticeRepository;
   }
 
@@ -34,7 +34,7 @@ class NoticeViewModel extends GetxController {
         await _noticeRepository.getNoticeList();
     var result = either.fold((l) {
       noticeStatus = Status.error;
-    }, (r) => r);
+    } as List<NoticeModel> Function(ErrorModel), (r) => r);
 
     //에러인 경우 종료
     if (either.isLeft()) return;
@@ -51,7 +51,7 @@ class NoticeViewModel extends GetxController {
   void addNoticeList() async {
     noticeStatus = Status.updating;
 
-    Either<ErrorModel, List<NoticeModel>> either = await _noticeRepository
+    Either<ErrorModel, List<NoticeModel>?> either = await _noticeRepository
         .getMoreNoticeList(noticeList.last.documentReference);
 
     //에러인 경우 종료
@@ -59,7 +59,7 @@ class NoticeViewModel extends GetxController {
       noticeStatus = Status.error;
       return;
     }
-    List<NoticeModel> result = either.getOrElse(() => null);
+    List<NoticeModel> result = either.getOrElse(() => null)!;
     if (result.isEmpty) {
       noticeStatus = Status.loaded;
       return;
@@ -74,7 +74,7 @@ class NoticeViewModel extends GetxController {
   }
 
   Future<void> toggleNoticeFavorite(
-      {@required String noticeId, @required String userId}) async {
+      {required String? noticeId, required String userId}) async {
     //Notice의 좋아요 리스트 가져오기
     NoticeModel notice =
         noticeList.where((notice) => notice.id == noticeId)?.first;
@@ -82,7 +82,7 @@ class NoticeViewModel extends GetxController {
 
     //이미 등록되있다면 삭제
     bool isDelete = false;
-    if (notice.favoriteUserList.where((element) => element == userId).isEmpty)
+    if (notice.favoriteUserList!.where((element) => element == userId).isEmpty)
       isDelete = false;
     else
       isDelete = true;
@@ -93,9 +93,9 @@ class NoticeViewModel extends GetxController {
 
     //local에서도 증가
     if (isDelete)
-      notice.favoriteUserList.remove(userId);
+      notice.favoriteUserList!.remove(userId);
     else
-      notice.favoriteUserList.add(userId);
+      notice.favoriteUserList!.add(userId);
     refreshNotice();
   }
 

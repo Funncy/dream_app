@@ -6,14 +6,14 @@ import 'package:dream/repositories/pray_repository.dart';
 import 'package:flutter/foundation.dart';
 
 class PrayRepositoryImpl extends PrayRepository {
-  FirebaseFirestore _firebaseFirestore;
+  late FirebaseFirestore _firebaseFirestore;
 
-  PrayRepositoryImpl({@required FirebaseFirestore firebaseFirestore}) {
+  PrayRepositoryImpl({required FirebaseFirestore firebaseFirestore}) {
     _firebaseFirestore = firebaseFirestore;
   }
 
   @override
-  Future<Either<ErrorModel, List<PrayModel>>> initPublicPrayList() async {
+  Future<Either<ErrorModel, List<PrayModel>?>> initPublicPrayList() async {
     try {
       var querySnapshot = await _firebaseFirestore
           .collection('public_pray')
@@ -29,10 +29,10 @@ class PrayRepositoryImpl extends PrayRepository {
   }
 
   @override
-  Future<Either<ErrorModel, List<PrayModel>>> addPublicPrayList(
-      DocumentReference documentReference) async {
+  Future<Either<ErrorModel, List<PrayModel>?>> addPublicPrayList(
+      DocumentReference? documentReference) async {
     try {
-      DocumentSnapshot documentSnapshot = await documentReference.get();
+      DocumentSnapshot documentSnapshot = await documentReference!.get();
       var querySnapshot = await _firebaseFirestore
           .collection('public_pray')
           .orderBy('updated_at')
@@ -49,11 +49,11 @@ class PrayRepositoryImpl extends PrayRepository {
 
   @override
   Future<Either<ErrorModel, void>> sendPray(
-      String userId, String title, String content, bool isPublic) async {
+      String userId, String title, String content, bool? isPublic) async {
     try {
       var model = PrayModel(userId: userId, title: title, content: content);
       CollectionReference collectionReference;
-      if (isPublic) {
+      if (isPublic!) {
         collectionReference = _firebaseFirestore.collection('public_pray');
       } else {
         collectionReference = _firebaseFirestore.collection('private_pray');

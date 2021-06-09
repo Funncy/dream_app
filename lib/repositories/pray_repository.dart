@@ -9,8 +9,8 @@ abstract class PrayRepository {
   //3. 공개 기도 목록 가져오기
 
   Future<Either<ErrorModel, void>> sendPray(
-      String userId, String title, String content, bool isPublic);
-  Future<Either<ErrorModel, List<PrayModel>>> initPublicPrayList();
-  Future<Either<ErrorModel, List<PrayModel>>> addPublicPrayList(
-      DocumentReference documentReference);
+      String userId, String title, String content, bool? isPublic);
+  Future<Either<ErrorModel, List<PrayModel>?>> initPublicPrayList();
+  Future<Either<ErrorModel, List<PrayModel>?>> addPublicPrayList(
+      DocumentReference? documentReference);
 }

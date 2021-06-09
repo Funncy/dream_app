@@ -22,7 +22,7 @@ class _PrayListScreenState extends State<PrayListScreen> {
   void initState() {
     super.initState();
     //build후에 함수 실행
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
       prayViewModel.initPrayList();
       _scrollController.addListener(() {
         if (_scrollController.position.pixels ==

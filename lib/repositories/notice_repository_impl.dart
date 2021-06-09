@@ -11,12 +11,12 @@ import 'package:flutter/foundation.dart';
 import 'package:dream/constants.dart';
 
 class NoticeRepositoryImpl extends NoticeRepository {
-  FirebaseFirestore _firebaseFirestore;
-  FirebaseStorage _firebaseStorage;
+  late FirebaseFirestore _firebaseFirestore;
+  late FirebaseStorage _firebaseStorage;
 
   NoticeRepositoryImpl(
-      {@required FirebaseFirestore firebaseFirestore,
-      @required FirebaseStorage firebaseStorage}) {
+      {required FirebaseFirestore firebaseFirestore,
+      required FirebaseStorage firebaseStorage}) {
     _firebaseFirestore = firebaseFirestore;
     _firebaseStorage = firebaseStorage;
   }
@@ -123,10 +123,10 @@ class NoticeRepositoryImpl extends NoticeRepository {
   }
 
   @override
-  Future<Either<ErrorModel, List<NoticeModel>>> getMoreNoticeList(
-      DocumentReference documentReference) async {
+  Future<Either<ErrorModel, List<NoticeModel>?>> getMoreNoticeList(
+      DocumentReference? documentReference) async {
     try {
-      DocumentSnapshot documentSnapshot = await documentReference.get();
+      DocumentSnapshot documentSnapshot = await documentReference!.get();
       var querySnapshot = await _firebaseFirestore
           .collection(noticeCollectionName)
           .orderBy('updated_at')
@@ -153,11 +153,11 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
   @override
   Future<Either<ErrorModel, void>> updateCommentCount(
-      String noticeId, int commentCount) async {
+      String? noticeId, int? commentCount) async {
     try {
       //notice doc에서 commentCount 증가
       DocumentReference documentReference =
-          _firebaseFirestore.collection(noticeCollectionName).doc(noticeId);
+          _firebaseFirestore.collection(noticeCollectionName).doc(noticeId!);
       await _firebaseFirestore.runTransaction((transaction) async {
         DocumentSnapshot snapshot = await transaction.get(documentReference);
 
@@ -165,7 +165,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
           throw Exception("Comment does not exist!");
         }
 
-        int newCommentCount = snapshot.data()['comment_count'] + 1;
+        int? newCommentCount = snapshot.data()['comment_count'] + 1;
 
         transaction
             .update(documentReference, {'comment_count': newCommentCount});
@@ -180,9 +180,9 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
   @override
   Future<Either<ErrorModel, void>> toggleNoticeFavorite(
-      {@required String noticeId,
-      @required String userId,
-      @required bool isDelete}) async {
+      {required String? noticeId,
+      required String userId,
+      required bool isDelete}) async {
     try {
       FieldValue fieldValue;
       if (isDelete)
@@ -191,7 +191,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
         fieldValue = FieldValue.arrayUnion([userId]);
       _firebaseFirestore
           .collection(noticeCollectionName)
-          .doc(noticeId)
+          .doc(noticeId!)
           .update({'favorite_user_list': fieldValue});
       return Right(null);
     } catch (e) {

@@ -10,7 +10,7 @@ class PraySendScreen extends StatefulWidget {
 }
 
 class _PraySendScreenState extends State<PraySendScreen> {
-  bool isPublic = Get.arguments;
+  bool? isPublic = Get.arguments;
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
   PrayViewModel prayViewModel = Get.find<PrayViewModel>();
@@ -31,7 +31,7 @@ class _PraySendScreenState extends State<PraySendScreen> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    String title = isPublic ? "공개 기도편지" : "비밀 기도편지";
+    String title = isPublic! ? "공개 기도편지" : "비밀 기도편지";
     return Scaffold(
       appBar: AppBar(
         title: Text(title),

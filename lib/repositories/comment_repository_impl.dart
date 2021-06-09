@@ -8,20 +8,20 @@ import 'package:flutter/foundation.dart';
 import 'package:dream/constants.dart';
 
 class CommentRepositoryImpl extends CommentRepository {
-  FirebaseFirestore _firebaseFirestore;
+  late FirebaseFirestore _firebaseFirestore;
   // FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
 
-  CommentRepositoryImpl({@required FirebaseFirestore firebaseFirestore}) {
+  CommentRepositoryImpl({required FirebaseFirestore firebaseFirestore}) {
     _firebaseFirestore = firebaseFirestore;
   }
 
   @override
   Future<Either<ErrorModel, List<CommentModel>>> getCommentList(
-      {@required String noticeId}) async {
+      {required String? noticeId}) async {
     try {
       var querySnapshot = await _firebaseFirestore
           .collection(noticeCollectionName)
-          .doc(noticeId)
+          .doc(noticeId!)
           .collection(commentCollectionName)
           .orderBy('updated_at')
           .get();
@@ -34,14 +34,14 @@ class CommentRepositoryImpl extends CommentRepository {
   }
 
   @override
-  Future<Either<ErrorModel, CommentModel>> getCommentById(
-      {@required String noticeId, @required String commentId}) async {
+  Future<Either<ErrorModel, CommentModel?>> getCommentById(
+      {required String? noticeId, required String? commentId}) async {
     try {
       DocumentSnapshot documentSnapshot = await _firebaseFirestore
           .collection(noticeCollectionName)
-          .doc(noticeId)
+          .doc(noticeId!)
           .collection(commentCollectionName)
-          .doc(commentId)
+          .doc(commentId!)
           .get();
       return Right(CommentModel.fromFirestore(documentSnapshot));
     } catch (e) {
@@ -51,15 +51,15 @@ class CommentRepositoryImpl extends CommentRepository {
 
   @override
   Future<Either<ErrorModel, void>> updateCommentById(
-      {@required String noticeId,
-      @required String commentId,
-      @required CommentModel commentModel}) async {
+      {required String? noticeId,
+      required String? commentId,
+      required CommentModel commentModel}) async {
     try {
       await _firebaseFirestore
           .collection(noticeCollectionName)
-          .doc(noticeId)
+          .doc(noticeId!)
           .collection(commentCollectionName)
-          .doc(commentId)
+          .doc(commentId!)
           .update(commentModel.toJson());
       return Right(null);
     } catch (e) {
@@ -69,9 +69,9 @@ class CommentRepositoryImpl extends CommentRepository {
 
   @override
   Future<Either<ErrorModel, void>> writeComment(
-      {@required String noticeId,
-      @required String userId,
-      @required String content}) async {
+      {required String? noticeId,
+      required String userId,
+      required String content}) async {
     try {
       var commentModel = CommentModel(
           id: null,
@@ -86,7 +86,7 @@ class CommentRepositoryImpl extends CommentRepository {
 
       _firebaseFirestore
           .collection(noticeCollectionName)
-          .doc(noticeId)
+          .doc(noticeId!)
           .collection(commentCollectionName)
           .add(commentModel.toJson());
 
@@ -97,11 +97,11 @@ class CommentRepositoryImpl extends CommentRepository {
   }
 
   Future<Either<ErrorModel, void>> deleteComment(
-      {@required String noticeId, @required String commentId}) async {
+      {required String? noticeId, required String commentId}) async {
     try {
       await _firebaseFirestore
           .collection(noticeCollectionName)
-          .doc(noticeId)
+          .doc(noticeId!)
           .collection(commentCollectionName)
           .doc(commentId)
           .delete();
@@ -114,10 +114,10 @@ class CommentRepositoryImpl extends CommentRepository {
 
   @override
   Future<Either<ErrorModel, void>> toggleCommentFavorite(
-      {@required String noticeId,
-      @required String commentId,
-      @required String userId,
-      @required bool isDelete}) async {
+      {required String? noticeId,
+      required String? commentId,
+      required String userId,
+      required bool isDelete}) async {
     try {
       //TODO : orderby 추가 필요 (모든 곳에)
       FieldValue fieldValue;
@@ -127,9 +127,9 @@ class CommentRepositoryImpl extends CommentRepository {
         fieldValue = FieldValue.arrayUnion([userId]);
       await _firebaseFirestore
           .collection(noticeCollectionName)
-          .doc(noticeId)
+          .doc(noticeId!)
           .collection(commentCollectionName)
-          .doc(commentId)
+          .doc(commentId!)
           .update({'favorite_user_list': fieldValue});
       return Right(null);
     } catch (e) {

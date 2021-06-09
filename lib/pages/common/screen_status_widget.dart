@@ -10,13 +10,13 @@ class DataStatusWidget extends StatelessWidget {
   final Status dataStatus;
 
   const DataStatusWidget(
-      {Key key,
-      @required this.body,
-      @required this.error,
-      @required this.loading,
-      @required this.empty,
-      @required this.dataStatus,
-      @required this.updating})
+      {Key? key,
+      required this.body,
+      required this.error,
+      required this.loading,
+      required this.empty,
+      required this.dataStatus,
+      required this.updating})
       : super(key: key);
 //TODO: Empty or Error Widget에서 새로 고침 가능하게 해야함. refreshIndicator 등
   @override

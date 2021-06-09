@@ -6,26 +6,26 @@ import 'package:flutter/foundation.dart';
 
 //Inner Collection
 class CommentModel extends Core with EquatableMixin {
-  final String id;
-  final String userId;
-  final String content;
+  final String? id;
+  final String? userId;
+  final String? content;
   List<ReplyModel> replyList;
-  int replyIndex;
-  List<String> favoriteUserList;
-  final DocumentReference documentReference;
+  int? replyIndex;
+  List<String>? favoriteUserList;
+  final DocumentReference? documentReference;
 
   CommentModel(
-      {@required this.id,
-      @required this.userId,
-      @required this.content,
-      @required this.replyList,
-      @required this.replyIndex,
-      @required this.favoriteUserList,
-      @required this.documentReference})
+      {required this.id,
+      required this.userId,
+      required this.content,
+      required this.replyList,
+      required this.replyIndex,
+      required this.favoriteUserList,
+      required this.documentReference})
       : super(DateTime.now(), DateTime.now());
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         id,
         userId,
         content,
@@ -42,7 +42,7 @@ class CommentModel extends Core with EquatableMixin {
         json['reply_list']?.cast<Map<String, Object>>();
     List<ReplyModel> replyList = [];
     replyList = replyJsonList.map((e) => ReplyModel.fromJson(e)).toList()
-      ..sort((a, b) => a.updatedAt.compareTo(b.updatedAt));
+      ..sort((a, b) => a.updatedAt!.compareTo(b.updatedAt!));
 
     var model = CommentModel(
       id: doc.id,
@@ -54,8 +54,8 @@ class CommentModel extends Core with EquatableMixin {
       documentReference: doc.reference,
     );
 
-    model.createdAt = (json['created_at'] as Timestamp)?.toDate() ?? null;
-    model.updatedAt = (json['updated_at'] as Timestamp)?.toDate() ?? null;
+    model.createdAt = (json['created_at'] as Timestamp?)?.toDate() ?? null;
+    model.updatedAt = (json['updated_at'] as Timestamp?)?.toDate() ?? null;
     return model;
   }
 

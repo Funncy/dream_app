@@ -19,55 +19,6 @@ void main() async {
   runApp(MyApp());
 }
 
-class TestApp extends StatefulWidget {
-  @override
-  _TestAppState createState() => _TestAppState();
-}
-
-class _TestAppState extends State<TestApp> {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('testApp'),
-        ),
-        body: Container(
-          child: Center(
-            child: RaisedButton(
-              onPressed: () async {
-                var firestore = FirebaseFirestore.instance;
-                // await firestore.collection('test').add({
-                //   'title': 'test 01',
-                //   'data': 'data 01',
-                //   'array': [
-                //     {
-                //       'title': 'array 01',
-                //       'content': 'content 01',
-                //     },
-                //     {
-                //       'title': 'array 02',
-                //       'content': 'content 02',
-                //     }
-                //   ]
-                // });
-                FieldValue fieldValue = FieldValue.arrayRemove([
-                  {'id': 0, 'title': 'array 03', 'content': 'content 03'}
-                ]);
-                await firestore
-                    .collection('test')
-                    .doc('s2nQAjc4QF5qVg9T7bdR')
-                    .update({'array': fieldValue});
-              },
-              child: Text("Test"),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -76,7 +27,6 @@ class MyApp extends StatelessWidget {
 
     return ScreenUtilInit(
       designSize: Size(360, 690),
-      allowFontScaling: false,
       builder: () => GetMaterialApp(
         title: '두드리시오',
         theme: ThemeData(

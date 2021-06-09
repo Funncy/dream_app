@@ -11,14 +11,14 @@ abstract class NoticeRepository {
 
   Future<Either<ErrorModel, List<NoticeModel>>> getNoticeList();
 
-  Future<Either<ErrorModel, List<NoticeModel>>> getMoreNoticeList(
-      DocumentReference documentReference);
+  Future<Either<ErrorModel, List<NoticeModel>?>> getMoreNoticeList(
+      DocumentReference? documentReference);
 
   Future<Either<ErrorModel, void>> updateCommentCount(
-      String noticeId, int commentCount);
+      String? noticeId, int? commentCount);
 
   Future<Either<ErrorModel, void>> toggleNoticeFavorite(
-      {@required String noticeId,
-      @required String userId,
-      @required bool isDelete});
+      {required String? noticeId,
+      required String userId,
+      required bool isDelete});
 }

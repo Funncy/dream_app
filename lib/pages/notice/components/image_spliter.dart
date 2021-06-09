@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 
 class ImageSpliter extends StatelessWidget {
-  final List<String> images;
-  const ImageSpliter({Key key, this.images}) : super(key: key);
+  final List<String>? images;
+  const ImageSpliter({Key? key, this.images}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    if (images.length == 0) {
+    if (images!.length == 0) {
       return Container();
     }
-    switch (images.length) {
+    switch (images!.length) {
       case 1:
         return Container(
           child: Image.network(
-            images[0],
+            images![0],
             fit: BoxFit.cover,
           ),
         );
@@ -24,7 +24,7 @@ class ImageSpliter extends StatelessWidget {
           children: [
             Expanded(
                 child: Image.network(
-              images[0],
+              images![0],
               fit: BoxFit.cover,
             )),
             SizedBox(
@@ -32,7 +32,7 @@ class ImageSpliter extends StatelessWidget {
             ),
             Expanded(
                 child: Image.network(
-              images[1],
+              images![1],
               fit: BoxFit.cover,
             ))
           ],
@@ -48,18 +48,18 @@ class ImageSpliter extends StatelessWidget {
 
 class ThreeDivisionImages extends StatelessWidget {
   const ThreeDivisionImages({
-    Key key,
-    @required this.images,
+    Key? key,
+    required this.images,
   }) : super(key: key);
 
-  final List<String> images;
+  final List<String>? images;
 
   @override
   Widget build(BuildContext context) {
     return Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       Expanded(
           child: Image.network(
-        images[0],
+        images![0],
         fit: BoxFit.cover,
       )),
       SizedBox(
@@ -71,25 +71,25 @@ class ThreeDivisionImages extends StatelessWidget {
         children: [
           Expanded(
               child: Image.network(
-            images[1],
+            images![1],
             fit: BoxFit.cover,
           )),
           SizedBox(
             height: 5,
           ),
-          if (images.length == 3)
+          if (images!.length == 3)
             Expanded(
                 child: Image.network(
-              images[2],
+              images![2],
               fit: BoxFit.cover,
             )),
-          if (images.length > 3)
+          if (images!.length > 3)
             Expanded(
                 child: Stack(children: [
               Positioned.fill(
                 child: Container(
                   child: Image.network(
-                    images[2],
+                    images![2],
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -99,7 +99,7 @@ class ThreeDivisionImages extends StatelessWidget {
                 decoration: BoxDecoration(color: Colors.black54),
                 child: Center(
                   child: Text(
-                    "+${images.length - 2}",
+                    "+${images!.length - 2}",
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 30,

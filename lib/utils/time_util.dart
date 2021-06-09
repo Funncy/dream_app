@@ -6,7 +6,7 @@ class TimeUtil {
     setLocaleMessages('ko', KoMessages());
   }
 
-  static String timeAgo({int milliseconds}) {
+  static String timeAgo({required int milliseconds}) {
     final date = DateTime.fromMillisecondsSinceEpoch(milliseconds);
     return format(date,
         locale: 'ko', // for test.

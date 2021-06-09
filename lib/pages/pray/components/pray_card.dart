@@ -15,16 +15,16 @@ class PrayCard extends StatelessWidget {
   //TODO: 실제 유저 아이디로 변경해야함.
   final String userId = '123';
 
-  const PrayCard({Key key, @required this.prayModel}) : super(key: key);
+  const PrayCard({Key? key, required this.prayModel}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     //시간 로드
     var date =
-        TimeUtil.getDateString(prayModel.updatedAt ?? prayModel.createdAt);
+        TimeUtil.getDateString(prayModel.updatedAt ?? prayModel.createdAt!);
     PrayViewModel prayViewModel = Get.find<PrayViewModel>();
 
-    String content = prayModel.content;
+    String content = prayModel.content!;
     if (content.length > 80) {
       content = content.substring(0, 80);
       content += "....";
@@ -47,7 +47,7 @@ class PrayCard extends StatelessWidget {
                   SizedBox(
                     height: 5.h,
                   ),
-                  Text(prayModel.title, style: Constants.titleStyle),
+                  Text(prayModel.title!, style: Constants.titleStyle),
                   SizedBox(
                     height: 8.h,
                   ),

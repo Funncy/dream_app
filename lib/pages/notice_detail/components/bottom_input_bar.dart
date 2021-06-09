@@ -3,9 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class BottonInputBar extends StatelessWidget {
   const BottonInputBar({
-    Key key,
-    @required this.textEditingController,
-    @required this.writeFunction,
+    Key? key,
+    required this.textEditingController,
+    required this.writeFunction,
   }) : super(key: key);
 
   final TextEditingController textEditingController;
@@ -47,7 +47,7 @@ class BottonInputBar extends StatelessWidget {
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30), color: Colors.amber),
             child: InkWell(
-                onTap: writeFunction,
+                onTap: writeFunction as void Function()?,
                 child: Icon(
                   Icons.arrow_forward_rounded,
                   color: Colors.white,

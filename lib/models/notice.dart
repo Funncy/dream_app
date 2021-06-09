@@ -4,21 +4,21 @@ import 'package:flutter/foundation.dart';
 import 'package:equatable/equatable.dart';
 
 class NoticeModel extends Core with EquatableMixin {
-  final String id;
-  final String userId;
-  final String content;
+  final String? id;
+  final String? userId;
+  final String? content;
   final List<String> imageList = [];
-  int commentCount;
-  List<String> favoriteUserList = [];
-  final DocumentReference documentReference;
+  int? commentCount;
+  List<String>? favoriteUserList = [];
+  final DocumentReference? documentReference;
 
   NoticeModel({
-    @required this.id,
-    @required this.userId,
-    @required this.content,
-    @required this.commentCount,
-    @required this.favoriteUserList,
-    @required this.documentReference,
+    required this.id,
+    required this.userId,
+    required this.content,
+    required this.commentCount,
+    required this.favoriteUserList,
+    required this.documentReference,
   }) : super(DateTime.now(), DateTime.now());
 
   factory NoticeModel.fromFirestore(DocumentSnapshot doc) {
@@ -33,8 +33,8 @@ class NoticeModel extends Core with EquatableMixin {
       documentReference: doc.reference,
     );
 
-    model.createdAt = (json['created_at'] as Timestamp)?.toDate() ?? null;
-    model.updatedAt = (json['updated_at'] as Timestamp)?.toDate() ?? null;
+    model.createdAt = (json['created_at'] as Timestamp?)?.toDate() ?? null;
+    model.updatedAt = (json['updated_at'] as Timestamp?)?.toDate() ?? null;
     return model;
   }
 
@@ -47,7 +47,7 @@ class NoticeModel extends Core with EquatableMixin {
         'updated_at': updatedAt,
       };
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         id,
         userId,
         content,

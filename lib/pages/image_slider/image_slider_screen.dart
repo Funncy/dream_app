@@ -4,9 +4,9 @@ import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ImageSliderScreen extends StatefulWidget {
-  final List<String> imageUrlList;
+  final List<String>? imageUrlList;
 
-  const ImageSliderScreen({Key key, this.imageUrlList}) : super(key: key);
+  const ImageSliderScreen({Key? key, this.imageUrlList}) : super(key: key);
 
   @override
   _ImageSliderScreenState createState() => _ImageSliderScreenState();
@@ -33,7 +33,7 @@ class _ImageSliderScreenState extends State<ImageSliderScreen> {
                         _current = index;
                       });
                     }),
-                items: widget.imageUrlList.map((i) {
+                items: widget.imageUrlList!.map((i) {
                   return Builder(
                     builder: (BuildContext context) {
                       return Container(
@@ -51,8 +51,8 @@ class _ImageSliderScreenState extends State<ImageSliderScreen> {
                 alignment: Alignment.bottomCenter,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: widget.imageUrlList.map((url) {
-                    int index = widget.imageUrlList.indexOf(url);
+                  children: widget.imageUrlList!.map((url) {
+                    int index = widget.imageUrlList!.indexOf(url);
                     return Container(
                       width: 8.0,
                       height: 8.0,

@@ -10,35 +10,33 @@ import 'package:dream/models/reply.dart';
 import 'package:dream/repositories/comment_repository.dart';
 import 'package:dream/repositories/notice_repository.dart';
 import 'package:dream/repositories/reply_repository.dart';
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 class CommentReplyViewModel extends GetxController {
-  NoticeRepository _noticeRepository;
-  CommentRepository _commentRepository;
-  ReplyRepository _replyRepository;
-  List<CommentModel> commentList = <CommentModel>[];
+  late NoticeRepository _noticeRepository;
+  late CommentRepository _commentRepository;
+  late ReplyRepository _replyRepository;
+  List<CommentModel?> commentList = <CommentModel?>[];
   Rx<Status> _commentStatus = Status.initial.obs;
   get commentStatus => _commentStatus.value;
-  Stream<Status> commentStatusStream() => _commentStatus.stream;
+  Stream<Status?> commentStatusStream() => _commentStatus.stream;
   set commentStatus(Status status) => _commentStatus.value = status;
   //답글은 comment내부에 존재하지만 상태는 따로 관리
   Rx<Status> _replyStatus = Status.initial.obs;
   get replyStatus => _replyStatus.value;
   get replyStatusStream => _commentStatus.stream;
   set replyStatus(Status status) => _replyStatus.value = status;
-  Rx<AlertModel> alert = AlertModel().obs;
 
   CommentReplyViewModel(
-      {@required NoticeRepository noticeRepository,
-      @required CommentRepository commentRepository,
-      @required ReplyRepository replyRepository}) {
+      {required NoticeRepository noticeRepository,
+      required CommentRepository commentRepository,
+      required ReplyRepository replyRepository}) {
     _noticeRepository = noticeRepository;
     _commentRepository = commentRepository;
     _replyRepository = replyRepository;
   }
 
-  Future<DataResult> getCommentList({@required String noticeId}) async {
+  Future<DataResult> getCommentList({required String? noticeId}) async {
     commentStatus = Status.loading;
 
     Either<ErrorModel, List<CommentModel>> either =
@@ -47,11 +45,11 @@ class CommentReplyViewModel extends GetxController {
 
     if (either.isLeft()) {
       commentStatus = Status.error;
-      return DataResult(isCompleted: false, errorModel: result);
+      return DataResult(isCompleted: false, errorModel: result as ErrorModel?);
     }
 
     commentList.clear();
-    commentList.addAll(result);
+    commentList.addAll(result as Iterable<CommentModel?>);
 
     if (commentList.length > 0) {
       commentStatus = Status.loaded;
@@ -62,9 +60,9 @@ class CommentReplyViewModel extends GetxController {
     return DataResult(isCompleted: true);
   }
 
-  DataResult isExistCommentById({@required String commentId}) {
+  DataResult isExistCommentById({required String? commentId}) {
     replyStatus = Status.loading;
-    if (commentList.where((e) => e.id == commentId).isNotEmpty) {
+    if (commentList.where((e) => e!.id == commentId).isNotEmpty) {
       replyStatus = Status.loaded;
       return DataResult(isCompleted: true);
     } else {
@@ -74,9 +72,9 @@ class CommentReplyViewModel extends GetxController {
   }
 
   Future<DataResult> writeComment(
-      {@required NoticeModel noticeModel,
-      @required String userId,
-      @required String content}) async {
+      {required NoticeModel noticeModel,
+      required String userId,
+      required String content}) async {
     //update 중
     commentStatus = Status.updating;
     //댓글 쓰기
@@ -87,7 +85,7 @@ class CommentReplyViewModel extends GetxController {
     //에러인 경우 아래 진행 안함
     if (either.isLeft()) {
       commentStatus = Status.loaded;
-      return DataResult(isCompleted: false, errorModel: result as ErrorModel);
+      return DataResult(isCompleted: false, errorModel: result as ErrorModel?);
     }
 
     //공지사항의 댓글 카운트 증가
@@ -113,19 +111,19 @@ class CommentReplyViewModel extends GetxController {
       noticeModel.commentCount--;
       //TODO: 댓글도 지워야함.
       commentStatus = Status.loaded;
-      return DataResult(isCompleted: false, errorModel: result as ErrorModel);
+      return DataResult(isCompleted: false, errorModel: result as ErrorModel?);
     }
     return DataResult(isCompleted: true);
   }
 
   Future<DataResult> deleteComment(
-      {@required NoticeModel notcieModel, @required commentId}) async {
+      {required NoticeModel notcieModel, required commentId}) async {
     Either<ErrorModel, void> either = await _commentRepository.deleteComment(
         noticeId: notcieModel.id, commentId: commentId);
     var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
       commentStatus = Status.loaded;
-      return DataResult(isCompleted: false, errorModel: result as ErrorModel);
+      return DataResult(isCompleted: false, errorModel: result as ErrorModel?);
     }
     //로컬에서도 삭제
     deleteModelInList(commentList, commentId);
@@ -140,24 +138,24 @@ class CommentReplyViewModel extends GetxController {
     return DataResult(isCompleted: true);
   }
 
-  Future<DataResult> updateCommentCount(String id, int count) async {
+  Future<DataResult> updateCommentCount(String? id, int? count) async {
     Either<ErrorModel, void> either =
         await _noticeRepository.updateCommentCount(id, count);
     var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
-      return DataResult(isCompleted: false, errorModel: result as ErrorModel);
+      return DataResult(isCompleted: false, errorModel: result as ErrorModel?);
     }
     return DataResult(isCompleted: true);
   }
 
   Future<DataResult> toggleCommentFavorite(
-      {@required String noticeId,
-      @required String commentId,
-      @required String userId}) async {
-    CommentModel commentModel = getModel(commentList, commentId);
+      {required String? noticeId,
+      required String? commentId,
+      required String userId}) async {
+    CommentModel? commentModel = getModel(commentList, commentId) as CommentModel?;
     if (commentModel == null) return DataResult(isCompleted: false);
 
-    bool isExist = favoriteUserisExist(commentModel.favoriteUserList, userId);
+    bool isExist = favoriteUserisExist(commentModel.favoriteUserList!, userId);
 
     Either<ErrorModel, void> either =
         await _commentRepository.toggleCommentFavorite(
@@ -167,26 +165,26 @@ class CommentReplyViewModel extends GetxController {
             isDelete: !isExist);
     var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
-      return DataResult(isCompleted: false, errorModel: result as ErrorModel);
+      return DataResult(isCompleted: false, errorModel: result as ErrorModel?);
     }
 
     //local에서도 증가
     if (isExist)
-      commentModel.favoriteUserList.add(userId);
+      commentModel.favoriteUserList!.add(userId);
     else
-      commentModel.favoriteUserList.remove(userId);
+      commentModel.favoriteUserList!.remove(userId);
     refreshComment();
     return DataResult(isCompleted: true);
   }
 
   Future<void> writeReply(
-      {@required String noticeId,
-      @required String commentId,
-      @required String userId,
-      @required String content}) async {
+      {required String? noticeId,
+      required String? commentId,
+      required String userId,
+      required String content}) async {
     replyStatus = Status.updating;
 
-    CommentModel commentModel = getModel(commentList, commentId);
+    CommentModel? commentModel = getModel(commentList, commentId) as CommentModel?;
     //Comment 내부 replyIndex 증가
     bool result = await increaseReplyIndex(
         noticeId: noticeId, commentId: commentId, commentModel: commentModel);
@@ -199,7 +197,7 @@ class CommentReplyViewModel extends GetxController {
     Either<ErrorModel, void> either = await _replyRepository.writeReply(
         noticeId: noticeId,
         commentId: commentId,
-        replyIndex: commentModel.replyIndex.toString(),
+        replyIndex: commentModel!.replyIndex.toString(),
         userId: userId,
         content: content);
 
@@ -210,7 +208,7 @@ class CommentReplyViewModel extends GetxController {
 
     //정상적으로 서버 통신 완료
     //답글 다시 읽어 오기
-    Either<ErrorModel, CommentModel> either2 = await _commentRepository
+    Either<ErrorModel, CommentModel?> either2 = await _commentRepository
         .getCommentById(noticeId: noticeId, commentId: commentId);
     if (either2.isLeft()) {
       sendAlert(ErrorConstants.commentWriteServerError);
@@ -224,9 +222,9 @@ class CommentReplyViewModel extends GetxController {
   }
 
   Future<void> deleteReply(
-      {@required String noticeId,
-      @required String commentId,
-      @required ReplyModel replyModel}) async {
+      {required String? noticeId,
+      required String commentId,
+      required ReplyModel replyModel}) async {
     replyStatus = Status.updating;
     var either = await _replyRepository.deleteReply(
         noticeId: noticeId, commentId: commentId, replyModel: replyModel);
@@ -235,7 +233,7 @@ class CommentReplyViewModel extends GetxController {
       return;
     }
     //로컬에서도 삭제 필요
-    CommentModel commentModel = getModel(commentList, commentId);
+    CommentModel commentModel = getModel(commentList, commentId) as CommentModel;
     commentModel.replyList.removeWhere((e) => e.id == replyModel.id);
     replaceModel(commentList, commentModel);
 
@@ -244,17 +242,17 @@ class CommentReplyViewModel extends GetxController {
   }
 
   Future<void> toggleReplyFavorite(
-      {@required String noticeId,
-      @required String commentId,
-      @required String replyId,
-      @required String userId}) async {
-    CommentModel commentModel = getModel(commentList, commentId);
+      {required String? noticeId,
+      required String? commentId,
+      required String? replyId,
+      required String userId}) async {
+    CommentModel? commentModel = getModel(commentList, commentId) as CommentModel?;
     if (commentModel == null) {
       sendAlert(ErrorConstants.serverError);
       return;
     }
 
-    ReplyModel replyModel = getModel(commentModel.replyList, replyId);
+    ReplyModel? replyModel = getModel(commentModel.replyList, replyId) as ReplyModel?;
     if (replyModel == null) {
       sendAlert(ErrorConstants.serverError);
       return;
@@ -276,9 +274,9 @@ class CommentReplyViewModel extends GetxController {
   }
 
   Future<bool> increaseReplyIndex(
-      {@required String noticeId,
-      @required String commentId,
-      @required CommentModel commentModel}) async {
+      {required String? noticeId,
+      required String? commentId,
+      required CommentModel? commentModel}) async {
     if (commentModel == null) return false;
     //인덱스 찾기
     commentModel.replyIndex++;
@@ -304,7 +302,7 @@ class CommentReplyViewModel extends GetxController {
     _replyStatus.refresh();
   }
 
-  Object getModel(List modelList, String modelId) =>
+  Object? getModel(List modelList, String? modelId) =>
       modelList.where((e) => e.id == modelId)?.first;
 
   bool replaceModel(List modelList, dynamic model) {

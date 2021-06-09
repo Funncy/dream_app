@@ -18,10 +18,10 @@ import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class NoticeReplyScreen extends StatefulWidget {
-  final String noticeId;
-  final String commentId;
+  final String? noticeId;
+  final String? commentId;
 
-  const NoticeReplyScreen({Key key, this.commentId, this.noticeId})
+  const NoticeReplyScreen({Key? key, this.commentId, this.noticeId})
       : super(key: key);
   @override
   _NoticeReplyScreenState createState() => _NoticeReplyScreenState();
@@ -32,12 +32,12 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> with AlertMixin {
       Get.find<CommentReplyViewModel>();
   final TextEditingController _textEditingController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  StreamSubscription alertSubscription;
+  late StreamSubscription alertSubscription;
   @override
   void initState() {
     super.initState();
     //id에 해당하는 댓글 존재 확인
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
       commentReplyViewModel.isExistCommentById(commentId: widget.commentId);
       alertSubscription = commentReplyViewModel.alert.listen((alertModel) {
         if (alertModel.isAlert) return;
@@ -45,7 +45,7 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> with AlertMixin {
         showAlert(title: alertModel.title, content: alertModel.content);
       });
       //새로운 답글 추가시 아래 스크롤 애니메이션
-      debounce(commentReplyViewModel.replyStatus, (_) {
+      debounce(commentReplyViewModel.replyStatus, (dynamic _) {
         if (commentReplyViewModel.replyStatus == Status.loaded) {
           _scrollController.animateTo(
               _scrollController.position.maxScrollExtent,
@@ -111,7 +111,7 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> with AlertMixin {
                       child: Obx(() {
                         var dataStatus = commentReplyViewModel.replyStatus;
                         var comment = commentReplyViewModel.commentList
-                            .firstWhere((e) => e.id == widget.commentId);
+                            .firstWhere((e) => e!.id == widget.commentId);
                         return DataStatusWidget(
                             body: _commentBody(comment),
                             error: _errorWidget(),
@@ -143,7 +143,7 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> with AlertMixin {
 
   EmptyWidget _emptyWidget() => EmptyWidget();
 
-  Stack _updatingWidget(CommentModel commentModel) {
+  Stack _updatingWidget(CommentModel? commentModel) {
     return Stack(
       children: [
         NoticeComment(
@@ -165,7 +165,7 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> with AlertMixin {
     );
   }
 
-  Widget _commentBody(CommentModel commentModel) {
+  Widget _commentBody(CommentModel? commentModel) {
     if (commentModel == null) return ErrorMessageWidget(errorMessage: 'test');
     return NoticeComment(
       noticeCommentModel: commentModel,

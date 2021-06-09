@@ -30,15 +30,15 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
   final commentReplyViewModel = Get.find<CommentReplyViewModel>();
   final TextEditingController _textEditingController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  var notice = Get.arguments as NoticeModel;
-  StreamSubscription alertSubscription;
+  var notice = Get.arguments as NoticeModel?;
+  late StreamSubscription alertSubscription;
 
   @override
   void initState() {
     super.initState();
     //build후에 함수 실행
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await commentReplyViewModel.getCommentList(noticeId: notice.id);
+    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+      await commentReplyViewModel.getCommentList(noticeId: notice!.id);
       alertSubscription = commentReplyViewModel.alert.listen((alertModel) {
         if (alertModel.isAlert) return;
         alertModel.isAlert = true;
@@ -52,7 +52,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
       //updating => loaded (scroll O)
 
       if (preStatus == Status.updating && status == Status.loaded) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
+        WidgetsBinding.instance!.addPostFrameCallback((_) {
           _scrollController.animateTo(
               _scrollController.position.maxScrollExtent,
               duration: Duration(milliseconds: 500),
@@ -72,7 +72,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
   void inputComment() {
     //TODO: uid 연동해야함.
     commentReplyViewModel.writeComment(
-        noticeModel: notice,
+        noticeModel: notice!,
         userId: '123',
         content: _textEditingController.text);
     _textEditingController.text = '';
@@ -84,7 +84,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
         content: '정말 댓글을 삭제하시겠습니까?',
         isFunction: true,
         function: () => commentReplyViewModel.deleteComment(
-            notcieModel: notice, commentId: commentId));
+            notcieModel: notice!, commentId: commentId));
   }
 
   void deleteReply(String commentId, ReplyModel replyModel) {
@@ -93,7 +93,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
         content: '정말 답글을 삭제하시겠습니까?',
         isFunction: true,
         function: () => commentReplyViewModel.deleteReply(
-            noticeId: notice.id, commentId: commentId, replyModel: replyModel));
+            noticeId: notice!.id, commentId: commentId, replyModel: replyModel));
   }
 
   @override
@@ -149,7 +149,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
     );
   }
 
-  Stack _updatingWidget(List<CommentModel> commentList) {
+  Stack _updatingWidget(List<CommentModel?> commentList) {
     return Stack(
       children: [
         _commentList(commentList),
@@ -172,7 +172,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
 
   ErrorMessageWidget _errorWidget() => ErrorMessageWidget(errorMessage: 'test');
 
-  ListView _commentList(List<CommentModel> commentList) {
+  ListView _commentList(List<CommentModel?> commentList) {
     return ListView.builder(
         physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,
@@ -181,7 +181,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
           return NoticeComment(
             noticeCommentModel: commentList[index],
             isReplyScreen: false,
-            noticeId: notice.id,
+            noticeId: notice!.id,
             deleteComment: deleteComment,
             deleteReply: deleteReply,
           );
