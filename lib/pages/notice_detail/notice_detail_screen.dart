@@ -39,28 +39,20 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
     //build후에 함수 실행
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       await commentReplyViewModel.getCommentList(noticeId: notice!.id);
-      // alertSubscription = commentReplyViewModel.alert.listen((alertModel) {
-      //   if (alertModel.isAlert) return;
-      //   alertModel.isAlert = true;
-      //   showAlert(title: alertModel.title, content: alertModel.content);
-      // });
     });
 
     //댓글 추가 이후 스크롤 내리기
-    commentReplyViewModel.commentStatusStream().reduce((preStatus, status) {
-      //initial => loading => loaded (scroll X)
-      //updating => loaded (scroll O)
+    commentReplyViewModel.commentStatusStream().reduce(scrollAnimatorByStatus);
+  }
 
-      if (preStatus == Status.updating && status == Status.loaded) {
-        WidgetsBinding.instance!.addPostFrameCallback((_) {
-          _scrollController.animateTo(
-              _scrollController.position.maxScrollExtent,
-              duration: Duration(milliseconds: 500),
-              curve: Curves.ease);
-        });
-      }
-      return status;
-    });
+  Status? scrollAnimatorByStatus(Status? preStatus, Status? status) {
+    if (preStatus == Status.updating && status == Status.loaded) {
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
+        _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+            duration: Duration(milliseconds: 500), curve: Curves.ease);
+      });
+    }
+    return status;
   }
 
   @override
@@ -134,7 +126,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
                             loading: _loadingWidget(),
                             empty: _emptyWidget(),
                             updating: _updatingWidget(commentList),
-                            dataStatus: dataStatus),
+                            dataStatus: dataStatus!),
                       ],
                     );
                   }),

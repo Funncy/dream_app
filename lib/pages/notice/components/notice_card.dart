@@ -99,7 +99,7 @@ class NoticeCard extends StatelessWidget {
                         Container(
                           width: 5.w,
                         ),
-                        Text("좋아요 ${notice!.favoriteUserList!.length ?? ""}",
+                        Text("좋아요 ${notice!.favoriteUserList!.length}",
                             style: Theme.of(context).textTheme.bodyText2)
                       ],
                     ),
