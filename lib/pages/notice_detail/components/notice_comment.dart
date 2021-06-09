@@ -168,7 +168,7 @@ class _NoticeCommentState extends State<NoticeComment> {
                               width: 5,
                             ),
                             Text(
-                                "${widget.noticeCommentModel!.favoriteUserList!.length ?? "0"}")
+                                "${widget.noticeCommentModel!.favoriteUserList!.length}")
                           ],
                         ),
                       )

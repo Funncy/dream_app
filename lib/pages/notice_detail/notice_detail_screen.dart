@@ -39,11 +39,11 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
     //build후에 함수 실행
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       await commentReplyViewModel.getCommentList(noticeId: notice!.id);
-      alertSubscription = commentReplyViewModel.alert.listen((alertModel) {
-        if (alertModel.isAlert) return;
-        alertModel.isAlert = true;
-        showAlert(title: alertModel.title, content: alertModel.content);
-      });
+      // alertSubscription = commentReplyViewModel.alert.listen((alertModel) {
+      //   if (alertModel.isAlert) return;
+      //   alertModel.isAlert = true;
+      //   showAlert(title: alertModel.title, content: alertModel.content);
+      // });
     });
 
     //댓글 추가 이후 스크롤 내리기
@@ -93,7 +93,9 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
         content: '정말 답글을 삭제하시겠습니까?',
         isFunction: true,
         function: () => commentReplyViewModel.deleteReply(
-            noticeId: notice!.id, commentId: commentId, replyModel: replyModel));
+            noticeId: notice!.id,
+            commentId: commentId,
+            replyModel: replyModel));
   }
 
   @override

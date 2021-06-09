@@ -132,7 +132,7 @@ class NoticeReply extends StatelessWidget {
                             SizedBox(
                               width: 5,
                             ),
-                            Text("${replyModel.favoriteUserList!.length ?? "0"}")
+                            Text("${replyModel.favoriteUserList!.length}")
                           ],
                         ),
                       )
