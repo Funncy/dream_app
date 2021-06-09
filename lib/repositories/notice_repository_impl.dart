@@ -165,7 +165,9 @@ class NoticeRepositoryImpl extends NoticeRepository {
           throw Exception("Comment does not exist!");
         }
 
-        int? newCommentCount = snapshot.data()['comment_count'] + 1;
+        Map<String, Object> data = snapshot.data() as Map<String, Object>;
+
+        int? newCommentCount = (data['comment_count'] as int) + 1;
 
         transaction
             .update(documentReference, {'comment_count': newCommentCount});
