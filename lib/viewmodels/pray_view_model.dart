@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:dream/core/data_status/data_result.dart';
 import 'package:dream/core/data_status/status_enum.dart';
 import 'package:dream/core/error/error_model.dart';
 import 'package:dream/models/pray.dart';
@@ -10,10 +11,10 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 class PrayViewModel extends GetxController {
   late PrayRepository _prayRepository;
   Rx<Status> _sendStatus = Status.initial.obs;
-  get sendStatus => _sendStatus.value;
+  Status get sendStatus => _sendStatus.value;
   set sendStatus(Status status) => _sendStatus.value = status;
   Rx<Status> _listStatus = Status.initial.obs;
-  get listStatus => _listStatus.value;
+  Status get listStatus => _listStatus.value;
   set listStatus(Status status) => _listStatus.value = status;
 
   List<PrayModel> prayList = [];
@@ -22,13 +23,14 @@ class PrayViewModel extends GetxController {
     _prayRepository = prayRepository;
   }
 
-  Future<void> initPrayList() async {
+  Future<DataResult> initPrayList() async {
     listStatus = Status.loading;
     Either<ErrorModel, List<PrayModel>?> either =
         await _prayRepository.initPublicPrayList();
+    var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
       listStatus = Status.error;
-      return;
+      return DataResult(isCompleted: false, errorModel: result as ErrorModel);
     }
 
     prayList.clear();
@@ -37,42 +39,47 @@ class PrayViewModel extends GetxController {
       listStatus = Status.empty;
     else
       listStatus = Status.loaded;
+    return DataResult(isCompleted: true);
   }
 
-  Future<void> addPrayList() async {
+  Future<DataResult> addPrayList() async {
     listStatus = Status.loading;
     Either<ErrorModel, List<PrayModel>?> either = await _prayRepository
         .addPublicPrayList(prayList.last.documentReference);
+    var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
       listStatus = Status.error;
-      return;
+      return DataResult(isCompleted: false, errorModel: result as ErrorModel);
     }
 
     prayList.addAll(either.getOrElse(() => null)!);
 
     listStatus = Status.loaded;
+    return DataResult(isCompleted: true);
   }
 
-  Future<void> sendPray(
+  Future<DataResult> sendPray(
       {required String userId,
       required String title,
       required String content,
       required bool? isPublic}) async {
-    sendStatus.value = Status.loading;
+    sendStatus = Status.loading;
     Either<ErrorModel, void> either =
         await _prayRepository.sendPray(userId, title, content, isPublic);
+    var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
       //TODO: Alert 보내기
-      return;
+      return DataResult(isCompleted: false, errorModel: result as ErrorModel);
     }
     sendStatus = Status.loaded;
+    return DataResult(isCompleted: true);
   }
 
   void sendRefresh() {
-    sendStatus.refresh();
+    _sendStatus.refresh();
   }
 
   void listRefresh() {
-    listStatus.refresh();
+    _listStatus.refresh();
   }
 }
