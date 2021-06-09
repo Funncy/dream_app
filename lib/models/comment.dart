@@ -38,8 +38,7 @@ class CommentModel extends Core with EquatableMixin {
   factory CommentModel.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic>? json = doc.data() as Map<String, dynamic>;
 
-    List<Map<String, Object>> replyJsonList =
-        json['reply_list']?.cast<Map<String, Object>>();
+    List replyJsonList = json['reply_list'];
     List<ReplyModel> replyList = [];
     replyList = replyJsonList.map((e) => ReplyModel.fromJson(e)).toList()
       ..sort((a, b) => a.updatedAt!.compareTo(b.updatedAt!));
@@ -54,8 +53,8 @@ class CommentModel extends Core with EquatableMixin {
       documentReference: doc.reference,
     );
 
-    model.createdAt = (json['created_at'] as Timestamp?)?.toDate() ?? null;
-    model.updatedAt = (json['updated_at'] as Timestamp?)?.toDate() ?? null;
+    model.createdAt = (json['created_at'] as Timestamp?)?.toDate();
+    model.updatedAt = (json['updated_at'] as Timestamp?)?.toDate();
     return model;
   }
 
