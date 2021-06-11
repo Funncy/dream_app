@@ -40,37 +40,37 @@ class CommentReplyViewModelImpl extends GetxController
     _replyRepository = replyRepository;
   }
 
+  Future<DataResult> process(List<Function> functionList) async {
+    DataResult successOrError = DataResult(isCompleted: true);
+    for (var function in functionList) {
+      successOrError = await function(successOrError);
+      if (!successOrError.isCompleted) {
+        return successOrError;
+      }
+    }
+    return successOrError;
+  }
+
   Future<ViewModelResult> writeComment(
       {required NoticeModel noticeModel,
       required String userId,
       required String content}) async {
     //update 중
     commentStatus = Status.updating;
-    //댓글 쓰기
-    DataResult successOrError = await _writeComment(
-        noticeModel: noticeModel, userId: userId, content: content);
-    if (!successOrError.isCompleted) {
-      commentStatus = Status.error;
-      return successOrError;
-    }
 
-    //공지사항의 댓글 카운트 증가
-    successOrError = await _increaseCommentCount(noticeModel);
-    if (!successOrError.isCompleted) {
-      commentStatus = Status.error;
-      return successOrError;
-    }
+    ViewModelResult result = await process([
+      (_) => _writeComment(
+          noticeModel: noticeModel, userId: userId, content: content),
+      (_) => _increaseCommentCount(noticeModel),
+      (_) => _getCommentList(noticeId: noticeModel.id),
+    ]);
 
-    //정상적으로 서버 통신 완료
-    //댓글 다시 읽어오기
-    successOrError = await _getCommentList(noticeId: noticeModel.id);
-    if (!successOrError.isCompleted) {
+    if (!result.isCompleted == false) {
       commentStatus = Status.error;
-      return successOrError;
+      return result;
     }
-
     commentStatus = Status.loaded;
-    return ViewModelResult(isCompleted: true);
+    return result;
   }
 
   Future<ViewModelResult> getCommentList({required String? noticeId}) async {
@@ -179,7 +179,7 @@ class CommentReplyViewModelImpl extends GetxController
 
     CommentModel resultModel = successOrError.data;
     //화면 모델 리스트에 삽입
-    replaceModel(commentList, commentModel);
+    replaceModel(commentList, resultModel);
 
     replyStatus = Status.loaded;
     return ViewModelResult(isCompleted: true);
@@ -239,6 +239,14 @@ class CommentReplyViewModelImpl extends GetxController
     //local에서도 수정
     replyStatus = Status.loaded;
     return ViewModelResult(isCompleted: true);
+  }
+
+  void refreshComment() {
+    _commentStatus.refresh();
+  }
+
+  void refreshReply() {
+    _replyStatus.refresh();
   }
 
   /*
@@ -453,14 +461,6 @@ class CommentReplyViewModelImpl extends GetxController
       return DataResult(isCompleted: false, errorModel: result as ErrorModel);
     }
     return DataResult(isCompleted: true);
-  }
-
-  void refreshComment() {
-    _commentStatus.refresh();
-  }
-
-  void refreshReply() {
-    _replyStatus.refresh();
   }
 
   Object? getModel(List modelList, String? modelId) =>
