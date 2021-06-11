@@ -5,6 +5,7 @@ import 'package:dream/repositories/pary_repository_impl.dart';
 import 'package:dream/repositories/reply_repository.dart';
 import 'package:dream/repositories/reply_repository_impl.dart';
 import 'package:dream/viewmodels/comment_reply_view_model.dart';
+import 'package:dream/viewmodels/comment_reply_view_model_impl.dart';
 import 'package:dream/viewmodels/notice_view_model.dart';
 import 'package:dream/viewmodels/pray_view_model.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -17,7 +18,7 @@ class NoticeBindings implements Bindings {
         noticeRepository: NoticeRepositoryImpl(
             firebaseFirestore: FirebaseFirestore.instance,
             firebaseStorage: FirebaseStorage.instance)));
-    Get.put<CommentReplyViewModel>(CommentReplyViewModel(
+    Get.put<CommentReplyViewModel>(CommentReplyViewModelImpl(
         noticeRepository: NoticeRepositoryImpl(
             firebaseFirestore: FirebaseFirestore.instance,
             firebaseStorage: FirebaseStorage.instance),
