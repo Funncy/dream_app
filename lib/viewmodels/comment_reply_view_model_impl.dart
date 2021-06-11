@@ -19,7 +19,8 @@ class CommentReplyViewModelImpl extends GetxController
   late NoticeRepository _noticeRepository;
   late CommentRepository _commentRepository;
   late ReplyRepository _replyRepository;
-  List<CommentModel?> commentList = <CommentModel?>[];
+  List<CommentModel?> _commentList = <CommentModel?>[];
+  List<CommentModel?> get commentList => _commentList;
   Rxn<Status?> _commentStatus =
       Rxn<Status?>(Status.initial); // Status.initial.obs;
   Status? get commentStatus => _commentStatus.value;
