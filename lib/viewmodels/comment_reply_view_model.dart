@@ -1,5 +1,6 @@
 import 'package:dream/core/data_status/data_result.dart';
 import 'package:dream/core/data_status/status_enum.dart';
+import 'package:dream/core/data_status/viewmodel_result.dart';
 import 'package:dream/models/notice.dart';
 import 'package:dream/models/reply.dart';
 
@@ -12,28 +13,28 @@ abstract class CommentReplyViewModel {
   set replyStatus(Status? status);
 
   //댓글
-  Future<DataResult> writeComment(
+  Future<ViewModelResult> writeComment(
       {required NoticeModel noticeModel,
       required String userId,
       required String content});
-  Future<DataResult> getCommentList({required String? noticeId});
-  Future<DataResult> deleteComment(
+  Future<ViewModelResult> getCommentList({required String? noticeId});
+  Future<ViewModelResult> deleteComment(
       {required NoticeModel notcieModel, required commentId});
-  Future<DataResult> toggleCommentFavorite(
+  Future<ViewModelResult> toggleCommentFavorite(
       {required String? noticeId,
       required String? commentId,
       required String userId});
   //답글
-  Future<DataResult> writeReply(
+  Future<ViewModelResult> writeReply(
       {required String? noticeId,
       required String? commentId,
       required String userId,
       required String content});
-  Future<DataResult> deleteReply(
+  Future<ViewModelResult> deleteReply(
       {required String? noticeId,
       required String commentId,
       required ReplyModel replyModel});
-  Future<DataResult> toggleReplyFavorite(
+  Future<ViewModelResult> toggleReplyFavorite(
       {required String? noticeId,
       required String? commentId,
       required String? replyId,

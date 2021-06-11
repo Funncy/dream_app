@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:dream/core/data_status/data_result.dart';
 import 'package:dream/core/data_status/status_enum.dart';
+import 'package:dream/core/data_status/viewmodel_result.dart';
 import 'package:dream/core/error/alert_model.dart';
 import 'package:dream/core/error/error_constants.dart';
 import 'package:dream/core/error/error_model.dart';
@@ -39,20 +40,47 @@ class CommentReplyViewModelImpl extends GetxController
     _replyRepository = replyRepository;
   }
 
-  Future<DataResult> getCommentList({required String? noticeId}) async {
-    commentStatus = Status.loading;
-
-    Either<ErrorModel, List<CommentModel>> either =
-        await _commentRepository.getCommentList(noticeId: noticeId);
-    var result = either.fold((l) => l, (r) => r);
-
-    if (either.isLeft()) {
+  Future<ViewModelResult> writeComment(
+      {required NoticeModel noticeModel,
+      required String userId,
+      required String content}) async {
+    //update 중
+    commentStatus = Status.updating;
+    //댓글 쓰기
+    DataResult successOrError = await _writeComment(
+        noticeModel: noticeModel, userId: userId, content: content);
+    if (!successOrError.isCompleted) {
       commentStatus = Status.error;
-      return DataResult(isCompleted: false, errorModel: result as ErrorModel?);
+      return successOrError;
     }
 
-    commentList.clear();
-    commentList.addAll(result as Iterable<CommentModel?>);
+    //공지사항의 댓글 카운트 증가
+    successOrError = await _increaseCommentCount(noticeModel);
+    if (!successOrError.isCompleted) {
+      commentStatus = Status.error;
+      return successOrError;
+    }
+
+    //정상적으로 서버 통신 완료
+    //댓글 다시 읽어오기
+    successOrError = await _getCommentList(noticeId: noticeModel.id);
+    if (!successOrError.isCompleted) {
+      commentStatus = Status.error;
+      return successOrError;
+    }
+
+    commentStatus = Status.loaded;
+    return ViewModelResult(isCompleted: true);
+  }
+
+  Future<ViewModelResult> getCommentList({required String? noticeId}) async {
+    commentStatus = Status.loading;
+
+    ViewModelResult successOrError = await _getCommentList(noticeId: noticeId);
+    if (!successOrError.isCompleted) {
+      commentStatus = Status.error;
+      return successOrError;
+    }
 
     if (commentList.length > 0) {
       commentStatus = Status.loaded;
@@ -60,6 +88,220 @@ class CommentReplyViewModelImpl extends GetxController
       commentStatus = Status.empty;
     }
 
+    return ViewModelResult(isCompleted: true);
+  }
+
+  Future<ViewModelResult> deleteComment(
+      {required NoticeModel notcieModel, required commentId}) async {
+    commentStatus = Status.loading;
+    DataResult successOrError =
+        await _deleteComment(noticeId: notcieModel.id!, commentId: commentId);
+    if (!successOrError.isCompleted) {
+      commentStatus = Status.error;
+      return successOrError;
+    }
+
+    //로컬에서도 삭제
+    deleteModelInList(commentList, commentId);
+
+    successOrError =
+        await _updateCommentCount(notcieModel.id, notcieModel.commentCount);
+    if (!successOrError.isCompleted) {
+      return successOrError;
+    }
+
+    commentStatus = Status.loaded;
+    return ViewModelResult(isCompleted: true);
+  }
+
+  Future<ViewModelResult> toggleCommentFavorite(
+      {required String? noticeId,
+      required String? commentId,
+      required String userId}) async {
+    CommentModel? commentModel =
+        getModel(commentList, commentId) as CommentModel?;
+    if (commentModel == null) return DataResult(isCompleted: false);
+
+    bool isExist = favoriteUserisExist(commentModel.favoriteUserList!, userId);
+
+    DataResult successOrError = await _toggleCommentFavorite(
+        noticeId: noticeId,
+        commentId: commentId,
+        userId: userId,
+        isExist: !isExist);
+    if (successOrError.isCompleted) {
+      commentStatus = Status.error;
+      return successOrError;
+    }
+
+    //local에서도 증가
+    _toggleCommentFavoriteLocal(userId: userId, model: commentModel);
+    commentStatus = Status.loaded;
+    return ViewModelResult(isCompleted: true);
+  }
+
+  Future<ViewModelResult> writeReply(
+      {required String? noticeId,
+      required String? commentId,
+      required String userId,
+      required String content}) async {
+    replyStatus = Status.updating;
+
+    CommentModel? commentModel =
+        getModel(commentList, commentId) as CommentModel?;
+    //Comment 내부 replyIndex 증가
+    DataResult successOrError = await increaseReplyIndex(
+        noticeId: noticeId, commentId: commentId, commentModel: commentModel);
+    if (!successOrError.isCompleted) {
+      replyStatus = Status.error;
+      return successOrError;
+    }
+
+    successOrError = await _writeReply(
+        noticeId: noticeId,
+        commentId: commentId,
+        replyIndex: commentModel!.replyIndex.toString(),
+        userId: userId,
+        content: content);
+    if (!successOrError.isCompleted) {
+      replyStatus = Status.error;
+      return successOrError;
+    }
+
+    //정상적으로 서버 통신 완료
+    //답글 다시 읽어 오기
+    successOrError =
+        await _getCommentById(noticeId: noticeId, commentId: commentId);
+    if (!successOrError.isCompleted) {
+      commentStatus = Status.error;
+      return successOrError;
+    }
+
+    CommentModel resultModel = successOrError.data;
+    //화면 모델 리스트에 삽입
+    replaceModel(commentList, commentModel);
+
+    replyStatus = Status.loaded;
+    return ViewModelResult(isCompleted: true);
+  }
+
+  Future<ViewModelResult> deleteReply(
+      {required String? noticeId,
+      required String commentId,
+      required ReplyModel replyModel}) async {
+    replyStatus = Status.loading;
+    DataResult successOrError = await _deleteReply(
+        noticeId: noticeId, commentId: commentId, replyModel: replyModel);
+    if (!successOrError.isCompleted) {
+      replyStatus = Status.error;
+      return successOrError;
+    }
+    //로컬에서도 삭제 필요
+    _deleteReplyInLocalList(
+        commentId: commentId, noticeId: noticeId, replyModel: replyModel);
+
+    replyStatus = Status.loaded;
+    return ViewModelResult(isCompleted: true);
+  }
+
+  Future<ViewModelResult> toggleReplyFavorite(
+      {required String? noticeId,
+      required String? commentId,
+      required String? replyId,
+      required String userId}) async {
+    replyStatus = Status.loading;
+    CommentModel? commentModel =
+        getModel(commentList, commentId) as CommentModel?;
+    if (commentModel == null) {
+      return ViewModelResult(
+          isCompleted: false,
+          errorModel: ErrorModel(message: 'commentModel is null'));
+    }
+
+    ReplyModel? replyModel =
+        getModel(commentModel.replyList, replyId) as ReplyModel?;
+    if (replyModel == null) {
+      return ViewModelResult(
+          isCompleted: false,
+          errorModel: ErrorModel(message: 'replyModel is null'));
+    }
+
+    DataResult successOrError = await _toggleReplyFavorite(
+        noticeId: noticeId,
+        commentId: commentId,
+        replyModel: replyModel,
+        userId: userId);
+    if (!successOrError.isCompleted) {
+      replyStatus = Status.error;
+      return successOrError;
+    }
+
+    //local에서도 수정
+    replyStatus = Status.loaded;
+    return ViewModelResult(isCompleted: true);
+  }
+
+  /*
+   *
+   * 
+   * Interface 부품 함수들 
+   * 
+   * 
+   * 
+  */
+
+  Future<DataResult> _getCommentList({required String? noticeId}) async {
+    Either<ErrorModel, List<CommentModel>> either =
+        await _commentRepository.getCommentList(noticeId: noticeId);
+    var result = either.fold((l) => l, (r) => r);
+
+    if (either.isLeft())
+      return DataResult(isCompleted: false, errorModel: result as ErrorModel?);
+
+    commentList.clear();
+    commentList.addAll(result as Iterable<CommentModel?>);
+    return DataResult(isCompleted: true);
+  }
+
+  Future<DataResult> _toggleCommentFavorite(
+      {required String? noticeId,
+      required String? commentId,
+      required String userId,
+      required bool isExist}) async {
+    Either<ErrorModel, void> either =
+        await _commentRepository.toggleCommentFavorite(
+            noticeId: noticeId,
+            commentId: commentId,
+            userId: userId,
+            isDelete: !isExist);
+    var result = either.fold((l) => l, (r) => r);
+    if (either.isLeft()) {
+      return DataResult(isCompleted: false, errorModel: result as ErrorModel?);
+    }
+    return DataResult(isCompleted: true);
+  }
+
+  //TODO: 변화하는지 체크 필요 (혹시 복사해오면 변경 안됨)
+  void _toggleCommentFavoriteLocal({
+    required String userId,
+    required CommentModel model,
+  }) {
+    bool isExist = favoriteUserisExist(model.favoriteUserList!, userId);
+    if (isExist)
+      model.favoriteUserList!.add(userId);
+    else
+      model.favoriteUserList!.remove(userId);
+  }
+
+  Future<DataResult> _deleteComment(
+      {required String noticeId, required commentId}) async {
+    Either<ErrorModel, void> either = await _commentRepository.deleteComment(
+        noticeId: noticeId, commentId: commentId);
+    var result = either.fold((l) => l, (r) => r);
+    if (either.isLeft()) {
+      commentStatus = Status.loaded;
+      return DataResult(isCompleted: false, errorModel: result as ErrorModel?);
+    }
     return DataResult(isCompleted: true);
   }
 
@@ -74,37 +316,22 @@ class CommentReplyViewModelImpl extends GetxController
     }
   }
 
-  Future<DataResult> writeComment(
+  Future<DataResult> _writeComment(
       {required NoticeModel noticeModel,
       required String userId,
       required String content}) async {
-    //update 중
-    commentStatus = Status.updating;
-    //댓글 쓰기
     Either<ErrorModel, void> either = await _commentRepository.writeComment(
         noticeId: noticeModel.id, userId: userId, content: content);
 
     var result = either.fold((l) => l, (r) => r);
     //에러인 경우 아래 진행 안함
     if (either.isLeft()) {
-      commentStatus = Status.loaded;
       return DataResult(isCompleted: false, errorModel: result as ErrorModel?);
     }
-
-    //공지사항의 댓글 카운트 증가
-    DataResult increaseResult = await increaseCommentCount(noticeModel);
-    if (!increaseResult.isCompleted) return increaseResult;
-
-    //정상적으로 서버 통신 완료
-    //댓글 다시 읽어오기
-    DataResult getCommentListResult =
-        await getCommentList(noticeId: noticeModel.id);
-    if (!getCommentListResult.isCompleted) return getCommentListResult;
-
     return DataResult(isCompleted: true);
   }
 
-  Future<DataResult> increaseCommentCount(NoticeModel noticeModel) async {
+  Future<DataResult> _increaseCommentCount(NoticeModel noticeModel) async {
     int commentCount = noticeModel.commentCount!;
     noticeModel.commentCount = commentCount + 1;
     //서버 통신
@@ -120,29 +347,7 @@ class CommentReplyViewModelImpl extends GetxController
     return DataResult(isCompleted: true);
   }
 
-  Future<DataResult> deleteComment(
-      {required NoticeModel notcieModel, required commentId}) async {
-    Either<ErrorModel, void> either = await _commentRepository.deleteComment(
-        noticeId: notcieModel.id, commentId: commentId);
-    var result = either.fold((l) => l, (r) => r);
-    if (either.isLeft()) {
-      commentStatus = Status.loaded;
-      return DataResult(isCompleted: false, errorModel: result as ErrorModel?);
-    }
-    //로컬에서도 삭제
-    deleteModelInList(commentList, commentId);
-
-    DataResult updateCommentCountResult =
-        await updateCommentCount(notcieModel.id, notcieModel.commentCount);
-    commentStatus = Status.loaded;
-    if (!updateCommentCountResult.isCompleted) {
-      return updateCommentCountResult;
-    }
-
-    return DataResult(isCompleted: true);
-  }
-
-  Future<DataResult> updateCommentCount(String? id, int? count) async {
+  Future<DataResult> _updateCommentCount(String? id, int? count) async {
     Either<ErrorModel, void> either =
         await _noticeRepository.updateCommentCount(id, count);
     var result = either.fold((l) => l, (r) => r);
@@ -152,124 +357,64 @@ class CommentReplyViewModelImpl extends GetxController
     return DataResult(isCompleted: true);
   }
 
-  Future<DataResult> toggleCommentFavorite(
-      {required String? noticeId,
-      required String? commentId,
-      required String userId}) async {
-    CommentModel? commentModel =
-        getModel(commentList, commentId) as CommentModel?;
-    if (commentModel == null) return DataResult(isCompleted: false);
-
-    bool isExist = favoriteUserisExist(commentModel.favoriteUserList!, userId);
-
-    Either<ErrorModel, void> either =
-        await _commentRepository.toggleCommentFavorite(
-            noticeId: noticeId,
-            commentId: commentId,
-            userId: userId,
-            isDelete: !isExist);
-    var result = either.fold((l) => l, (r) => r);
-    if (either.isLeft()) {
-      return DataResult(isCompleted: false, errorModel: result as ErrorModel?);
-    }
-
-    //local에서도 증가
-    if (isExist)
-      commentModel.favoriteUserList!.add(userId);
-    else
-      commentModel.favoriteUserList!.remove(userId);
-    refreshComment();
-    return DataResult(isCompleted: true);
-  }
-
-  Future<DataResult> writeReply(
+  Future<DataResult> _writeReply(
       {required String? noticeId,
       required String? commentId,
       required String userId,
+      required String replyIndex,
       required String content}) async {
-    replyStatus = Status.updating;
-
-    CommentModel? commentModel =
-        getModel(commentList, commentId) as CommentModel?;
-    //Comment 내부 replyIndex 증가
-    DataResult increaseReplyIndexResult = await increaseReplyIndex(
-        noticeId: noticeId, commentId: commentId, commentModel: commentModel);
-
-    if (!increaseReplyIndexResult.isCompleted) {
-      replyStatus = Status.loaded;
-      return increaseReplyIndexResult;
-    }
-
     Either<ErrorModel, void> either = await _replyRepository.writeReply(
         noticeId: noticeId,
         commentId: commentId,
-        replyIndex: commentModel!.replyIndex.toString(),
+        replyIndex: replyIndex,
         userId: userId,
         content: content);
     var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
       return DataResult(isCompleted: false, errorModel: result as ErrorModel);
     }
-
-    //정상적으로 서버 통신 완료
-    //답글 다시 읽어 오기
-    Either<ErrorModel, CommentModel?> either2 = await _commentRepository
-        .getCommentById(noticeId: noticeId, commentId: commentId);
-    var result2 = either2.fold((l) => l, (r) => r);
-    if (either2.isLeft()) {
-      return DataResult(isCompleted: false, errorModel: result2 as ErrorModel);
-    }
-    commentModel = either2.getOrElse(() => null);
-    //화면 모델 리스트에 삽입
-    replaceModel(commentList, commentModel);
-
-    replyStatus = Status.loaded;
     return DataResult(isCompleted: true);
   }
 
-  Future<DataResult> deleteReply(
+  Future<DataResult> _getCommentById(
+      {required String? noticeId, required String? commentId}) async {
+    Either<ErrorModel, CommentModel?> either = await _commentRepository
+        .getCommentById(noticeId: noticeId, commentId: commentId);
+    var result2 = either.fold((l) => l, (r) => r);
+    if (either.isLeft()) {
+      return DataResult(isCompleted: false, errorModel: result2 as ErrorModel);
+    }
+    return DataResult(isCompleted: true, data: either.getOrElse(() => null));
+  }
+
+  Future<DataResult> _deleteReply(
       {required String? noticeId,
       required String commentId,
       required ReplyModel replyModel}) async {
-    replyStatus = Status.updating;
     var either = await _replyRepository.deleteReply(
         noticeId: noticeId, commentId: commentId, replyModel: replyModel);
     var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
       return DataResult(isCompleted: false, errorModel: result as ErrorModel);
     }
-    //로컬에서도 삭제 필요
+    return DataResult(isCompleted: true);
+  }
+
+  void _deleteReplyInLocalList(
+      {required String? noticeId,
+      required String commentId,
+      required ReplyModel replyModel}) {
     CommentModel commentModel =
         getModel(commentList, commentId) as CommentModel;
     commentModel.replyList.removeWhere((e) => e.id == replyModel.id);
     replaceModel(commentList, commentModel);
-
-    replyStatus = Status.loaded;
-    commentStatus = Status.loaded;
-    return DataResult(isCompleted: true);
   }
 
-  Future<DataResult> toggleReplyFavorite(
+  Future<DataResult> _toggleReplyFavorite(
       {required String? noticeId,
       required String? commentId,
-      required String? replyId,
+      required ReplyModel replyModel,
       required String userId}) async {
-    CommentModel? commentModel =
-        getModel(commentList, commentId) as CommentModel?;
-    if (commentModel == null) {
-      return DataResult(
-          isCompleted: false,
-          errorModel: ErrorModel(message: 'commentModel is null'));
-    }
-
-    ReplyModel? replyModel =
-        getModel(commentModel.replyList, replyId) as ReplyModel?;
-    if (replyModel == null) {
-      return DataResult(
-          isCompleted: false,
-          errorModel: ErrorModel(message: 'replyModel is null'));
-    }
-
     var either = await _replyRepository.toggleReplyFavorite(
       noticeId: noticeId,
       commentId: commentId,
@@ -280,9 +425,6 @@ class CommentReplyViewModelImpl extends GetxController
     if (either.isLeft()) {
       return DataResult(isCompleted: false, errorModel: result as ErrorModel);
     }
-
-    //local에서도 수정
-    refreshComment();
     return DataResult(isCompleted: true);
   }
 
