@@ -77,10 +77,13 @@ class CommentReplyViewModelImpl extends GetxController
   Future<ViewModelResult> getCommentList({required String? noticeId}) async {
     commentStatus = Status.loading;
 
-    ViewModelResult successOrError = await _getCommentList(noticeId: noticeId);
-    if (!successOrError.isCompleted) {
+    ViewModelResult result = await process([
+      (_) => _getCommentList(noticeId: noticeId),
+    ]);
+
+    if (!result.isCompleted == false) {
       commentStatus = Status.error;
-      return successOrError;
+      return result;
     }
 
     if (commentList.length > 0) {
@@ -89,7 +92,7 @@ class CommentReplyViewModelImpl extends GetxController
       commentStatus = Status.empty;
     }
 
-    return ViewModelResult(isCompleted: true);
+    return result;
   }
 
   Future<ViewModelResult> deleteComment(

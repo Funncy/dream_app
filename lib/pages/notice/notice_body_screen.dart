@@ -1,3 +1,4 @@
+import 'package:dream/core/data_status/viewmodel_result.dart';
 import 'package:dream/models/notice.dart';
 import 'package:dream/pages/common/empty_widget.dart';
 import 'package:dream/pages/common/error_message_widget.dart';
@@ -48,18 +49,35 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> {
         onRefresh: refreshNoticeList,
         child: Container(
           color: Colors.black12,
-          child: Obx(() {
-            var dataStatus = noticeViewModel.noticeStatus;
-            List<NoticeModel> noticeList = noticeViewModel.noticeList;
-
-            return DataStatusWidget(
-                body: _noticeList(noticeList),
-                error: _errorWidget(),
-                loading: _loadingWidget(),
-                empty: _emptyWidget(),
-                updating: _updatingWidget(noticeList),
-                dataStatus: dataStatus);
-          }),
+          child: FutureBuilder(
+            future: noticeViewModel.getNoticeList(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Container(
+                  child: Center(
+                    child: Text("로딩 위젯"),
+                  ),
+                );
+              } else if (snapshot.connectionState == ConnectionState.done) {
+                if ((snapshot.data as ViewModelResult).isCompleted) {
+                  return Obx(() {
+                    var dataStatus = noticeViewModel.noticeStatus;
+                    List<NoticeModel> noticeList = noticeViewModel.noticeList;
+                    return DataStatusWidget(
+                        body: _noticeList(noticeList),
+                        error: _noticeList(noticeList),
+                        loading: _noticeList(noticeList),
+                        empty: _emptyWidget(),
+                        updating: _updatingWidget(noticeList),
+                        dataStatus: dataStatus);
+                  });
+                }
+              }
+              return Container(
+                child: Center(child: Text("에러 위젯")),
+              );
+            },
+          ),
         ),
       ),
     );

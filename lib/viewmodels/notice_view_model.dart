@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:dream/core/data_status/data_result.dart';
 import 'package:dream/core/data_status/status_enum.dart';
+import 'package:dream/core/data_status/viewmodel_result.dart';
 import 'package:dream/core/error/error_model.dart';
 import 'package:dream/models/notice.dart';
 import 'package:dream/repositories/notice_repository.dart';
@@ -24,11 +25,18 @@ class NoticeViewModel extends GetxController {
     _noticeRepository.createDummyData();
   }
 
-  Future<DataResult> getNoticeList() async {
-    //데이터 상태와 데이터를 가져오는 함수를 전달
-    //추가로 리스트 형태인지를 전달
-    // 리스트 형태인경우 데이터의 길이에 따라 Empty위젯을 보여줘야 함.
-    noticeStatus = Status.loading;
+  Future<DataResult> process(List<Function> functionList) async {
+    DataResult successOrError = DataResult(isCompleted: true);
+    for (var function in functionList) {
+      successOrError = await function(successOrError);
+      if (!successOrError.isCompleted) {
+        return successOrError;
+      }
+    }
+    return successOrError;
+  }
+
+  Future<DataResult> _getNoticeList() async {
     Either<ErrorModel, List<NoticeModel>> either =
         await _noticeRepository.getNoticeList();
     var result = either.fold((l) => l, (r) => r);
@@ -42,11 +50,30 @@ class NoticeViewModel extends GetxController {
     //Right이면 List로 반환됨.
     noticeList.clear();
     noticeList.addAll(result as List<NoticeModel>);
+
+    return DataResult(isCompleted: true);
+  }
+
+  Future<ViewModelResult> getNoticeList() async {
+    //데이터 상태와 데이터를 가져오는 함수를 전달
+    //추가로 리스트 형태인지를 전달
+    // 리스트 형태인경우 데이터의 길이에 따라 Empty위젯을 보여줘야 함.
+    noticeStatus = Status.loading;
+
+    ViewModelResult result = await process([
+      (_) => _getNoticeList(),
+    ]);
+
+    if (!result.isCompleted) {
+      noticeStatus = Status.error;
+      return result;
+    }
+
     if (noticeList.length > 0)
       noticeStatus = Status.loaded;
     else
       noticeStatus = Status.empty;
-    return DataResult(isCompleted: true);
+    return result;
   }
 
   Future<DataResult> addNoticeList() async {
