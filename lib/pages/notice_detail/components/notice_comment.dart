@@ -154,6 +154,9 @@ class _NoticeCommentState extends State<NoticeComment> {
                               noticeId: widget.noticeId,
                               commentId: widget.noticeCommentModel!.id,
                               userId: '123');
+                          if (widget.isReplyScreen == true) {
+                            commentReplyViewModel.refreshReply();
+                          }
                         },
                         child: Row(
                           children: [

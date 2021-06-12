@@ -36,7 +36,7 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> with AlertMixin {
     super.initState();
     //id에 해당하는 댓글 존재 확인
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      // commentReplyViewModel.isExistCommentById(commentId: widget.commentId);
+      commentReplyViewModel.isExistCommentById(commentId: widget.commentId);
       // alertSubscription = commentReplyViewModel.alert.listen((alertModel) {
       //   if (alertModel.isAlert) return;
       //   alertModel.isAlert = true;

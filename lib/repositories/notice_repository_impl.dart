@@ -165,7 +165,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
           throw Exception("Comment does not exist!");
         }
 
-        Map<String, Object> data = snapshot.data() as Map<String, Object>;
+        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
 
         int? newCommentCount = (data['comment_count'] as int) + 1;
 
