@@ -31,8 +31,6 @@ class CommentReplyViewModelImpl extends GetxController
   Rxn<Status?> _replyStatus = Rxn<Status?>(Status.initial);
   Status? get commentStatus => _commentStatus.value;
   set commentStatus(Status? status) => _commentStatus.value = status;
-  //test용
-  void setCommentStatus(Status? status) => _commentStatus.value = status;
   //답글은 comment내부에 존재하지만 상태는 따로 관리
   Status? get replyStatus => _replyStatus.value;
   set replyStatus(Status? status) => _replyStatus.value = status;
@@ -58,7 +56,7 @@ class CommentReplyViewModelImpl extends GetxController
             noticeModel: noticeModel, userId: userId, content: content),
         (_) => _increaseCommentCount(noticeModel),
         (_) => _getCommentList(noticeId: noticeModel.id),
-      ], setStatus: setCommentStatus);
+      ], status: _commentStatus);
 
   // Future<ViewModelResult> writeComment(
   //     {required NoticeModel noticeModel,

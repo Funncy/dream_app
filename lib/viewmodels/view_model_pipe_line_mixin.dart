@@ -1,6 +1,7 @@
 import 'package:dream/core/data_status/data_result.dart';
 import 'package:dream/core/data_status/status_enum.dart';
 import 'package:dream/core/data_status/viewmodel_result.dart';
+import 'package:get/get.dart';
 
 typedef Future<DataResult> Process(DataResult successOrError);
 
@@ -18,19 +19,19 @@ mixin ViewModelPipeLineMixin {
 
   Future<ViewModelResult> process(
       {required List<Process> functionList,
-      required Function setStatus,
+      required Rxn<Status?> status,
       List<dynamic>? dataList}) async {
-    setStatus(Status.loading);
+    status.value = Status.loading;
 
     ViewModelResult result = await pipeline(functionList);
     if (!result.isCompleted) {
-      setStatus(Status.error);
+      status.value = Status.error;
       return result;
     }
     if (dataList == null && dataList!.length == 0) {
-      setStatus(Status.empty);
+      status.value = Status.empty;
     } else {
-      setStatus(Status.loaded);
+      status.value = Status.loaded;
     }
     return ViewModelResult(isCompleted: true);
   }
