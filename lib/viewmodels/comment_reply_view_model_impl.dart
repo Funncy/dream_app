@@ -79,6 +79,8 @@ class CommentReplyViewModelImpl extends GetxController
     return ViewModelResult(isCompleted: true);
   }
 
+  void test() async => await Future.delayed(Duration(microseconds: 10));
+
   Future<ViewModelResult> toggleCommentFavorite(
       {required String? noticeId,
       required String? commentId,
@@ -86,8 +88,15 @@ class CommentReplyViewModelImpl extends GetxController
     commentStatus = Status.loading;
 
     ViewModelResult result = await pipeline([
-      (_) => _toggleCommentFavorite(
-          noticeId: noticeId, commentId: commentId, userId: userId)
+      (_) => _getModel(commentList, commentId),
+      (data) => _favoriteUserisExist(data['model'].favoriteUserList, userId),
+      (data) => _toggleCommentFavorite(
+          noticeId: noticeId,
+          commentId: commentId,
+          userId: userId,
+          isExist: data['isExist']),
+      (data) => _toggleCommentFavoriteLocal(
+          userId: userId, model: data['model'], isExist: data['isExist']),
     ]);
     if (!result.isCompleted) {
       commentStatus = Status.error;
@@ -233,17 +242,8 @@ class CommentReplyViewModelImpl extends GetxController
     required String? noticeId,
     required String? commentId,
     required String userId,
+    required bool isExist,
   }) async {
-    //모델 찾기
-    DataResult successOrError = _getModel(commentList, commentId);
-    if (!successOrError.isCompleted) return successOrError;
-    CommentModel commentModel = successOrError.data['model'];
-
-    successOrError =
-        _favoriteUserisExist(commentModel.favoriteUserList!, userId);
-    if (!successOrError.isCompleted) return successOrError;
-    bool isExist = successOrError.data['isExist'];
-
     Either<ErrorModel, void> either =
         await _commentRepository.toggleCommentFavorite(
             noticeId: noticeId,
@@ -254,10 +254,6 @@ class CommentReplyViewModelImpl extends GetxController
     if (either.isLeft()) {
       return DataResult(isCompleted: false, errorModel: result as ErrorModel);
     }
-    //local에서도 증가
-    successOrError = _toggleCommentFavoriteLocal(
-        userId: userId, model: commentModel, isExist: isExist);
-    if (!successOrError.isCompleted) return successOrError;
 
     return DataResult(isCompleted: true);
   }
