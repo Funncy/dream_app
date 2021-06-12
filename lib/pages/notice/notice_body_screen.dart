@@ -25,7 +25,6 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> {
     super.initState();
     //build후에 함수 실행
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      noticeViewModel.getNoticeList();
       _scrollController.addListener(() {
         if (_scrollController.position.pixels ==
             _scrollController.position.maxScrollExtent) {
