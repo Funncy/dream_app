@@ -23,7 +23,7 @@ class NoticeViewModelImpl extends GetxController
   Status? get noticeStatus => _noticeStatus.value;
   set noticeStatus(Status? status) => _noticeStatus.value = status;
 
-  NoticeViewModel({required NoticeRepository noticeRepository}) {
+  NoticeViewModelImpl({required NoticeRepository noticeRepository}) {
     _noticeRepository = noticeRepository;
   }
 
