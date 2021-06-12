@@ -58,48 +58,10 @@ class CommentReplyViewModelImpl extends GetxController
         (_) => _getCommentList(noticeId: noticeModel.id),
       ], status: _commentStatus);
 
-  // Future<ViewModelResult> writeComment(
-  //     {required NoticeModel noticeModel,
-  //     required String userId,
-  //     required String content}) async {
-  //   //update 중
-  //   commentStatus = Status.updating;
-
-  //   ViewModelResult result = await pipeline([
-  //     (_) => _writeComment(
-  //         noticeModel: noticeModel, userId: userId, content: content),
-  //     (_) => _increaseCommentCount(noticeModel),
-  //     (_) => _getCommentList(noticeId: noticeModel.id),
-  //   ]);
-
-  //   if (!result.isCompleted == false) {
-  //     commentStatus = Status.error;
-  //     return result;
-  //   }
-  //   commentStatus = Status.loaded;
-  //   return result;
-  // }
-
-  Future<ViewModelResult> getCommentList({required String? noticeId}) async {
-    commentStatus = Status.loading;
-
-    ViewModelResult result = await pipeline([
-      (_) => _getCommentList(noticeId: noticeId),
-    ]);
-
-    if (!result.isCompleted == false) {
-      commentStatus = Status.error;
-      return result;
-    }
-
-    if (commentList.length > 0) {
-      commentStatus = Status.loaded;
-    } else {
-      commentStatus = Status.empty;
-    }
-
-    return result;
-  }
+  Future<ViewModelResult> getCommentList({required String? noticeId}) =>
+      process(functionList: [
+        (_) => _getCommentList(noticeId: noticeId),
+      ], status: _commentStatus);
 
   Future<ViewModelResult> deleteComment(
       {required NoticeModel notcieModel, required commentId}) async {
