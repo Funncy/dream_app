@@ -133,7 +133,8 @@ class CommentReplyViewModelImpl extends GetxController
             noticeId: noticeId,
             commentId: commentId,
             replyModel: data['model'],
-            userId: userId)
+            userId: userId),
+        (_) => _getCommentById(noticeId: noticeId, commentId: commentId),
       ], status: _replyStatus);
 
   void refreshComment() {

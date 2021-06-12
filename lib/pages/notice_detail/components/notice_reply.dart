@@ -112,13 +112,15 @@ class NoticeReply extends StatelessWidget {
                         ),
                       ),
                       GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           //TODO: userID바꿔야함
-                          commentReplyViewModel.toggleReplyFavorite(
+                          await commentReplyViewModel.toggleReplyFavorite(
                               noticeId: noticeId,
                               commentId: commentId,
                               replyId: replyModel.id,
                               userId: '123');
+                          //답글의 좋아요 버튼을 눌러도 댓글화면에도 바로 반영하기 위함.
+                          commentReplyViewModel.refreshComment();
                         },
                         child: Row(
                           children: [
