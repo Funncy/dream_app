@@ -39,6 +39,12 @@ class NoticeViewModelImpl extends GetxController
         (_) => _getMoreNoticeList(),
       ], status: _noticeStatus);
 
+  Future<ViewModelResult> toggleNoticeFavorite(
+          {required String? noticeId, required String userId}) =>
+      process(functionList: [
+        (_) => _toggleNoticeFavorite(noticeId: noticeId, userId: userId),
+      ], status: _noticeStatus);
+
   Future<DataResult> _getNoticeList() async {
     Either<ErrorModel, List<NoticeModel>> either =
         await _noticeRepository.getNoticeList();
@@ -46,11 +52,9 @@ class NoticeViewModelImpl extends GetxController
 
     //에러인 경우 종료
     if (either.isLeft()) {
-      noticeStatus = Status.error;
       return DataResult(isCompleted: false, errorModel: result as ErrorModel);
     }
 
-    //Right이면 List로 반환됨.
     noticeList.clear();
     noticeList.addAll(result as List<NoticeModel>);
 
@@ -76,12 +80,17 @@ class NoticeViewModelImpl extends GetxController
     return DataResult(isCompleted: true);
   }
 
-  Future<DataResult> toggleNoticeFavorite(
+  Future<DataResult> _toggleNoticeFavorite(
       {required String? noticeId, required String userId}) async {
     //Notice의 좋아요 리스트 가져오기
-    NoticeModel notice =
-        noticeList.where((notice) => notice.id == noticeId).first;
-
+    late NoticeModel notice;
+    try {
+      notice = noticeList.where((notice) => notice.id == noticeId).first;
+    } catch (e) {
+      return DataResult(
+          isCompleted: false,
+          errorModel: ErrorModel(message: 'notice not found'));
+    }
     //이미 등록되있다면 삭제
     bool isExist = notice.favoriteUserList!
         .where((element) => element == userId)

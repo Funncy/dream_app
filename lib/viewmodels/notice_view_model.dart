@@ -10,7 +10,7 @@ abstract class NoticeViewModel {
 
   Future<ViewModelResult> getNoticeList();
   Future<ViewModelResult> getMoreNoticeList();
-  Future<DataResult> toggleNoticeFavorite(
+  Future<ViewModelResult> toggleNoticeFavorite(
       {required String? noticeId, required String userId});
   void refreshNotice();
 }
