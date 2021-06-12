@@ -28,7 +28,7 @@ mixin ViewModelPipeLineMixin {
       status.value = Status.error;
       return result;
     }
-    if (dataList == null && dataList!.length == 0) {
+    if (dataList != null && dataList.length == 0) {
       status.value = Status.empty;
     } else {
       status.value = Status.loaded;
