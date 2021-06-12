@@ -62,151 +62,74 @@ class CommentReplyViewModelImpl extends GetxController
       ], status: _commentStatus);
 
   Future<ViewModelResult> deleteComment(
-      {required NoticeModel notcieModel, required commentId}) async {
-    commentStatus = Status.loading;
-
-    ViewModelResult result = await pipeline([
-      (_) => _deleteComment(noticeId: notcieModel.id!, commentId: commentId),
-      (_) => _updateCommentCount(notcieModel.id, notcieModel.commentCount),
-    ]);
-
-    if (!result.isCompleted) {
-      commentStatus = Status.error;
-      return result;
-    }
-
-    commentStatus = Status.loaded;
-    return ViewModelResult(isCompleted: true);
-  }
-
-  void test() async => await Future.delayed(Duration(microseconds: 10));
+          {required NoticeModel notcieModel, required commentId}) =>
+      process(functionList: [
+        (_) => _deleteComment(noticeId: notcieModel.id!, commentId: commentId),
+        (_) => _updateCommentCount(notcieModel.id, notcieModel.commentCount),
+      ], status: _commentStatus);
 
   Future<ViewModelResult> toggleCommentFavorite(
-      {required String? noticeId,
-      required String? commentId,
-      required String userId}) async {
-    commentStatus = Status.loading;
-
-    ViewModelResult result = await pipeline([
-      (_) => _getModel(commentList, commentId),
-      (data) => _favoriteUserisExist(data['model'].favoriteUserList, userId),
-      (data) => _toggleCommentFavorite(
-          noticeId: noticeId,
-          commentId: commentId,
-          userId: userId,
-          isExist: data['isExist']),
-      (data) => _toggleCommentFavoriteLocal(
-          userId: userId, model: data['model'], isExist: data['isExist']),
-    ]);
-    if (!result.isCompleted) {
-      commentStatus = Status.error;
-      return result;
-    }
-
-    commentStatus = Status.loaded;
-    return ViewModelResult(isCompleted: true);
-  }
+          {required String? noticeId,
+          required String? commentId,
+          required String userId}) =>
+      process(functionList: [
+        (_) => _getModel(commentList, commentId),
+        (data) => _favoriteUserisExist(data['model'].favoriteUserList, userId),
+        (data) => _toggleCommentFavorite(
+            noticeId: noticeId,
+            commentId: commentId,
+            userId: userId,
+            isExist: data['isExist']),
+        (data) => _toggleCommentFavoriteLocal(
+            userId: userId, model: data['model'], isExist: data['isExist']),
+      ], status: _commentStatus);
 
   Future<ViewModelResult> writeReply(
-      {required String? noticeId,
-      required String? commentId,
-      required String userId,
-      required String content}) async {
-    replyStatus = Status.updating;
-
-    CommentModel? commentModel =
-        _getModel(commentList, commentId) as CommentModel?;
-    //Comment 내부 replyIndex 증가
-    DataResult successOrError = await _increaseReplyIndex(
-        noticeId: noticeId, commentId: commentId, commentModel: commentModel);
-    if (!successOrError.isCompleted) {
-      replyStatus = Status.error;
-      return successOrError;
-    }
-
-    successOrError = await _writeReply(
-        noticeId: noticeId,
-        commentId: commentId,
-        replyIndex: commentModel!.replyIndex.toString(),
-        userId: userId,
-        content: content);
-    if (!successOrError.isCompleted) {
-      replyStatus = Status.error;
-      return successOrError;
-    }
-
-    //정상적으로 서버 통신 완료
-    //답글 다시 읽어 오기
-    successOrError =
-        await _getCommentById(noticeId: noticeId, commentId: commentId);
-    if (!successOrError.isCompleted) {
-      commentStatus = Status.error;
-      return successOrError;
-    }
-
-    CommentModel resultModel = successOrError.data;
-    //화면 모델 리스트에 삽입
-    _replaceModel(commentList, resultModel);
-
-    replyStatus = Status.loaded;
-    return ViewModelResult(isCompleted: true);
-  }
+          {required String? noticeId,
+          required String? commentId,
+          required String userId,
+          required String content}) =>
+      process(functionList: [
+        (_) => _getModel(commentList, commentId),
+        (data) => _increaseReplyIndex(
+            noticeId: noticeId,
+            commentId: commentId,
+            commentModel: data['model']),
+        (data) => _writeReply(
+            noticeId: noticeId,
+            commentId: commentId,
+            replyIndex: data['model'].replyIndex.toString(),
+            userId: userId,
+            content: content),
+        (_) => _getCommentById(noticeId: noticeId, commentId: commentId),
+        (data) => _replaceModel(commentList, data['comment_model']),
+      ], status: _replyStatus);
 
   Future<ViewModelResult> deleteReply(
-      {required String? noticeId,
-      required String commentId,
-      required ReplyModel replyModel}) async {
-    replyStatus = Status.loading;
-    DataResult successOrError = await _deleteReply(
-        noticeId: noticeId, commentId: commentId, replyModel: replyModel);
-    if (!successOrError.isCompleted) {
-      replyStatus = Status.error;
-      return successOrError;
-    }
-    //로컬에서도 삭제 필요
-    _deleteReplyInLocalList(
-        commentId: commentId, noticeId: noticeId, replyModel: replyModel);
-
-    replyStatus = Status.loaded;
-    return ViewModelResult(isCompleted: true);
-  }
+          {required String? noticeId,
+          required String commentId,
+          required ReplyModel replyModel}) =>
+      process(functionList: [
+        (_) => _deleteReply(
+            noticeId: noticeId, commentId: commentId, replyModel: replyModel),
+        (_) => _deleteReplyInLocalList(
+            commentId: commentId, noticeId: noticeId, replyModel: replyModel),
+      ], status: _replyStatus);
 
   Future<ViewModelResult> toggleReplyFavorite(
-      {required String? noticeId,
-      required String? commentId,
-      required String? replyId,
-      required String userId}) async {
-    replyStatus = Status.loading;
-    CommentModel? commentModel =
-        _getModel(commentList, commentId) as CommentModel?;
-    if (commentModel == null) {
-      return ViewModelResult(
-          isCompleted: false,
-          errorModel: ErrorModel(message: 'commentModel is null'));
-    }
-
-    ReplyModel? replyModel =
-        _getModel(commentModel.replyList, replyId) as ReplyModel?;
-    if (replyModel == null) {
-      return ViewModelResult(
-          isCompleted: false,
-          errorModel: ErrorModel(message: 'replyModel is null'));
-    }
-
-    DataResult successOrError = await _toggleReplyFavorite(
-        noticeId: noticeId,
-        commentId: commentId,
-        replyModel: replyModel,
-        userId: userId);
-    if (!successOrError.isCompleted) {
-      replyStatus = Status.error;
-      return successOrError;
-    }
-
-    //local에서도 수정
-    replyStatus = Status.loaded;
-    return ViewModelResult(isCompleted: true);
-  }
+          {required String? noticeId,
+          required String? commentId,
+          required String? replyId,
+          required String userId}) =>
+      process(functionList: [
+        (_) => _getModel(commentList, commentId),
+        (data) => _getModel(data['model'].replyList, replyId),
+        (data) => _toggleReplyFavorite(
+            noticeId: noticeId,
+            commentId: commentId,
+            replyModel: data['model'],
+            userId: userId)
+      ], status: _replyStatus);
 
   void refreshComment() {
     _commentStatus.refresh();
@@ -368,11 +291,12 @@ class CommentReplyViewModelImpl extends GetxController
       {required String? noticeId, required String? commentId}) async {
     Either<ErrorModel, CommentModel?> either = await _commentRepository
         .getCommentById(noticeId: noticeId, commentId: commentId);
-    var result2 = either.fold((l) => l, (r) => r);
+    var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
-      return DataResult(isCompleted: false, errorModel: result2 as ErrorModel);
+      return DataResult(isCompleted: false, errorModel: result as ErrorModel);
     }
-    return DataResult(isCompleted: true, data: either.getOrElse(() => null));
+    return DataResult(
+        isCompleted: true, data: {'comment_model': result as CommentModel});
   }
 
   Future<DataResult> _deleteReply(
