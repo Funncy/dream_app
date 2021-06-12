@@ -31,6 +31,10 @@ class NoticeViewModelImpl extends GetxController
     _noticeRepository.createDummyData();
   }
 
+  Future<ViewModelResult> getNoticeList() => process(functionList: [
+        (_) => _getNoticeList(),
+      ], status: _noticeStatus, dataList: noticeList);
+
   Future<DataResult> _getNoticeList() async {
     Either<ErrorModel, List<NoticeModel>> either =
         await _noticeRepository.getNoticeList();
@@ -49,11 +53,7 @@ class NoticeViewModelImpl extends GetxController
     return DataResult(isCompleted: true);
   }
 
-  Future<ViewModelResult> getNoticeList() => process(functionList: [
-        (_) => _getNoticeList(),
-      ], status: _noticeStatus, dataList: noticeList);
-
-  Future<DataResult> addNoticeList() async {
+  Future<DataResult> moreGetNoticeList() async {
     noticeStatus = Status.updating;
 
     Either<ErrorModel, List<NoticeModel>?> either = await _noticeRepository
