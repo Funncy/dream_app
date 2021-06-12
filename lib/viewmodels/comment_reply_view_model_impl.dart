@@ -108,9 +108,9 @@ class CommentReplyViewModelImpl extends GetxController
     replyStatus = Status.updating;
 
     CommentModel? commentModel =
-        getModel(commentList, commentId) as CommentModel?;
+        _getModel(commentList, commentId) as CommentModel?;
     //Comment 내부 replyIndex 증가
-    DataResult successOrError = await increaseReplyIndex(
+    DataResult successOrError = await _increaseReplyIndex(
         noticeId: noticeId, commentId: commentId, commentModel: commentModel);
     if (!successOrError.isCompleted) {
       replyStatus = Status.error;
@@ -139,7 +139,7 @@ class CommentReplyViewModelImpl extends GetxController
 
     CommentModel resultModel = successOrError.data;
     //화면 모델 리스트에 삽입
-    replaceModel(commentList, resultModel);
+    _replaceModel(commentList, resultModel);
 
     replyStatus = Status.loaded;
     return ViewModelResult(isCompleted: true);
@@ -171,7 +171,7 @@ class CommentReplyViewModelImpl extends GetxController
       required String userId}) async {
     replyStatus = Status.loading;
     CommentModel? commentModel =
-        getModel(commentList, commentId) as CommentModel?;
+        _getModel(commentList, commentId) as CommentModel?;
     if (commentModel == null) {
       return ViewModelResult(
           isCompleted: false,
@@ -179,7 +179,7 @@ class CommentReplyViewModelImpl extends GetxController
     }
 
     ReplyModel? replyModel =
-        getModel(commentModel.replyList, replyId) as ReplyModel?;
+        _getModel(commentModel.replyList, replyId) as ReplyModel?;
     if (replyModel == null) {
       return ViewModelResult(
           isCompleted: false,
@@ -238,10 +238,10 @@ class CommentReplyViewModelImpl extends GetxController
   }) async {
     //모델 찾기
     CommentModel? commentModel =
-        getModel(commentList, commentId) as CommentModel?;
+        _getModel(commentList, commentId) as CommentModel?;
     if (commentModel == null) return DataResult(isCompleted: false);
 
-    bool isExist = favoriteUserisExist(commentModel.favoriteUserList!, userId);
+    bool isExist = _favoriteUserisExist(commentModel.favoriteUserList!, userId);
 
     Either<ErrorModel, void> either =
         await _commentRepository.toggleCommentFavorite(
@@ -266,15 +266,24 @@ class CommentReplyViewModelImpl extends GetxController
   }
 
   //TODO: 변화하는지 체크 필요 (혹시 복사해오면 변경 안됨)
-  void _toggleCommentFavoriteLocal({
+  DataResult _toggleCommentFavoriteLocal({
     required String userId,
     required CommentModel model,
   }) {
-    bool isExist = favoriteUserisExist(model.favoriteUserList!, userId);
-    if (isExist)
-      model.favoriteUserList!.add(userId);
-    else
-      model.favoriteUserList!.remove(userId);
+    late bool isExist;
+    try {
+      isExist = _favoriteUserisExist(model.favoriteUserList!, userId);
+      if (isExist)
+        model.favoriteUserList!.add(userId);
+      else
+        model.favoriteUserList!.remove(userId);
+    } catch (e) {
+      return DataResult(
+          isCompleted: false,
+          errorModel:
+              ErrorModel(message: 'error at _toggleCommentFavoriteLocal'));
+    }
+    return DataResult(isCompleted: true);
   }
 
   Future<DataResult> _deleteComment(
@@ -298,12 +307,9 @@ class CommentReplyViewModelImpl extends GetxController
   }
 
   DataResult isExistCommentById({required String? commentId}) {
-    replyStatus = Status.loading;
     if (commentList.where((e) => e!.id == commentId).isNotEmpty) {
-      replyStatus = Status.loaded;
       return DataResult(isCompleted: true);
     } else {
-      replyStatus = Status.error;
       return DataResult(isCompleted: false);
     }
   }
@@ -333,7 +339,6 @@ class CommentReplyViewModelImpl extends GetxController
     if (either.isLeft()) {
       noticeModel.commentCount = commentCount - 1;
       //TODO: 댓글도 지워야함.
-      commentStatus = Status.loaded;
       return DataResult(isCompleted: false, errorModel: result as ErrorModel?);
     }
     return DataResult(isCompleted: true);
@@ -392,14 +397,21 @@ class CommentReplyViewModelImpl extends GetxController
     return DataResult(isCompleted: true);
   }
 
-  void _deleteReplyInLocalList(
+  DataResult _deleteReplyInLocalList(
       {required String? noticeId,
       required String commentId,
       required ReplyModel replyModel}) {
-    CommentModel commentModel =
-        getModel(commentList, commentId) as CommentModel;
-    commentModel.replyList.removeWhere((e) => e.id == replyModel.id);
-    replaceModel(commentList, commentModel);
+    try {
+      CommentModel commentModel =
+          _getModel(commentList, commentId) as CommentModel;
+      commentModel.replyList.removeWhere((e) => e.id == replyModel.id);
+      _replaceModel(commentList, commentModel);
+    } catch (e) {
+      return DataResult(
+          isCompleted: false,
+          errorModel: ErrorModel(message: 'error at _deleteReplyInLocalList'));
+    }
+    return DataResult(isCompleted: true);
   }
 
   Future<DataResult> _toggleReplyFavorite(
@@ -420,7 +432,7 @@ class CommentReplyViewModelImpl extends GetxController
     return DataResult(isCompleted: true);
   }
 
-  Future<DataResult> increaseReplyIndex(
+  Future<DataResult> _increaseReplyIndex(
       {required String? noticeId,
       required String? commentId,
       required CommentModel? commentModel}) async {
@@ -447,21 +459,48 @@ class CommentReplyViewModelImpl extends GetxController
     return DataResult(isCompleted: true);
   }
 
-  Object? getModel(List modelList, String? modelId) =>
-      modelList.where((e) => e.id == modelId).first;
-
-  bool replaceModel(List modelList, dynamic model) {
-    int index = modelList.indexWhere((e) => e.id == model.id);
-    if (index == -1) {
-      return false;
+  DataResult _getModel(List modelList, String? modelId) {
+    late Object model;
+    try {
+      model = modelList.where((e) => e.id == modelId).first;
+    } catch (e) {
+      return DataResult(
+          isCompleted: false,
+          errorModel: ErrorModel(message: 'error at getModel'));
     }
-    modelList[index] = model;
-    return true;
+    return DataResult(isCompleted: true, data: {'model': model});
   }
 
-  bool favoriteUserisExist(List favoriteList, String userId) =>
-      favoriteList.where((e) => e == userId).isEmpty;
+  DataResult _replaceModel(List modelList, dynamic model) {
+    int index = modelList.indexWhere((e) => e.id == model.id);
+    if (index == -1) {
+      return DataResult(
+          isCompleted: false,
+          errorModel: ErrorModel(message: 'index == -1 at replaceModel'));
+    }
+    modelList[index] = model;
+    return DataResult(isCompleted: true);
+  }
 
-  void _deleteModelInList(List modelList, String modelId) =>
+  DataResult _favoriteUserisExist(List favoriteList, String userId) {
+    try {
+      bool isEmpty = favoriteList.where((e) => e == userId).isEmpty;
+      return DataResult(isCompleted: true, data: {'isEmpty': isEmpty});
+    } catch (e) {
+      return DataResult(
+          isCompleted: false,
+          errorModel: ErrorModel(message: 'error at _favoriteUserisExist'));
+    }
+  }
+
+  DataResult _deleteModelInList(List modelList, String modelId) {
+    try {
       modelList.removeWhere((e) => e.id == modelId);
+      return DataResult(isCompleted: true);
+    } catch (e) {
+      return DataResult(
+          isCompleted: false,
+          errorModel: ErrorModel(message: 'error at _deleteModelInList'));
+    }
+  }
 }
