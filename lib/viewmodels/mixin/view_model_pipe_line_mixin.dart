@@ -19,8 +19,7 @@ mixin ViewModelPipeLineMixin {
 
   Future<ViewModelResult> process(
       {required List<Process> functionList,
-      required Rxn<Status?> status,
-      List<dynamic>? dataList}) async {
+      required Rxn<Status?> status}) async {
     status.value = Status.loading;
 
     ViewModelResult result = await pipeline(functionList);
@@ -28,11 +27,9 @@ mixin ViewModelPipeLineMixin {
       status.value = Status.error;
       return result;
     }
-    if (dataList != null && dataList.length == 0) {
-      status.value = Status.empty;
-    } else {
-      status.value = Status.loaded;
-    }
+
+    status.value = Status.loaded;
+
     return ViewModelResult(isCompleted: true);
   }
 }

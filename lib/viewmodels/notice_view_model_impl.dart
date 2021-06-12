@@ -33,7 +33,7 @@ class NoticeViewModelImpl extends GetxController
 
   Future<ViewModelResult> getNoticeList() => process(functionList: [
         (_) => _getNoticeList(),
-      ], status: _noticeStatus, dataList: noticeList);
+      ], status: _noticeStatus);
 
   Future<ViewModelResult> getMoreNoticeList() => process(functionList: [
         (_) => _getMoreNoticeList(),
