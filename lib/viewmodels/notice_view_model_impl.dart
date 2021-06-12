@@ -45,6 +45,18 @@ class NoticeViewModelImpl extends GetxController
         (_) => _toggleNoticeFavorite(noticeId: noticeId, userId: userId),
       ], status: _noticeStatus);
 
+  void refreshNotice() {
+    _noticeStatus.refresh();
+  }
+
+  /*
+  *
+  *
+  * 함수 부품들
+  *
+  *    
+  */
+
   Future<DataResult> _getNoticeList() async {
     Either<ErrorModel, List<NoticeModel>> either =
         await _noticeRepository.getNoticeList();
@@ -83,18 +95,17 @@ class NoticeViewModelImpl extends GetxController
   Future<DataResult> _toggleNoticeFavorite(
       {required String? noticeId, required String userId}) async {
     //Notice의 좋아요 리스트 가져오기
-    late NoticeModel notice;
-    try {
-      notice = noticeList.where((notice) => notice.id == noticeId).first;
-    } catch (e) {
-      return DataResult(
-          isCompleted: false,
-          errorModel: ErrorModel(message: 'notice not found'));
+    DataResult successOrError = _getNoticeById(noticeId!);
+    if (!successOrError.isCompleted) {
+      return successOrError;
     }
+    NoticeModel notice = successOrError.data['notice'];
     //이미 등록되있다면 삭제
-    bool isExist = notice.favoriteUserList!
-        .where((element) => element == userId)
-        .isNotEmpty;
+    successOrError = _isExistFavoriteUser(notice, userId);
+    if (!successOrError.isCompleted) {
+      return successOrError;
+    }
+    bool isExist = successOrError.data['isExist'];
 
     var either = await _noticeRepository.toggleNoticeFavorite(
         noticeId: noticeId, userId: userId, isDelete: isExist);
@@ -112,7 +123,29 @@ class NoticeViewModelImpl extends GetxController
     return DataResult(isCompleted: true);
   }
 
-  void refreshNotice() {
-    _noticeStatus.refresh();
+  DataResult _getNoticeById(String noticeId) {
+    late NoticeModel notice;
+    try {
+      notice = noticeList.where((notice) => notice.id == noticeId).first;
+    } catch (e) {
+      return DataResult(
+          isCompleted: false,
+          errorModel: ErrorModel(message: 'notice not found'));
+    }
+    return DataResult(isCompleted: true, data: {'notice': notice});
+  }
+
+  DataResult _isExistFavoriteUser(NoticeModel notice, String userId) {
+    late bool isExist;
+    try {
+      isExist = notice.favoriteUserList!
+          .where((element) => element == userId)
+          .isNotEmpty;
+    } catch (e) {
+      return DataResult(
+          isCompleted: false,
+          errorModel: ErrorModel(message: 'error at isExistFavoriteUser'));
+    }
+    return DataResult(isCompleted: true, data: {'isExist': isExist});
   }
 }
