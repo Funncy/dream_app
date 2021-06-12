@@ -27,6 +27,7 @@ abstract class CommentReplyViewModel {
       required String? commentId,
       required String userId});
   //답글
+  Future<ViewModelResult> isExistCommentById({required String? commentId});
   Future<ViewModelResult> writeReply(
       {required String? noticeId,
       required String? commentId,

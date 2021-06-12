@@ -84,6 +84,11 @@ class CommentReplyViewModelImpl extends GetxController
             userId: userId, model: data['model'], isExist: data['isExist']),
       ], status: _commentStatus);
 
+  Future<ViewModelResult> isExistCommentById({required String? commentId}) =>
+      process(functionList: [
+        (_) => _isExistCommentById(commentId: commentId),
+      ], status: _replyStatus);
+
   Future<ViewModelResult> writeReply(
           {required String? noticeId,
           required String? commentId,
@@ -220,7 +225,7 @@ class CommentReplyViewModelImpl extends GetxController
     return DataResult(isCompleted: true);
   }
 
-  DataResult isExistCommentById({required String? commentId}) {
+  DataResult _isExistCommentById({required String? commentId}) {
     if (commentList.where((e) => e!.id == commentId).isNotEmpty) {
       return DataResult(isCompleted: true);
     } else {
