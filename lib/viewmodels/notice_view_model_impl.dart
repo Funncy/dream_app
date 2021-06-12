@@ -53,7 +53,7 @@ class NoticeViewModelImpl extends GetxController
     return DataResult(isCompleted: true);
   }
 
-  Future<DataResult> moreGetNoticeList() async {
+  Future<DataResult> getMoreNoticeList() async {
     noticeStatus = Status.updating;
 
     Either<ErrorModel, List<NoticeModel>?> either = await _noticeRepository
