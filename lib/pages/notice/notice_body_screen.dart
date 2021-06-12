@@ -69,7 +69,7 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> {
                         loading: _noticeList(noticeList),
                         empty: _emptyWidget(),
                         updating: _updatingWidget(noticeList),
-                        dataStatus: dataStatus);
+                        dataStatus: dataStatus!);
                   });
                 }
               }

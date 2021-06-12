@@ -44,27 +44,9 @@ class NoticeViewModel extends GetxController with ViewModelPipeLineMixin {
     return DataResult(isCompleted: true);
   }
 
-  Future<ViewModelResult> getNoticeList() async {
-    //데이터 상태와 데이터를 가져오는 함수를 전달
-    //추가로 리스트 형태인지를 전달
-    // 리스트 형태인경우 데이터의 길이에 따라 Empty위젯을 보여줘야 함.
-    noticeStatus = Status.loading;
-
-    ViewModelResult result = await process([
-      (_) => _getNoticeList(),
-    ]);
-
-    if (!result.isCompleted) {
-      noticeStatus = Status.error;
-      return result;
-    }
-
-    if (noticeList.length > 0)
-      noticeStatus = Status.loaded;
-    else
-      noticeStatus = Status.empty;
-    return result;
-  }
+  Future<ViewModelResult> getNoticeList() => process(functionList: [
+        (_) => _getNoticeList(),
+      ], status: _noticeStatus, dataList: noticeList);
 
   Future<DataResult> addNoticeList() async {
     noticeStatus = Status.updating;
