@@ -35,6 +35,10 @@ class NoticeViewModelImpl extends GetxController
         (_) => _getNoticeList(),
       ], status: _noticeStatus, dataList: noticeList);
 
+  Future<ViewModelResult> getMoreNoticeList() => process(functionList: [
+        (_) => _getMoreNoticeList(),
+      ], status: _noticeStatus);
+
   Future<DataResult> _getNoticeList() async {
     Either<ErrorModel, List<NoticeModel>> either =
         await _noticeRepository.getNoticeList();
@@ -53,31 +57,22 @@ class NoticeViewModelImpl extends GetxController
     return DataResult(isCompleted: true);
   }
 
-  Future<DataResult> getMoreNoticeList() async {
-    noticeStatus = Status.updating;
+  Future<DataResult> _getMoreNoticeList() async {
+    if (noticeList.length == 0) {
+      return DataResult(
+          isCompleted: false,
+          errorModel: ErrorModel(message: 'noticeList item count is 0'));
+    }
 
     Either<ErrorModel, List<NoticeModel>?> either = await _noticeRepository
         .getMoreNoticeList(noticeList.last.documentReference);
     var result = either.fold((l) => l, (r) => r);
     //에러인 경우 종료
     if (either.isLeft()) {
-      noticeStatus = Status.error;
       return DataResult(isCompleted: false, errorModel: result as ErrorModel);
     }
-    if ((result as List<NoticeModel>).isEmpty) {
-      noticeStatus = Status.loaded;
-      return DataResult(
-          isCompleted: false,
-          errorModel: ErrorModel(message: 'notice is null'));
-    }
 
-    //Right이면 List로 반환됨.
-    noticeList.addAll(result);
-    if (noticeList.length > 0)
-      noticeStatus = Status.loaded;
-    else
-      noticeStatus = Status.empty;
-
+    noticeList.addAll(result as List<NoticeModel>);
     return DataResult(isCompleted: true);
   }
 
