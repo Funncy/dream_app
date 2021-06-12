@@ -60,14 +60,16 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> with AlertMixin {
     super.dispose();
   }
 
-  void writeReply() {
+  void writeReply() async {
     //TODO: uid 실제 유저로 바꿔야함.
-    commentReplyViewModel.writeReply(
+    await commentReplyViewModel.writeReply(
         noticeId: widget.noticeId,
         commentId: widget.commentId,
         userId: '123',
         content: _textEditingController.text);
     _textEditingController.text = '';
+    //뒤로 갈 경우 화면 적용시키기 위함
+    commentReplyViewModel.refreshComment();
   }
 
   void deleteReply(String commentId, ReplyModel replyModel) {
