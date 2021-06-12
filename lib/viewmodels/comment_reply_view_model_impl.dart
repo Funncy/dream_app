@@ -12,7 +12,7 @@ import 'package:dream/repositories/comment_repository.dart';
 import 'package:dream/repositories/notice_repository.dart';
 import 'package:dream/repositories/reply_repository.dart';
 import 'package:dream/viewmodels/comment_reply_view_model.dart';
-import 'package:dream/viewmodels/view_model_pipe_line_mixin.dart';
+import 'package:dream/viewmodels/mixin/view_model_pipe_line_mixin.dart';
 import 'package:get/get.dart';
 
 class CommentReplyViewModelImpl extends GetxController

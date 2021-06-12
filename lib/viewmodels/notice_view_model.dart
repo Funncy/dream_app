@@ -5,17 +5,18 @@ import 'package:dream/core/data_status/viewmodel_result.dart';
 import 'package:dream/core/error/error_model.dart';
 import 'package:dream/models/notice.dart';
 import 'package:dream/repositories/notice_repository.dart';
+import 'package:dream/viewmodels/mixin/view_model_pipe_line_mixin.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 
-class NoticeViewModel extends GetxController {
+class NoticeViewModel extends GetxController with ViewModelPipeLineMixin {
   late NoticeRepository _noticeRepository;
   //obs는 observer로 Rx로 데이터 관리되게 됩니다.
   //화면 상태가 아니라 데이터의 상태를 관리하자.
   List<NoticeModel> noticeList = <NoticeModel>[];
-  Rx<Status> _noticeStatus = Status.initial.obs;
-  Status get noticeStatus => _noticeStatus.value;
-  set noticeStatus(Status status) => _noticeStatus.value = status;
+  Rxn<Status?> _noticeStatus = Rxn<Status?>(Status.initial);
+  Status? get noticeStatus => _noticeStatus.value;
+  set noticeStatus(Status? status) => _noticeStatus.value = status;
 
   NoticeViewModel({required NoticeRepository noticeRepository}) {
     _noticeRepository = noticeRepository;
@@ -23,17 +24,6 @@ class NoticeViewModel extends GetxController {
 
   void createDummyData() async {
     _noticeRepository.createDummyData();
-  }
-
-  Future<DataResult> process(List<Function> functionList) async {
-    DataResult successOrError = DataResult(isCompleted: true);
-    for (var function in functionList) {
-      successOrError = await function(successOrError);
-      if (!successOrError.isCompleted) {
-        return successOrError;
-      }
-    }
-    return successOrError;
   }
 
   Future<DataResult> _getNoticeList() async {
