@@ -235,11 +235,14 @@ class CommentReplyViewModelImpl extends GetxController
     required String userId,
   }) async {
     //모델 찾기
-    CommentModel? commentModel =
-        _getModel(commentList, commentId) as CommentModel?;
-    if (commentModel == null) return DataResult(isCompleted: false);
+    DataResult successOrError = _getModel(commentList, commentId);
+    if (!successOrError.isCompleted) return successOrError;
+    CommentModel commentModel = successOrError.data['model'];
 
-    bool isExist = _favoriteUserisExist(commentModel.favoriteUserList!, userId);
+    successOrError =
+        _favoriteUserisExist(commentModel.favoriteUserList!, userId);
+    if (!successOrError.isCompleted) return successOrError;
+    bool isExist = successOrError.data['isExist'];
 
     Either<ErrorModel, void> either =
         await _commentRepository.toggleCommentFavorite(
@@ -249,16 +252,12 @@ class CommentReplyViewModelImpl extends GetxController
             isDelete: !isExist);
     var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
-      return DataResult(isCompleted: false, errorModel: result as ErrorModel?);
+      return DataResult(isCompleted: false, errorModel: result as ErrorModel);
     }
     //local에서도 증가
-    try {
-      _toggleCommentFavoriteLocal(userId: userId, model: commentModel);
-    } catch (e) {
-      return DataResult(
-          isCompleted: false,
-          errorModel: ErrorModel(message: 'favorite user not found'));
-    }
+    successOrError = _toggleCommentFavoriteLocal(
+        userId: userId, model: commentModel, isExist: isExist);
+    if (!successOrError.isCompleted) return successOrError;
 
     return DataResult(isCompleted: true);
   }
@@ -267,21 +266,20 @@ class CommentReplyViewModelImpl extends GetxController
   DataResult _toggleCommentFavoriteLocal({
     required String userId,
     required CommentModel model,
+    required bool isExist,
   }) {
-    late bool isExist;
     try {
-      isExist = _favoriteUserisExist(model.favoriteUserList!, userId);
       if (isExist)
         model.favoriteUserList!.add(userId);
       else
         model.favoriteUserList!.remove(userId);
+      return DataResult(isCompleted: true);
     } catch (e) {
       return DataResult(
           isCompleted: false,
           errorModel:
               ErrorModel(message: 'error at _toggleCommentFavoriteLocal'));
     }
-    return DataResult(isCompleted: true);
   }
 
   Future<DataResult> _deleteComment(
@@ -290,7 +288,6 @@ class CommentReplyViewModelImpl extends GetxController
         noticeId: noticeId, commentId: commentId);
     var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
-      commentStatus = Status.loaded;
       return DataResult(isCompleted: false, errorModel: result as ErrorModel?);
     }
     //모델 내부도 삭제
@@ -482,8 +479,8 @@ class CommentReplyViewModelImpl extends GetxController
 
   DataResult _favoriteUserisExist(List favoriteList, String userId) {
     try {
-      bool isEmpty = favoriteList.where((e) => e == userId).isEmpty;
-      return DataResult(isCompleted: true, data: {'isEmpty': isEmpty});
+      bool isExist = favoriteList.where((e) => e == userId).isEmpty;
+      return DataResult(isCompleted: true, data: {'isExist': isExist});
     } catch (e) {
       return DataResult(
           isCompleted: false,
