@@ -12,25 +12,33 @@ import 'package:dream/repositories/comment_repository.dart';
 import 'package:dream/repositories/notice_repository.dart';
 import 'package:dream/repositories/reply_repository.dart';
 import 'package:dream/viewmodels/comment_reply_view_model.dart';
+import 'package:dream/viewmodels/view_model_pipe_line_mixin.dart';
 import 'package:get/get.dart';
 
 class CommentReplyViewModelImpl extends GetxController
+    with ViewModelPipeLineMixin
     implements CommentReplyViewModel {
+  //서버통신을 위한 Repositories
   late NoticeRepository _noticeRepository;
   late CommentRepository _commentRepository;
   late ReplyRepository _replyRepository;
+  //main datas
   List<CommentModel?> _commentList = <CommentModel?>[];
   List<CommentModel?> get commentList => _commentList;
+  //main data별 status
   Rxn<Status?> _commentStatus =
       Rxn<Status?>(Status.initial); // Status.initial.obs;
-  Status? get commentStatus => _commentStatus.value;
-  Stream<Status?> commentStatusStream() => _commentStatus.stream;
-  set commentStatus(Status? status) => _commentStatus.value = status;
-  //답글은 comment내부에 존재하지만 상태는 따로 관리
   Rxn<Status?> _replyStatus = Rxn<Status?>(Status.initial);
+  Status? get commentStatus => _commentStatus.value;
+  set commentStatus(Status? status) => _commentStatus.value = status;
+  //test용
+  void setCommentStatus(Status? status) => _commentStatus.value = status;
+  //답글은 comment내부에 존재하지만 상태는 따로 관리
   Status? get replyStatus => _replyStatus.value;
-  get replyStatusStream => _commentStatus.stream;
   set replyStatus(Status? status) => _replyStatus.value = status;
+  //화면에서 상태별 stream에 접근하기 위한 stream getter
+  Stream<Status?> commentStatusStream() => _commentStatus.stream;
+  get replyStatusStream => _commentStatus.stream;
 
   CommentReplyViewModelImpl(
       {required NoticeRepository noticeRepository,
@@ -41,43 +49,43 @@ class CommentReplyViewModelImpl extends GetxController
     _replyRepository = replyRepository;
   }
 
-  Future<DataResult> process(List<Function> functionList) async {
-    DataResult successOrError = DataResult(isCompleted: true);
-    for (var function in functionList) {
-      successOrError = await function(successOrError);
-      if (!successOrError.isCompleted) {
-        return successOrError;
-      }
-    }
-    return successOrError;
-  }
-
   Future<ViewModelResult> writeComment(
-      {required NoticeModel noticeModel,
-      required String userId,
-      required String content}) async {
-    //update 중
-    commentStatus = Status.updating;
+          {required NoticeModel noticeModel,
+          required String userId,
+          required String content}) =>
+      process(functionList: [
+        (_) => _writeComment(
+            noticeModel: noticeModel, userId: userId, content: content),
+        (_) => _increaseCommentCount(noticeModel),
+        (_) => _getCommentList(noticeId: noticeModel.id),
+      ], setStatus: setCommentStatus);
 
-    ViewModelResult result = await process([
-      (_) => _writeComment(
-          noticeModel: noticeModel, userId: userId, content: content),
-      (_) => _increaseCommentCount(noticeModel),
-      (_) => _getCommentList(noticeId: noticeModel.id),
-    ]);
+  // Future<ViewModelResult> writeComment(
+  //     {required NoticeModel noticeModel,
+  //     required String userId,
+  //     required String content}) async {
+  //   //update 중
+  //   commentStatus = Status.updating;
 
-    if (!result.isCompleted == false) {
-      commentStatus = Status.error;
-      return result;
-    }
-    commentStatus = Status.loaded;
-    return result;
-  }
+  //   ViewModelResult result = await pipeline([
+  //     (_) => _writeComment(
+  //         noticeModel: noticeModel, userId: userId, content: content),
+  //     (_) => _increaseCommentCount(noticeModel),
+  //     (_) => _getCommentList(noticeId: noticeModel.id),
+  //   ]);
+
+  //   if (!result.isCompleted == false) {
+  //     commentStatus = Status.error;
+  //     return result;
+  //   }
+  //   commentStatus = Status.loaded;
+  //   return result;
+  // }
 
   Future<ViewModelResult> getCommentList({required String? noticeId}) async {
     commentStatus = Status.loading;
 
-    ViewModelResult result = await process([
+    ViewModelResult result = await pipeline([
       (_) => _getCommentList(noticeId: noticeId),
     ]);
 
@@ -98,20 +106,15 @@ class CommentReplyViewModelImpl extends GetxController
   Future<ViewModelResult> deleteComment(
       {required NoticeModel notcieModel, required commentId}) async {
     commentStatus = Status.loading;
-    DataResult successOrError =
-        await _deleteComment(noticeId: notcieModel.id!, commentId: commentId);
-    if (!successOrError.isCompleted) {
+
+    ViewModelResult result = await pipeline([
+      (_) => _deleteComment(noticeId: notcieModel.id!, commentId: commentId),
+      (_) => _updateCommentCount(notcieModel.id, notcieModel.commentCount),
+    ]);
+
+    if (!result.isCompleted) {
       commentStatus = Status.error;
-      return successOrError;
-    }
-
-    //로컬에서도 삭제
-    deleteModelInList(commentList, commentId);
-
-    successOrError =
-        await _updateCommentCount(notcieModel.id, notcieModel.commentCount);
-    if (!successOrError.isCompleted) {
-      return successOrError;
+      return result;
     }
 
     commentStatus = Status.loaded;
@@ -122,24 +125,17 @@ class CommentReplyViewModelImpl extends GetxController
       {required String? noticeId,
       required String? commentId,
       required String userId}) async {
-    CommentModel? commentModel =
-        getModel(commentList, commentId) as CommentModel?;
-    if (commentModel == null) return DataResult(isCompleted: false);
+    commentStatus = Status.loading;
 
-    bool isExist = favoriteUserisExist(commentModel.favoriteUserList!, userId);
-
-    DataResult successOrError = await _toggleCommentFavorite(
-        noticeId: noticeId,
-        commentId: commentId,
-        userId: userId,
-        isExist: !isExist);
-    if (successOrError.isCompleted) {
+    ViewModelResult result = await pipeline([
+      (_) => _toggleCommentFavorite(
+          noticeId: noticeId, commentId: commentId, userId: userId)
+    ]);
+    if (!result.isCompleted) {
       commentStatus = Status.error;
-      return successOrError;
+      return result;
     }
 
-    //local에서도 증가
-    _toggleCommentFavoriteLocal(userId: userId, model: commentModel);
     commentStatus = Status.loaded;
     return ViewModelResult(isCompleted: true);
   }
@@ -275,11 +271,18 @@ class CommentReplyViewModelImpl extends GetxController
     return DataResult(isCompleted: true);
   }
 
-  Future<DataResult> _toggleCommentFavorite(
-      {required String? noticeId,
-      required String? commentId,
-      required String userId,
-      required bool isExist}) async {
+  Future<DataResult> _toggleCommentFavorite({
+    required String? noticeId,
+    required String? commentId,
+    required String userId,
+  }) async {
+    //모델 찾기
+    CommentModel? commentModel =
+        getModel(commentList, commentId) as CommentModel?;
+    if (commentModel == null) return DataResult(isCompleted: false);
+
+    bool isExist = favoriteUserisExist(commentModel.favoriteUserList!, userId);
+
     Either<ErrorModel, void> either =
         await _commentRepository.toggleCommentFavorite(
             noticeId: noticeId,
@@ -290,6 +293,15 @@ class CommentReplyViewModelImpl extends GetxController
     if (either.isLeft()) {
       return DataResult(isCompleted: false, errorModel: result as ErrorModel?);
     }
+    //local에서도 증가
+    try {
+      _toggleCommentFavoriteLocal(userId: userId, model: commentModel);
+    } catch (e) {
+      return DataResult(
+          isCompleted: false,
+          errorModel: ErrorModel(message: 'favorite user not found'));
+    }
+
     return DataResult(isCompleted: true);
   }
 
@@ -313,6 +325,14 @@ class CommentReplyViewModelImpl extends GetxController
     if (either.isLeft()) {
       commentStatus = Status.loaded;
       return DataResult(isCompleted: false, errorModel: result as ErrorModel?);
+    }
+    //모델 내부도 삭제
+    try {
+      _deleteModelInList(commentList, commentId);
+    } catch (e) {
+      return DataResult(
+          isCompleted: false,
+          errorModel: ErrorModel(message: 'model is not found'));
     }
     return DataResult(isCompleted: true);
   }
@@ -482,6 +502,6 @@ class CommentReplyViewModelImpl extends GetxController
   bool favoriteUserisExist(List favoriteList, String userId) =>
       favoriteList.where((e) => e == userId).isEmpty;
 
-  void deleteModelInList(List modelList, String modelId) =>
+  void _deleteModelInList(List modelList, String modelId) =>
       modelList.removeWhere((e) => e.id == modelId);
 }
