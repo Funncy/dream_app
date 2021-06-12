@@ -2,8 +2,6 @@ import 'package:dartz/dartz.dart';
 import 'package:dream/core/data_status/data_result.dart';
 import 'package:dream/core/data_status/status_enum.dart';
 import 'package:dream/core/data_status/viewmodel_result.dart';
-import 'package:dream/core/error/alert_model.dart';
-import 'package:dream/core/error/error_constants.dart';
 import 'package:dream/core/error/error_model.dart';
 import 'package:dream/models/comment.dart';
 import 'package:dream/models/notice.dart';
