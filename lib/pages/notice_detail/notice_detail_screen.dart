@@ -75,8 +75,12 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
         title: '댓글 삭제',
         content: '정말 댓글을 삭제하시겠습니까?',
         isFunction: true,
-        function: () => commentReplyViewModel.deleteComment(
-            notcieModel: notice!, commentId: commentId));
+        function: () async {
+          await commentReplyViewModel.deleteComment(
+              notcieModel: notice!, commentId: commentId);
+          commentReplyViewModel.refreshComment();
+          commentReplyViewModel.refreshReply();
+        });
   }
 
   void deleteReply(String commentId, ReplyModel replyModel) {
@@ -84,10 +88,14 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
         title: '답글 삭제',
         content: '정말 답글을 삭제하시겠습니까?',
         isFunction: true,
-        function: () => commentReplyViewModel.deleteReply(
-            noticeId: notice!.id,
-            commentId: commentId,
-            replyModel: replyModel));
+        function: () async {
+          await commentReplyViewModel.deleteReply(
+              noticeId: notice!.id,
+              commentId: commentId,
+              replyModel: replyModel);
+          commentReplyViewModel.refreshComment();
+          commentReplyViewModel.refreshReply();
+        });
   }
 
   @override

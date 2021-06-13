@@ -77,10 +77,13 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> with AlertMixin {
         title: '답글 삭제',
         content: '정말 답글을 삭제하시겠습니까?',
         isFunction: true,
-        function: () => commentReplyViewModel.deleteReply(
-            noticeId: widget.noticeId,
-            commentId: commentId,
-            replyModel: replyModel));
+        function: () async {
+          await commentReplyViewModel.deleteReply(
+              noticeId: widget.noticeId,
+              commentId: commentId,
+              replyModel: replyModel);
+          commentReplyViewModel.refreshComment();
+        });
   }
 
   @override

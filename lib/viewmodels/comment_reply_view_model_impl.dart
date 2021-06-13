@@ -324,7 +324,7 @@ class CommentReplyViewModelImpl extends GetxController
       required ReplyModel replyModel}) {
     try {
       CommentModel commentModel =
-          _getModel(commentList, commentId) as CommentModel;
+          _getModel(commentList, commentId).data['model'];
       commentModel.replyList.removeWhere((e) => e.id == replyModel.id);
       _replaceModel(commentList, commentModel);
     } catch (e) {
