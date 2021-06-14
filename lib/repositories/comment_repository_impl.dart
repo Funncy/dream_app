@@ -103,7 +103,7 @@ class CommentRepositoryImpl extends CommentRepository {
           .collection(noticeCollectionName)
           .doc(noticeId!)
           .collection(commentCollectionName)
-          .doc(commentId)
+          .doc(commentId + 'qweqwe')
           .delete();
 
       return Right(null);

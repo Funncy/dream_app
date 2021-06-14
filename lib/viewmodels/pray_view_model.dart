@@ -42,10 +42,10 @@ class PrayViewModel extends GetxController {
     return DataResult(isCompleted: true);
   }
 
-  Future<DataResult> addPrayList() async {
+  Future<DataResult> getMorePrayList() async {
     listStatus = Status.loading;
     Either<ErrorModel, List<PrayModel>?> either = await _prayRepository
-        .addPublicPrayList(prayList.last.documentReference);
+        .getMorePublicPrayList(prayList.last.documentReference);
     var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
       listStatus = Status.error;

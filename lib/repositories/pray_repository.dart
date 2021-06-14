@@ -11,6 +11,6 @@ abstract class PrayRepository {
   Future<Either<ErrorModel, void>> sendPray(
       String userId, String title, String content, bool? isPublic);
   Future<Either<ErrorModel, List<PrayModel>?>> initPublicPrayList();
-  Future<Either<ErrorModel, List<PrayModel>?>> addPublicPrayList(
+  Future<Either<ErrorModel, List<PrayModel>?>> getMorePublicPrayList(
       DocumentReference? documentReference);
 }

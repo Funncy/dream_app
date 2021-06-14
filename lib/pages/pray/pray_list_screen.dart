@@ -1,8 +1,13 @@
+import 'package:dream/core/data_status/status_enum.dart';
+import 'package:dream/core/data_status/viewmodel_result.dart';
+import 'package:dream/core/error/error_model.dart';
 import 'package:dream/models/pray.dart';
+import 'package:dream/pages/common/alert_mixin.dart';
 import 'package:dream/pages/common/empty_widget.dart';
 import 'package:dream/pages/common/error_message_widget.dart';
 import 'package:dream/pages/common/loading_widget.dart';
 import 'package:dream/pages/common/screen_status_widget.dart';
+import 'package:dream/pages/common/view_model_builder.dart';
 import 'package:dream/pages/pray/components/pray_card.dart';
 import 'package:dream/viewmodels/pray_view_model.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,7 +19,7 @@ class PrayListScreen extends StatefulWidget {
   _PrayListScreenState createState() => _PrayListScreenState();
 }
 
-class _PrayListScreenState extends State<PrayListScreen> {
+class _PrayListScreenState extends State<PrayListScreen> with AlertMixin {
   final ScrollController _scrollController = ScrollController();
   final prayViewModel = Get.find<PrayViewModel>();
 
@@ -23,44 +28,79 @@ class _PrayListScreenState extends State<PrayListScreen> {
     super.initState();
     //build후에 함수 실행
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      prayViewModel.initPrayList();
       _scrollController.addListener(() {
         if (_scrollController.position.pixels ==
             _scrollController.position.maxScrollExtent) {
-          prayViewModel.addPrayList();
+          prayViewModel.getMorePrayList();
         }
       });
     });
   }
 
-  Future<void> refreshNoticeList() async {
+  Future<void> refreshPrayList() async {
     prayViewModel.initPrayList();
+  }
+
+  void errorAlert(ErrorModel? errorModel) {
+    if (errorModel == null) return;
+    showAlert(title: '오류', content: '다시 시도해주세요.');
+  }
+
+  void _ifErrorSendAlert(Status dataStatus, ErrorModel? errorModel) {
+    if (dataStatus != Status.error || errorModel == null) return;
+    //Alert 발생
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      errorAlert(errorModel);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: Text("중보 기도"),
       ),
       body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: refreshNoticeList,
-          child: Container(
-            color: Colors.black12,
-            child: Obx(() {
-              List<PrayModel> prayList = prayViewModel.prayList;
-              var dataStatus = prayViewModel.listStatus;
+        child: Column(
+          children: [
+            Expanded(
+              flex: 1,
+              child: RefreshIndicator(
+                onRefresh: refreshPrayList,
+                child: Container(
+                  width: size.width,
+                  color: Colors.black12,
+                  child: ViewModelBuilder(
+                    init: prayViewModel.initPrayList(),
+                    errorWidget: _errorWidget(),
+                    loadingWidget: _loadingWidget(),
+                    builder: (context, snapshot) {
+                      return Obx(() {
+                        var dataStatus = prayViewModel.listStatus;
+                        List<PrayModel> prayList = prayViewModel.prayList;
 
-              return DataStatusWidget(
-                  body: _prayList(prayList),
-                  error: _errorWidget(),
-                  loading: _loadingWidget(),
-                  empty: _emptyWidget(),
-                  updating: _updatingWidget(prayList),
-                  dataStatus: dataStatus);
-            }),
-          ),
+                        _ifErrorSendAlert(dataStatus,
+                            (snapshot.data as ViewModelResult).errorModel);
+
+                        if (prayList.length == 0) {
+                          //Empty Widget
+                          return _emptyWidget();
+                        }
+
+                        return Stack(
+                          children: [
+                            _bodyWidget(prayList),
+                            if (dataStatus == Status.loading) _loadingWidget(),
+                          ],
+                        );
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -72,24 +112,10 @@ class _PrayListScreenState extends State<PrayListScreen> {
 
   ErrorMessageWidget _errorWidget() => ErrorMessageWidget(errorMessage: 'test');
 
-  _updatingWidget(List<PrayModel> noticeList) {
-    return Stack(
-      children: [
-        _prayList(noticeList),
-        Align(
-          alignment: Alignment.center,
-          child: Container(
-            height: 400.h,
-            child: Center(child: CircularProgressIndicator()),
-          ),
-        )
-      ],
-    );
-  }
-
-  ListView _prayList(List<PrayModel> prayList) {
+  ListView _bodyWidget(List<PrayModel> prayList) {
     return ListView.builder(
-        key: PageStorageKey("notice_listview"),
+        physics: const AlwaysScrollableScrollPhysics(),
+        key: PageStorageKey("pray_listview"),
         controller: _scrollController,
         itemCount: prayList.length,
         itemBuilder: (context, index) {

@@ -29,7 +29,7 @@ class PrayRepositoryImpl extends PrayRepository {
   }
 
   @override
-  Future<Either<ErrorModel, List<PrayModel>?>> addPublicPrayList(
+  Future<Either<ErrorModel, List<PrayModel>?>> getMorePublicPrayList(
       DocumentReference? documentReference) async {
     try {
       DocumentSnapshot documentSnapshot = await documentReference!.get();
