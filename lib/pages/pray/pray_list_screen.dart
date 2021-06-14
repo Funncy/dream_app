@@ -69,7 +69,6 @@ class _PrayListScreenState extends State<PrayListScreen> with AlertMixin {
               child: RefreshIndicator(
                 onRefresh: refreshPrayList,
                 child: Container(
-                  width: size.width,
                   color: Colors.black12,
                   child: ViewModelBuilder(
                     init: prayViewModel.initPrayList(),

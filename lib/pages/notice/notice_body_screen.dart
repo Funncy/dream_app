@@ -48,40 +48,49 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> with AlertMixin {
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: Text("공지사항"),
       ),
-      body: RefreshIndicator(
-        onRefresh: refreshNoticeList,
-        child: Container(
-            color: Colors.black12,
-            child: ViewModelBuilder(
-              init: noticeViewModel.getNoticeList(),
-              errorWidget: _errorWidget(),
-              loadingWidget: _loadingWidget(),
-              builder: (context, snapshot) {
-                return Obx(() {
-                  var dataStatus = noticeViewModel.noticeStatus;
-                  List<NoticeModel> noticeList = noticeViewModel.noticeList;
+      body: Column(
+        children: [
+          Expanded(
+            flex: 1,
+            child: RefreshIndicator(
+              onRefresh: refreshNoticeList,
+              child: Container(
+                  color: Colors.black12,
+                  child: ViewModelBuilder(
+                    init: noticeViewModel.getNoticeList(),
+                    errorWidget: _errorWidget(),
+                    loadingWidget: _loadingWidget(),
+                    builder: (context, snapshot) {
+                      return Obx(() {
+                        var dataStatus = noticeViewModel.noticeStatus;
+                        List<NoticeModel> noticeList =
+                            noticeViewModel.noticeList;
 
-                  _ifErrorSendAlert(dataStatus!,
-                      (snapshot.data as ViewModelResult).errorModel);
+                        _ifErrorSendAlert(dataStatus!,
+                            (snapshot.data as ViewModelResult).errorModel);
 
-                  if (noticeList.length == 0) {
-                    //Empty Widget
-                    return _emptyWidget();
-                  }
+                        if (noticeList.length == 0) {
+                          //Empty Widget
+                          return _emptyWidget(size);
+                        }
 
-                  return Stack(
-                    children: [
-                      _bodyWidget(noticeList),
-                      if (dataStatus == Status.loading) _loadingWidget(),
-                    ],
-                  );
-                });
-              },
-            )),
+                        return Stack(
+                          children: [
+                            _bodyWidget(noticeList),
+                            if (dataStatus == Status.loading) _loadingWidget(),
+                          ],
+                        );
+                      });
+                    },
+                  )),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -118,7 +127,16 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> with AlertMixin {
         });
   }
 
-  EmptyWidget _emptyWidget() => EmptyWidget();
+  Widget _emptyWidget(Size size) => Stack(
+        children: [
+          SingleChildScrollView(
+              child: Container(
+            width: size.width,
+            height: size.height,
+          )),
+          EmptyWidget()
+        ],
+      );
 
   LoadingWidget _loadingWidget() => LoadingWidget();
 
