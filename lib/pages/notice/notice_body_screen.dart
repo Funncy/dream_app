@@ -1,9 +1,12 @@
+import 'package:dream/core/data_status/status_enum.dart';
 import 'package:dream/core/data_status/viewmodel_result.dart';
+import 'package:dream/core/error/error_model.dart';
 import 'package:dream/models/notice.dart';
 import 'package:dream/pages/common/empty_widget.dart';
 import 'package:dream/pages/common/error_message_widget.dart';
 import 'package:dream/pages/common/loading_widget.dart';
-import 'package:dream/pages/common/screen_status_widget.dart';
+import 'package:dream/pages/common/view_model_builder.dart';
+import 'package:dream/pages/mixin/alert_mixin.dart';
 import 'package:dream/pages/notice/components/notice_card.dart';
 import 'package:dream/viewmodels/notice_view_model.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,7 +19,7 @@ class NoticeBodyScreen extends StatefulWidget {
   _NoticeBodyScreenState createState() => _NoticeBodyScreenState();
 }
 
-class _NoticeBodyScreenState extends State<NoticeBodyScreen> {
+class _NoticeBodyScreenState extends State<NoticeBodyScreen> with AlertMixin {
   final ScrollController _scrollController = ScrollController();
   final noticeViewModel = Get.find<NoticeViewModel>();
 
@@ -38,6 +41,11 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> {
     noticeViewModel.getNoticeList();
   }
 
+  void errorAlert(ErrorModel? errorModel) {
+    if (errorModel == null) return;
+    showAlert(title: '오류', content: '다시 시도해주세요.');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,63 +55,46 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> {
       body: RefreshIndicator(
         onRefresh: refreshNoticeList,
         child: Container(
-          color: Colors.black12,
-          child: FutureBuilder(
-            future: noticeViewModel.getNoticeList(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Container(
-                  child: Center(
-                    child: Text("로딩 위젯"),
-                  ),
-                );
-              } else if (snapshot.connectionState == ConnectionState.done) {
-                if ((snapshot.data as ViewModelResult).isCompleted) {
-                  return Obx(() {
-                    var dataStatus = noticeViewModel.noticeStatus;
-                    List<NoticeModel> noticeList = noticeViewModel.noticeList;
-                    return DataStatusWidget(
-                        body: _noticeList(noticeList),
-                        error: _noticeList(noticeList),
-                        loading: _noticeList(noticeList),
-                        empty: _emptyWidget(),
-                        updating: _updatingWidget(noticeList),
-                        dataStatus: dataStatus!);
-                  });
-                }
-              }
-              return Container(
-                child: Center(child: Text("에러 위젯")),
-              );
-            },
-          ),
-        ),
+            color: Colors.black12,
+            child: ViewModelBuilder(
+              init: noticeViewModel.getNoticeList(),
+              errorWidget: _errorWidget(),
+              loadingWidget: _loadingWidget(),
+              builder: (context, snapshot) {
+                return Obx(() {
+                  var dataStatus = noticeViewModel.noticeStatus;
+                  List<NoticeModel> noticeList = noticeViewModel.noticeList;
+
+                  _errorCheck(dataStatus!, snapshot);
+
+                  if (noticeList.length == 0) {
+                    //Empty Widget
+                    return _emptyWidget();
+                  }
+
+                  return Stack(
+                    children: [
+                      _bodyWidget(noticeList),
+                      if (dataStatus == Status.loading) _loadingWidget(),
+                    ],
+                  );
+                });
+              },
+            )),
       ),
     );
   }
 
-  EmptyWidget _emptyWidget() => EmptyWidget();
-
-  LoadingWidget _loadingWidget() => LoadingWidget();
-
-  ErrorMessageWidget _errorWidget() => ErrorMessageWidget(errorMessage: 'test');
-
-  _updatingWidget(List<NoticeModel> noticeList) {
-    return Stack(
-      children: [
-        _noticeList(noticeList),
-        Align(
-          alignment: Alignment.center,
-          child: Container(
-            height: 400.h,
-            child: Center(child: CircularProgressIndicator()),
-          ),
-        )
-      ],
-    );
+  void _errorCheck(Status dataStatus, AsyncSnapshot snapshot) {
+    if (dataStatus == Status.error) {
+      //Alert 발생
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
+        errorAlert((snapshot.data as ViewModelResult).errorModel);
+      });
+    }
   }
 
-  ListView _noticeList(List<NoticeModel> noticeList) {
+  ListView _bodyWidget(List<NoticeModel> noticeList) {
     return ListView.builder(
         key: PageStorageKey("notice_listview"),
         controller: _scrollController,
@@ -126,4 +117,11 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> {
               ));
         });
   }
+
+  EmptyWidget _emptyWidget() => EmptyWidget();
+
+  LoadingWidget _loadingWidget() => LoadingWidget();
+
+  ErrorMessageWidget _errorWidget() =>
+      ErrorMessageWidget(errorMessage: '일시적인 문제가 발생했습니다.\n다시 시도해주세요.');
 }
