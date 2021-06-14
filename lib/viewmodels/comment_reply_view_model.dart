@@ -21,7 +21,7 @@ abstract class CommentReplyViewModel {
       required String content});
   Future<ViewModelResult> getCommentList({required String? noticeId});
   Future<ViewModelResult> deleteComment(
-      {required NoticeModel notcieModel, required commentId});
+      {required NoticeModel noticeModel, required commentId});
   Future<ViewModelResult> toggleCommentFavorite(
       {required String? noticeId,
       required String? commentId,

@@ -7,7 +7,7 @@ import 'package:dream/pages/common/empty_widget.dart';
 import 'package:dream/pages/common/error_message_widget.dart';
 import 'package:dream/pages/common/loading_widget.dart';
 import 'package:dream/pages/common/screen_status_widget.dart';
-import 'package:dream/pages/mixin/alert_mixin.dart';
+import 'package:dream/pages/common/alert_mixin.dart';
 import 'package:dream/pages/notice_detail/components/bottom_input_bar.dart';
 import 'package:dream/pages/notice_detail/components/notice_comment.dart';
 import 'package:dream/viewmodels/comment_reply_view_model.dart';

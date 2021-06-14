@@ -153,8 +153,13 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
   @override
   Future<Either<ErrorModel, void>> updateCommentCount(
-      String? noticeId, int? commentCount) async {
+      {required String? noticeId, bool isIncreasement = true}) async {
     try {
+      late int count;
+      if (isIncreasement)
+        count = 1;
+      else
+        count = -1;
       //notice doc에서 commentCount 증가
       DocumentReference documentReference =
           _firebaseFirestore.collection(noticeCollectionName).doc(noticeId!);
@@ -167,7 +172,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
         Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
 
-        int? newCommentCount = (data['comment_count'] as int) + 1;
+        int? newCommentCount = (data['comment_count'] as int) + count;
 
         transaction
             .update(documentReference, {'comment_count': newCommentCount});

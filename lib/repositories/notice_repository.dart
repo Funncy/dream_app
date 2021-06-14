@@ -15,7 +15,7 @@ abstract class NoticeRepository {
       DocumentReference? documentReference);
 
   Future<Either<ErrorModel, void>> updateCommentCount(
-      String? noticeId, int? commentCount);
+      {required String? noticeId, bool isIncreasement = true});
 
   Future<Either<ErrorModel, void>> toggleNoticeFavorite(
       {required String? noticeId,

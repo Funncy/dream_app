@@ -6,7 +6,7 @@ import 'package:dream/pages/common/empty_widget.dart';
 import 'package:dream/pages/common/error_message_widget.dart';
 import 'package:dream/pages/common/loading_widget.dart';
 import 'package:dream/pages/common/view_model_builder.dart';
-import 'package:dream/pages/mixin/alert_mixin.dart';
+import 'package:dream/pages/common/alert_mixin.dart';
 import 'package:dream/pages/notice/components/notice_card.dart';
 import 'package:dream/viewmodels/notice_view_model.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

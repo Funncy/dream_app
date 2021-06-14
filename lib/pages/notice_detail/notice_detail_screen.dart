@@ -10,7 +10,7 @@ import 'package:dream/models/reply.dart';
 import 'package:dream/pages/common/error_message_widget.dart';
 import 'package:dream/pages/common/loading_widget.dart';
 import 'package:dream/pages/common/view_model_builder.dart';
-import 'package:dream/pages/mixin/alert_mixin.dart';
+import 'package:dream/pages/common/alert_mixin.dart';
 import 'package:dream/pages/notice/components/notice_card.dart';
 import 'package:dream/pages/notice_detail/components/bottom_input_bar.dart';
 import 'package:dream/pages/notice_detail/components/notice_comment.dart';
@@ -82,7 +82,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
         isFunction: true,
         function: () async {
           await commentReplyViewModel.deleteComment(
-              notcieModel: notice!, commentId: commentId);
+              noticeModel: notice!, commentId: commentId);
           commentReplyViewModel.refreshComment();
           commentReplyViewModel.refreshReply();
         });

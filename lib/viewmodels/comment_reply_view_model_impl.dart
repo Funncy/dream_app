@@ -54,6 +54,7 @@ class CommentReplyViewModelImpl extends GetxController
             noticeModel: noticeModel, userId: userId, content: content),
         (_) => _increaseCommentCount(noticeModel),
         (_) => _getCommentList(noticeId: noticeModel.id),
+        (_) => _updateCommentCountLocal(noticeModel: noticeModel, count: 1),
       ], status: _commentStatus);
 
   Future<ViewModelResult> getCommentList({required String? noticeId}) =>
@@ -62,10 +63,12 @@ class CommentReplyViewModelImpl extends GetxController
       ], status: _commentStatus);
 
   Future<ViewModelResult> deleteComment(
-          {required NoticeModel notcieModel, required commentId}) =>
+          {required NoticeModel noticeModel, required commentId}) =>
       process(functionList: [
-        (_) => _deleteComment(noticeId: notcieModel.id!, commentId: commentId),
-        (_) => _updateCommentCount(notcieModel.id, notcieModel.commentCount),
+        (_) => _deleteComment(noticeId: noticeModel.id!, commentId: commentId),
+        (_) => _deleteModelInLocal(modelList: commentList, id: commentId),
+        (_) => _updateCommentCount(noticeModel.id, noticeModel.commentCount),
+        (_) => _updateCommentCountLocal(noticeModel: noticeModel, count: -1),
       ], status: _commentStatus);
 
   Future<ViewModelResult> toggleCommentFavorite(
@@ -215,15 +218,19 @@ class CommentReplyViewModelImpl extends GetxController
     if (either.isLeft()) {
       return DataResult(isCompleted: false, errorModel: result as ErrorModel?);
     }
-    //모델 내부도 삭제
+    return DataResult(isCompleted: true);
+  }
+
+  DataResult _deleteModelInLocal(
+      {required List modelList, required String id}) {
     try {
-      _deleteModelInList(commentList, commentId);
+      modelList.removeWhere((e) => e.id == id);
+      return DataResult(isCompleted: true);
     } catch (e) {
       return DataResult(
           isCompleted: false,
-          errorModel: ErrorModel(message: 'model is not found'));
+          errorModel: ErrorModel(message: 'error at _deleteModelInList'));
     }
-    return DataResult(isCompleted: true);
   }
 
   DataResult _isExistCommentById({required String? commentId}) {
@@ -250,28 +257,37 @@ class CommentReplyViewModelImpl extends GetxController
   }
 
   Future<DataResult> _increaseCommentCount(NoticeModel noticeModel) async {
-    int commentCount = noticeModel.commentCount!;
-    noticeModel.commentCount = commentCount + 1;
-    //서버 통신
-    Either<ErrorModel, void> either = await _noticeRepository
-        .updateCommentCount(noticeModel.id, noticeModel.commentCount);
+    Either<ErrorModel, void> either =
+        await _noticeRepository.updateCommentCount(noticeId: noticeModel.id);
     var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
-      noticeModel.commentCount = commentCount - 1;
-      //TODO: 댓글도 지워야함.
       return DataResult(isCompleted: false, errorModel: result as ErrorModel?);
     }
     return DataResult(isCompleted: true);
   }
 
   Future<DataResult> _updateCommentCount(String? id, int? count) async {
-    Either<ErrorModel, void> either =
-        await _noticeRepository.updateCommentCount(id, count);
+    Either<ErrorModel, void> either = await _noticeRepository
+        .updateCommentCount(noticeId: id, isIncreasement: false);
     var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
       return DataResult(isCompleted: false, errorModel: result as ErrorModel?);
     }
     return DataResult(isCompleted: true);
+  }
+
+  DataResult _updateCommentCountLocal(
+      {required NoticeModel noticeModel, required int count}) {
+    try {
+      int commentCount = noticeModel.commentCount!;
+      noticeModel.commentCount = commentCount + count;
+      if (noticeModel.commentCount == 0) noticeModel.commentCount = 0;
+      return DataResult(isCompleted: true);
+    } catch (e) {
+      return DataResult(
+          isCompleted: false,
+          errorModel: ErrorModel(message: 'error at _updateCommentCountLocal'));
+    }
   }
 
   Future<DataResult> _writeReply(
@@ -422,18 +438,6 @@ class CommentReplyViewModelImpl extends GetxController
       return DataResult(
           isCompleted: false,
           errorModel: ErrorModel(message: 'error at _favoriteUserisExist'));
-    }
-  }
-
-  ///_deleteModelInList => data is None.
-  DataResult _deleteModelInList(List modelList, String modelId) {
-    try {
-      modelList.removeWhere((e) => e.id == modelId);
-      return DataResult(isCompleted: true);
-    } catch (e) {
-      return DataResult(
-          isCompleted: false,
-          errorModel: ErrorModel(message: 'error at _deleteModelInList'));
     }
   }
 }
