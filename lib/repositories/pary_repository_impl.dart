@@ -4,7 +4,6 @@ import 'package:dream/core/error/error_model.dart';
 import 'package:dream/core/error/server_error_model.dart';
 import 'package:dream/models/pray.dart';
 import 'package:dream/repositories/pray_repository.dart';
-import 'package:flutter/foundation.dart';
 
 class PrayRepositoryImpl extends PrayRepository {
   late FirebaseFirestore _firebaseFirestore;

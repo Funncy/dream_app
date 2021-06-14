@@ -29,7 +29,7 @@ class CommentRepositoryImpl extends CommentRepository {
           querySnapshot.docs.map((e) => CommentModel.fromFirestore(e)).toList();
       return Right(result);
     } catch (e) {
-      return Left(ServerErrorModel(code: 'firebase Error'));
+      return Left(ServerErrorModel(code: e.toString()));
     }
   }
 
@@ -92,7 +92,7 @@ class CommentRepositoryImpl extends CommentRepository {
 
       return Right(null);
     } catch (e) {
-      return Left(ServerErrorModel(code: 'firebase error'));
+      return Left(ServerErrorModel(code: e.toString()));
     }
   }
 
@@ -108,7 +108,7 @@ class CommentRepositoryImpl extends CommentRepository {
 
       return Right(null);
     } catch (e) {
-      return Left(ServerErrorModel(code: 'firebase error'));
+      return Left(ServerErrorModel(code: e.toString()));
     }
   }
 

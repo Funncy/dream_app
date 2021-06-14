@@ -119,7 +119,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
       return Right(result);
     } catch (e) {
-      return Left(ServerErrorModel(code: 'firebase Error'));
+      return Left(ServerErrorModel(code: e.toString()));
     }
   }
 
@@ -148,7 +148,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
       return Right(result);
     } catch (e) {
-      return Left(ServerErrorModel(code: 'firebase Error'));
+      return Left(ServerErrorModel(code: e.toString()));
     }
   }
 

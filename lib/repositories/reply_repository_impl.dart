@@ -99,7 +99,7 @@ class ReplyRepositoryImpl extends ReplyRepository {
       });
       return Right(null);
     } catch (e) {
-      return Left(ServerErrorModel(code: 'firebase error'));
+      return Left(ServerErrorModel(code: e.toString()));
     }
   }
 }
