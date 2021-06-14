@@ -32,6 +32,8 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
   var notice = Get.arguments as NoticeModel?;
   late StreamSubscription alertSubscription;
 
+  bool isScrollDown = false;
+
   @override
   void initState() {
     super.initState();
@@ -40,7 +42,10 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
   }
 
   Status? scrollAnimatorByStatus(Status? preStatus, Status? status) {
-    if (preStatus == Status.loading && status == Status.loaded) {
+    if (preStatus == Status.loading &&
+        status == Status.loaded &&
+        isScrollDown) {
+      isScrollDown = false;
       WidgetsBinding.instance!.addPostFrameCallback((_) {
         _scrollController.animateTo(_scrollController.position.maxScrollExtent,
             duration: Duration(milliseconds: 500), curve: Curves.ease);
@@ -62,6 +67,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
 
   void inputComment() {
     //TODO: uid 연동해야함.
+    isScrollDown = true;
     commentReplyViewModel.writeComment(
         noticeModel: notice!,
         userId: '123',
