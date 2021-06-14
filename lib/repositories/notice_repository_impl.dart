@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dream/core/error/error_model.dart';
+import 'package:dream/core/error/server_error_model.dart';
 import 'package:dream/models/comment.dart';
 import 'package:dream/models/notice.dart';
 import 'package:dream/models/reply.dart';
@@ -118,7 +119,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
       return Right(result);
     } catch (e) {
-      return Left(ErrorModel(message: 'firebase Error'));
+      return Left(ServerErrorModel(code: 'firebase Error'));
     }
   }
 
@@ -147,7 +148,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
       return Right(result);
     } catch (e) {
-      return Left(ErrorModel(message: 'firebase Error'));
+      return Left(ServerErrorModel(code: 'firebase Error'));
     }
   }
 
@@ -181,7 +182,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
       });
       return Right(null);
     } catch (e) {
-      return Left(ErrorModel(message: e.toString()));
+      return Left(ServerErrorModel(code: e.toString()));
     }
   }
 
@@ -202,7 +203,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
           .update({'favorite_user_list': fieldValue});
       return Right(null);
     } catch (e) {
-      return Left(ErrorModel(message: e.toString()));
+      return Left(ServerErrorModel(code: e.toString()));
     }
   }
 }

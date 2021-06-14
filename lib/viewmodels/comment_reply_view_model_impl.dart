@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:dream/core/data_status/data_result.dart';
 import 'package:dream/core/data_status/status_enum.dart';
 import 'package:dream/core/data_status/viewmodel_result.dart';
+import 'package:dream/core/error/default_error_model.dart';
 import 'package:dream/core/error/error_model.dart';
 import 'package:dream/models/comment.dart';
 import 'package:dream/models/notice.dart';
@@ -206,7 +207,7 @@ class CommentReplyViewModelImpl extends GetxController
       return DataResult(
           isCompleted: false,
           errorModel:
-              ErrorModel(message: 'error at _toggleCommentFavoriteLocal'));
+              DefaultErrorModel(code: 'error at _toggleCommentFavoriteLocal'));
     }
   }
 
@@ -229,7 +230,7 @@ class CommentReplyViewModelImpl extends GetxController
     } catch (e) {
       return DataResult(
           isCompleted: false,
-          errorModel: ErrorModel(message: 'error at _deleteModelInList'));
+          errorModel: DefaultErrorModel(code: 'error at _deleteModelInList '));
     }
   }
 
@@ -286,7 +287,8 @@ class CommentReplyViewModelImpl extends GetxController
     } catch (e) {
       return DataResult(
           isCompleted: false,
-          errorModel: ErrorModel(message: 'error at _updateCommentCountLocal'));
+          errorModel:
+              DefaultErrorModel(code: 'error at _updateCommentCountLocal'));
     }
   }
 
@@ -346,7 +348,8 @@ class CommentReplyViewModelImpl extends GetxController
     } catch (e) {
       return DataResult(
           isCompleted: false,
-          errorModel: ErrorModel(message: 'error at _deleteReplyInLocalList'));
+          errorModel:
+              DefaultErrorModel(code: 'error at _deleteReplyInLocalList'));
     }
     return DataResult(isCompleted: true);
   }
@@ -376,7 +379,7 @@ class CommentReplyViewModelImpl extends GetxController
     if (commentModel == null)
       return DataResult(
           isCompleted: false,
-          errorModel: ErrorModel(message: 'commentModel is null'));
+          errorModel: DefaultErrorModel(code: 'commentModel is null'));
     //인덱스 찾기
     int replyIndex = commentModel.replyIndex!;
 
@@ -408,7 +411,7 @@ class CommentReplyViewModelImpl extends GetxController
     } catch (e) {
       return DataResult(
           isCompleted: false,
-          errorModel: ErrorModel(message: 'error at getModel'));
+          errorModel: DefaultErrorModel(code: 'error at getModel'));
     }
     return DataResult(isCompleted: true, data: {'model': model});
   }
@@ -419,7 +422,7 @@ class CommentReplyViewModelImpl extends GetxController
     if (index == -1) {
       return DataResult(
           isCompleted: false,
-          errorModel: ErrorModel(message: 'index == -1 at replaceModel'));
+          errorModel: DefaultErrorModel(code: 'index == -1 at replaceModel'));
     }
     modelList[index] = model;
     return DataResult(isCompleted: true);
@@ -437,7 +440,7 @@ class CommentReplyViewModelImpl extends GetxController
     } catch (e) {
       return DataResult(
           isCompleted: false,
-          errorModel: ErrorModel(message: 'error at _favoriteUserisExist'));
+          errorModel: DefaultErrorModel(code: 'error at _favoriteUserisExist'));
     }
   }
 }

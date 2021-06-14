@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dream/core/error/error_model.dart';
+import 'package:dream/core/error/server_error_model.dart';
 import 'package:dream/models/pray.dart';
 import 'package:dream/repositories/pray_repository.dart';
 import 'package:flutter/foundation.dart';
@@ -24,7 +25,7 @@ class PrayRepositoryImpl extends PrayRepository {
           querySnapshot.docs.map((e) => PrayModel.fromFirestore(e)).toList();
       return Right(result);
     } catch (e) {
-      return Left(ErrorModel(message: e.toString()));
+      return Left(ServerErrorModel(code: e.toString()));
     }
   }
 
@@ -43,7 +44,7 @@ class PrayRepositoryImpl extends PrayRepository {
           querySnapshot.docs.map((e) => PrayModel.fromFirestore(e)).toList();
       return Right(result);
     } catch (e) {
-      return Left(ErrorModel(message: e.toString()));
+      return Left(ServerErrorModel(code: e.toString()));
     }
   }
 
@@ -61,7 +62,7 @@ class PrayRepositoryImpl extends PrayRepository {
       collectionReference.add(model.toJson());
       return Right(null);
     } catch (e) {
-      return Left(ErrorModel(message: e.toString()));
+      return Left(ServerErrorModel(code: e.toString()));
     }
   }
 }

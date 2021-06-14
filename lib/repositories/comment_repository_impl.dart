@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dream/core/error/error_model.dart';
+import 'package:dream/core/error/server_error_model.dart';
 import 'package:dream/models/comment.dart';
 import 'package:dream/repositories/comment_repository.dart';
-import 'package:flutter/foundation.dart';
 
 import 'package:dream/constants.dart';
 
@@ -29,7 +29,7 @@ class CommentRepositoryImpl extends CommentRepository {
           querySnapshot.docs.map((e) => CommentModel.fromFirestore(e)).toList();
       return Right(result);
     } catch (e) {
-      return Left(ErrorModel(message: 'firebase Error'));
+      return Left(ServerErrorModel(code: 'firebase Error'));
     }
   }
 
@@ -45,7 +45,7 @@ class CommentRepositoryImpl extends CommentRepository {
           .get();
       return Right(CommentModel.fromFirestore(documentSnapshot));
     } catch (e) {
-      return Left(ErrorModel(message: e.toString()));
+      return Left(ServerErrorModel(code: e.toString()));
     }
   }
 
@@ -63,7 +63,7 @@ class CommentRepositoryImpl extends CommentRepository {
           .update(commentModel.toJson());
       return Right(null);
     } catch (e) {
-      return Left(ErrorModel(message: e.toString()));
+      return Left(ServerErrorModel(code: e.toString()));
     }
   }
 
@@ -92,7 +92,7 @@ class CommentRepositoryImpl extends CommentRepository {
 
       return Right(null);
     } catch (e) {
-      return Left(ErrorModel(message: 'firebase error'));
+      return Left(ServerErrorModel(code: 'firebase error'));
     }
   }
 
@@ -108,7 +108,7 @@ class CommentRepositoryImpl extends CommentRepository {
 
       return Right(null);
     } catch (e) {
-      return Left(ErrorModel(message: 'firebase error'));
+      return Left(ServerErrorModel(code: 'firebase error'));
     }
   }
 
@@ -133,7 +133,7 @@ class CommentRepositoryImpl extends CommentRepository {
           .update({'favorite_user_list': fieldValue});
       return Right(null);
     } catch (e) {
-      return Left(ErrorModel(message: e.toString()));
+      return Left(ServerErrorModel(code: e.toString()));
     }
   }
 }

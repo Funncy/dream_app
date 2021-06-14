@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:dream/core/data_status/data_result.dart';
 import 'package:dream/core/data_status/status_enum.dart';
 import 'package:dream/core/data_status/viewmodel_result.dart';
+import 'package:dream/core/error/default_error_model.dart';
 import 'package:dream/core/error/error_model.dart';
 import 'package:dream/models/notice.dart';
 import 'package:dream/repositories/notice_repository.dart';
@@ -77,7 +78,7 @@ class NoticeViewModelImpl extends GetxController
     if (noticeList.length == 0) {
       return DataResult(
           isCompleted: false,
-          errorModel: ErrorModel(message: 'noticeList item count is 0'));
+          errorModel: DefaultErrorModel(code: 'noticeList item count is 0'));
     }
 
     Either<ErrorModel, List<NoticeModel>?> either = await _noticeRepository
@@ -130,7 +131,8 @@ class NoticeViewModelImpl extends GetxController
     } catch (e) {
       return DataResult(
           isCompleted: false,
-          errorModel: ErrorModel(message: 'notice not found'));
+          errorModel:
+              DefaultErrorModel(code: 'notice not found at _getNoticeById'));
     }
     return DataResult(isCompleted: true, data: {'notice': notice});
   }
@@ -144,7 +146,7 @@ class NoticeViewModelImpl extends GetxController
     } catch (e) {
       return DataResult(
           isCompleted: false,
-          errorModel: ErrorModel(message: 'error at isExistFavoriteUser'));
+          errorModel: DefaultErrorModel(code: 'error at _isExistFavoriteUser'));
     }
     return DataResult(isCompleted: true, data: {'isExist': isExist});
   }

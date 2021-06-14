@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dream/core/error/error_model.dart';
+import 'package:dream/core/error/server_error_model.dart';
 import 'package:dream/models/reply.dart';
 import 'package:dream/repositories/reply_repository.dart';
 import 'package:flutter/foundation.dart';
@@ -39,7 +40,7 @@ class ReplyRepositoryImpl extends ReplyRepository {
       });
       return Right(null);
     } catch (e) {
-      return Left(ErrorModel(message: e.toString()));
+      return Left(ServerErrorModel(code: e.toString()));
     }
   }
 
@@ -60,7 +61,7 @@ class ReplyRepositoryImpl extends ReplyRepository {
       });
       return Right(null);
     } catch (e) {
-      return Left(ErrorModel(message: e.toString()));
+      return Left(ServerErrorModel(code: e.toString()));
     }
   }
 
@@ -98,7 +99,7 @@ class ReplyRepositoryImpl extends ReplyRepository {
       });
       return Right(null);
     } catch (e) {
-      return Left(ErrorModel(message: 'firebase error'));
+      return Left(ServerErrorModel(code: 'firebase error'));
     }
   }
 }
