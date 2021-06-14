@@ -1,6 +1,12 @@
-import 'package:flutter/foundation.dart';
+import 'package:logger/logger.dart';
 
-class ErrorModel {
-  final String message;
-  ErrorModel({required this.message});
+abstract class ErrorModel {
+  late String code;
+  late String title;
+  late String content;
+
+  ErrorModel({required this.code}) {
+    var logger = Logger();
+    logger.d("error code : $code");
+  }
 }
