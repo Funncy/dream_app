@@ -380,6 +380,11 @@ class CommentReplyViewModelImpl extends GetxController
     return DataResult(isCompleted: true);
   }
 
+  ///_getModel => data is CommentModel.
+  ///
+  ///```
+  /// CommentModel model = data['model']
+  /// ```
   DataResult _getModel(List modelList, String? modelId) {
     late Object model;
     try {
@@ -392,6 +397,7 @@ class CommentReplyViewModelImpl extends GetxController
     return DataResult(isCompleted: true, data: {'model': model});
   }
 
+  ///_replaceModel => data is None.
   DataResult _replaceModel(List modelList, dynamic model) {
     int index = modelList.indexWhere((e) => e.id == model.id);
     if (index == -1) {
@@ -403,6 +409,11 @@ class CommentReplyViewModelImpl extends GetxController
     return DataResult(isCompleted: true);
   }
 
+  ///_favoriteUserisExist => data is bool.
+  ///
+  ///```
+  /// bool isExist = data['isExist']
+  ///```
   DataResult _favoriteUserisExist(List favoriteList, String userId) {
     try {
       bool isExist = favoriteList.where((e) => e == userId).isEmpty;
@@ -414,6 +425,7 @@ class CommentReplyViewModelImpl extends GetxController
     }
   }
 
+  ///_deleteModelInList => data is None.
   DataResult _deleteModelInList(List modelList, String modelId) {
     try {
       modelList.removeWhere((e) => e.id == modelId);
