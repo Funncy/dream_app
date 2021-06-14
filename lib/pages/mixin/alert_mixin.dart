@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 mixin AlertMixin<T extends StatefulWidget> on State<T> {
@@ -16,14 +15,14 @@ mixin AlertMixin<T extends StatefulWidget> on State<T> {
           content: Text(content!),
           actions: <Widget>[
             if (isFunction)
-              FlatButton(
+              TextButton(
                 child: Text('OK'),
                 onPressed: () async {
                   function!();
                   Navigator.pop(context, "OK");
                 },
               ),
-            FlatButton(
+            TextButton(
               child: Text('Cancel'),
               onPressed: () {
                 Navigator.pop(context, "Cancel");
