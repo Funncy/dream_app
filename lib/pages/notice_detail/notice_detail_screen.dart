@@ -2,22 +2,21 @@ import 'dart:async';
 
 import 'package:dream/constants.dart';
 import 'package:dream/core/data_status/status_enum.dart';
+import 'package:dream/core/data_status/viewmodel_result.dart';
+import 'package:dream/core/error/error_model.dart';
 import 'package:dream/models/comment.dart';
 import 'package:dream/models/notice.dart';
 import 'package:dream/models/reply.dart';
-import 'package:dream/pages/common/empty_widget.dart';
 import 'package:dream/pages/common/error_message_widget.dart';
 import 'package:dream/pages/common/loading_widget.dart';
-import 'package:dream/pages/common/screen_status_widget.dart';
+import 'package:dream/pages/common/view_model_builder.dart';
 import 'package:dream/pages/mixin/alert_mixin.dart';
 import 'package:dream/pages/notice/components/notice_card.dart';
 import 'package:dream/pages/notice_detail/components/bottom_input_bar.dart';
 import 'package:dream/pages/notice_detail/components/notice_comment.dart';
 import 'package:dream/viewmodels/comment_reply_view_model.dart';
-import 'package:dream/viewmodels/notice_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class NoticeDetailScreen extends StatefulWidget {
   static final routeName = '/notice_detail';
@@ -36,17 +35,12 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
   @override
   void initState() {
     super.initState();
-    //build후에 함수 실행
-    WidgetsBinding.instance!.addPostFrameCallback((_) async {
-      await commentReplyViewModel.getCommentList(noticeId: notice!.id);
-    });
-
     //댓글 추가 이후 스크롤 내리기
     commentReplyViewModel.commentStatusStream().reduce(scrollAnimatorByStatus);
   }
 
   Status? scrollAnimatorByStatus(Status? preStatus, Status? status) {
-    if (preStatus == Status.updating && status == Status.loaded) {
+    if (preStatus == Status.loading && status == Status.loaded) {
       WidgetsBinding.instance!.addPostFrameCallback((_) {
         _scrollController.animateTo(_scrollController.position.maxScrollExtent,
             duration: Duration(milliseconds: 500), curve: Curves.ease);
@@ -59,6 +53,11 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
   void dispose() {
     alertSubscription.cancel();
     super.dispose();
+  }
+
+  void errorAlert(ErrorModel? errorModel) {
+    if (errorModel == null) return;
+    showAlert(title: '오류', content: '다시 시도해주세요.');
   }
 
   void inputComment() {
@@ -114,31 +113,42 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
             children: [
               Expanded(
                 child: SingleChildScrollView(
-                  controller: _scrollController,
-                  child: Obx(() {
-                    var dataStatus = commentReplyViewModel.commentStatus;
-                    var commentList = commentReplyViewModel.commentList;
-                    return Column(
-                      children: [
-                        NoticeCard(
-                          notice: notice,
-                          isCommentScreen: true,
-                        ),
-                        Divider(
-                          thickness: 1.0,
-                          color: Colors.black26,
-                        ),
-                        DataStatusWidget(
-                            body: _commentList(commentList),
-                            error: _errorWidget(),
-                            loading: _loadingWidget(),
-                            empty: _emptyWidget(),
-                            updating: _updatingWidget(commentList),
-                            dataStatus: dataStatus!),
-                      ],
-                    );
-                  }),
-                ),
+                    controller: _scrollController,
+                    child: ViewModelBuilder(
+                        init: commentReplyViewModel.getCommentList(
+                            noticeId: notice!.id),
+                        errorWidget: _errorWidget(),
+                        loadingWidget: _loadingWidget(),
+                        builder: (context, snapshot) {
+                          return Obx(() {
+                            var dataStatus =
+                                commentReplyViewModel.commentStatus;
+                            var commentList = commentReplyViewModel.commentList;
+
+                            _ifErrorSendAlert(dataStatus!,
+                                (snapshot.data as ViewModelResult).errorModel);
+
+                            return Stack(
+                              children: [
+                                Column(
+                                  children: [
+                                    NoticeCard(
+                                      notice: notice,
+                                      isCommentScreen: true,
+                                    ),
+                                    Divider(
+                                      thickness: 1.0,
+                                      color: Colors.black26,
+                                    ),
+                                    _bodyWidget(commentList),
+                                  ],
+                                ),
+                                if (dataStatus == Status.loading)
+                                  _loadingWidget(),
+                              ],
+                            );
+                          });
+                        })),
               ),
               BottonInputBar(
                 textEditingController: _textEditingController,
@@ -151,30 +161,23 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
     );
   }
 
-  Stack _updatingWidget(List<CommentModel?> commentList) {
-    return Stack(
-      children: [
-        _commentList(commentList),
-        Container(
-          height: 400.h,
-          child: Center(child: CircularProgressIndicator()),
-        )
-      ],
-    );
-  }
-
-  EmptyWidget _emptyWidget() => EmptyWidget();
-
-  Padding _loadingWidget() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 50.0),
+  Widget _loadingWidget() {
+    return Center(
       child: LoadingWidget(),
     );
   }
 
+  void _ifErrorSendAlert(Status dataStatus, ErrorModel? errorModel) {
+    if (dataStatus != Status.error || errorModel == null) return;
+    //Alert 발생
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      errorAlert(errorModel);
+    });
+  }
+
   ErrorMessageWidget _errorWidget() => ErrorMessageWidget(errorMessage: 'test');
 
-  ListView _commentList(List<CommentModel?> commentList) {
+  ListView _bodyWidget(List<CommentModel?> commentList) {
     return ListView.builder(
         physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,
