@@ -65,7 +65,8 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> with AlertMixin {
                   var dataStatus = noticeViewModel.noticeStatus;
                   List<NoticeModel> noticeList = noticeViewModel.noticeList;
 
-                  _errorCheck(dataStatus!, snapshot);
+                  _ifErrorSendAlert(dataStatus!,
+                      (snapshot.data as ViewModelResult).errorModel);
 
                   if (noticeList.length == 0) {
                     //Empty Widget
@@ -85,13 +86,12 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> with AlertMixin {
     );
   }
 
-  void _errorCheck(Status dataStatus, AsyncSnapshot snapshot) {
-    if (dataStatus == Status.error) {
-      //Alert 발생
-      WidgetsBinding.instance!.addPostFrameCallback((_) {
-        errorAlert((snapshot.data as ViewModelResult).errorModel);
-      });
-    }
+  void _ifErrorSendAlert(Status dataStatus, ErrorModel? errorModel) {
+    if (dataStatus != Status.error || errorModel == null) return;
+    //Alert 발생
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      errorAlert(errorModel);
+    });
   }
 
   ListView _bodyWidget(List<NoticeModel> noticeList) {
