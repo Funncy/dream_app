@@ -9,8 +9,8 @@ mixin ViewModelPipeLineMixin {
   Future<DataResult> pipeline(List<Function> functionList) async {
     DataResult successOrError = DataResult(isCompleted: true);
     Map<String, dynamic> data = {};
-    for (var process in functionList) {
-      successOrError = await process(data);
+    for (var function in functionList) {
+      successOrError = await function(data);
       if (!successOrError.isCompleted) {
         return successOrError;
       }
