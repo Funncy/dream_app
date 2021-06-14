@@ -85,7 +85,7 @@ class _PrayListScreenState extends State<PrayListScreen> with AlertMixin {
 
                         if (prayList.length == 0) {
                           //Empty Widget
-                          return _emptyWidget();
+                          return _emptyWidget(size);
                         }
 
                         return Stack(
@@ -106,7 +106,16 @@ class _PrayListScreenState extends State<PrayListScreen> with AlertMixin {
     );
   }
 
-  EmptyWidget _emptyWidget() => EmptyWidget();
+  Widget _emptyWidget(Size size) => Stack(
+        children: [
+          SingleChildScrollView(
+              child: Container(
+            width: size.width,
+            height: size.height,
+          )),
+          EmptyWidget()
+        ],
+      );
 
   LoadingWidget _loadingWidget() => LoadingWidget();
 
