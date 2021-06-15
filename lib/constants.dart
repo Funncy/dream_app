@@ -8,14 +8,14 @@ class Constants {
   static Color iconSelectedColor = Colors.black;
   static Color favoriteAndCommentColor = Colors.black;
 
-  static TextStyle titleStyle =
-      TextStyle(fontSize: 18.ssp, color: Colors.black);
+  static TextStyle titleStyle = TextStyle(fontSize: 18.sp, color: Colors.black);
 
   static TextStyle contentStyle =
-      TextStyle(fontSize: 16.ssp, color: Colors.black);
+      TextStyle(fontSize: 16.sp, color: Colors.black);
 }
 
 //FireStore Name
+const String userCollectionName = 'user';
 const String noticeCollectionName = 'notice';
 const String commentCollectionName = 'comment';
 const String replyCollectionName = 'notice_reply';
