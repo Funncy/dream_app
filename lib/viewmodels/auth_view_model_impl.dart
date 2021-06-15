@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:dream/core/data_status/data_result.dart';
+import 'package:dream/core/data_status/fireauth_status.dart';
 import 'package:dream/core/data_status/status_enum.dart';
 import 'package:dream/core/data_status/viewmodel_result.dart';
 import 'package:dream/core/error/default_error_model.dart';
@@ -18,6 +19,9 @@ class AuthViewModelImpl extends GetxController
   late AuthRepository _authRepository;
   Rxn<Status?> _signInStatus = Rxn<Status?>(Status.initial);
   Rxn<Status?> _signUpStatus = Rxn<Status?>(Status.initial);
+  Rxn<FireAuthStatus?> _fireauthStatus =
+      Rxn<FireAuthStatus?>(FireAuthStatus.loading);
+  FireAuthStatus? get fireauthStatus => _fireauthStatus.value;
   Status? get signInStatus => _signInStatus.value;
   set signInStatus(Status? status) => _signInStatus.value = status;
   Status? get signUpStatus => _signUpStatus.value;
@@ -33,8 +37,26 @@ class AuthViewModelImpl extends GetxController
 
   @override
   void onInit() {
-    _user.bindStream(_authRepository.getAuthStateChanges());
+    _authRepository.getAuthStateChanges().listen((user) {
+      if (_user.value != null) {
+        if (_user.value!.id == user.id) return;
+      }
+      _user.value = user;
+      changeFireAuthStatus();
+    });
+    // _user.bindStream(_authRepository.getAuthStateChanges());
     super.onInit();
+  }
+
+  void changeFireAuthStatus({FireAuthStatus? status}) {
+    if (status != null) {
+      _fireauthStatus.value = status;
+    } else {
+      if (_user.value != null)
+        _fireauthStatus.value = FireAuthStatus.signin;
+      else
+        _fireauthStatus.value = FireAuthStatus.signout;
+    }
   }
 
   Future<ViewModelResult> signInWithEmail(
