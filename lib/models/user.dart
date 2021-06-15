@@ -13,7 +13,7 @@ class UserModel extends Core {
   UserModel({
     required this.id,
     required this.email,
-    this.isActivate = false,
+    this.isActivate = true,
     required this.name,
     required this.group,
     this.profileImageUrl,
