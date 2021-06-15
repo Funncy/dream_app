@@ -10,6 +10,9 @@ abstract class AuthViewModel {
   Future<ViewModelResult> signInWithEmail(
       {required String email, required String password});
   Future<ViewModelResult> signUpWithEmail(
-      {required String email, required String password});
+      {required String email,
+      required String password,
+      required String name,
+      required String group});
   Future<ViewModelResult> signOut();
 }

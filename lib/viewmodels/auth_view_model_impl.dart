@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:dream/core/data_status/data_result.dart';
 import 'package:dream/core/data_status/status_enum.dart';
 import 'package:dream/core/data_status/viewmodel_result.dart';
+import 'package:dream/core/error/default_error_model.dart';
 import 'package:dream/core/error/error_model.dart';
 import 'package:dream/models/user.dart';
 import 'package:dream/repositories/auth_repository.dart';
@@ -25,7 +26,6 @@ class AuthViewModelImpl extends GetxController
   Rxn<UserModel> _user = Rxn<UserModel>();
   // Rxn<User> _firebaseUser = Rxn<User>();
   UserModel? get user => _user.value;
-  UserModel? setUser(UserModel user) => _user.value = user;
 
   AuthViewModelImpl({required authRepository}) {
     _authRepository = authRepository;
@@ -45,9 +45,13 @@ class AuthViewModelImpl extends GetxController
       ], status: _signInStatus);
 
   Future<ViewModelResult> signUpWithEmail(
-          {required String email, required String password}) =>
+          {required String email,
+          required String password,
+          required String name,
+          required String group}) =>
       process(functionList: [
-        (_) => _signUpWithEamil(email: email, password: password),
+        (_) => _signUpWithEamil(
+            email: email, password: password, name: name, group: group),
         (data) => setUser(data['user']),
       ], status: _signUpStatus);
 
@@ -85,15 +89,30 @@ class AuthViewModelImpl extends GetxController
   /// UserModel userModel = data['user']
   /// ```
   Future<DataResult> _signUpWithEamil(
-      {required String email, required String password}) async {
+      {required String email,
+      required String password,
+      required String name,
+      required String group}) async {
     Either<ErrorModel, UserModel> either =
-        await _authRepository.signUpWithEmail(email, password);
+        await _authRepository.signUpWithEmail(
+            email: email, password: password, name: name, group: group);
     var result = either.fold((l) => l, (r) => r);
 
     if (either.isLeft()) {
       return DataResult(isCompleted: false, errorModel: result as ErrorModel);
     }
     return DataResult(isCompleted: true, data: {'user': result});
+  }
+
+  DataResult setUser(UserModel user) {
+    try {
+      _user.value = user;
+      return DataResult(isCompleted: true);
+    } catch (e) {
+      return DataResult(
+          isCompleted: false,
+          errorModel: DefaultErrorModel(code: e.toString()));
+    }
   }
 
   ///_signOut => data is void
