@@ -4,19 +4,20 @@ import 'package:flutter/material.dart';
 
 import '../../constants.dart';
 
-class LoginInScreen extends StatefulWidget {
-  const LoginInScreen({Key? key}) : super(key: key);
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({Key? key}) : super(key: key);
 
   @override
-  _LoginInScreenState createState() => _LoginInScreenState();
+  _SignUpScreenState createState() => _SignUpScreenState();
 }
 
-class _LoginInScreenState extends State<LoginInScreen>
+class _SignUpScreenState extends State<SignUpScreen>
     with AlertMixin, InputMixin {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   TextEditingController _emailController = TextEditingController();
   TextEditingController _pwController = TextEditingController();
+  TextEditingController _cpwController = TextEditingController();
 
   @override
   void initState() {
@@ -27,6 +28,7 @@ class _LoginInScreenState extends State<LoginInScreen>
   void dispose() {
     _emailController.dispose();
     _pwController.dispose();
+    _cpwController.dispose();
     super.dispose();
   }
 
@@ -48,7 +50,7 @@ class _LoginInScreenState extends State<LoginInScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("로그인"),
+        title: Text("회원 가입"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(Constants.commonGap),
@@ -75,6 +77,27 @@ class _LoginInScreenState extends State<LoginInScreen>
                 cursorColor: Colors.black54,
                 obscureText: true,
                 decoration: textInputDecor('Password'),
+                validator: (text) {
+                  if (text!.isNotEmpty && text.length > 4) {
+                    return null;
+                  } else {
+                    return '비밀번호를 4자리 이상 입력해주세요.';
+                  }
+                },
+              ),
+              SizedBox(height: Constants.commonLGap),
+              TextFormField(
+                controller: _cpwController,
+                cursorColor: Colors.black54,
+                obscureText: true,
+                decoration: textInputDecor('Confirm Password'),
+                validator: (text) {
+                  if (text!.isNotEmpty && _pwController.text == text) {
+                    return null;
+                  } else {
+                    return '입력값이 비밀번호와 일치하지 않습니다.';
+                  }
+                },
               ),
               SizedBox(height: Constants.commonLGap),
               _submitBtn(context, _formKey),
@@ -97,7 +120,7 @@ class _LoginInScreenState extends State<LoginInScreen>
           backgroundColor: Colors.amber[300],
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
           side: BorderSide(color: Colors.amber[300]!)),
-      child: Text('로그인', style: TextStyle(color: Colors.black)),
+      child: Text('회원가입', style: TextStyle(color: Colors.black)),
     );
   }
 }

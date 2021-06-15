@@ -12,6 +12,9 @@ class Constants {
 
   static TextStyle contentStyle =
       TextStyle(fontSize: 16.sp, color: Colors.black);
+
+  static const double commonGap = 14.0;
+  static const double commonLGap = 16.0;
 }
 
 //FireStore Name
