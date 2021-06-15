@@ -1,3 +1,5 @@
+import 'package:dream/core/data_status/viewmodel_result.dart';
+import 'package:dream/core/error/error_model.dart';
 import 'package:dream/pages/common/alert_mixin.dart';
 import 'package:dream/pages/common/input_mixin.dart';
 import 'package:dream/viewmodels/auth_view_model_impl.dart';
@@ -44,23 +46,26 @@ class _SignUpScreenState extends State<SignUpScreen>
     super.dispose();
   }
 
+  void errorAlert(ErrorModel? errorModel) {
+    if (errorModel == null) return;
+    showAlert(title: errorModel.title, content: errorModel.content);
+  }
+
   void submitLogin(FocusScopeNode currentFocus) async {
     bool isValidate = _formKey.currentState?.validate() ?? false;
     if (isValidate) {
       currentFocus.unfocus();
-      var result = await Get.find<AuthViewModelImpl>().signUpWithEmail(
-          email: _emailController.text,
-          password: _pwController.text,
-          name: _nameController.text,
-          group: _groupName);
-      print(result);
-      print(Get.find<AuthViewModelImpl>().user);
-      print("Test");
-      // if (result.isComplete) {
-      //   Get.toNamed(TermsAndConditionsPage.routeName);
-      // } else {
-      //   showAlert(errorModel: result.errorModel);
-      // }
+      ViewModelResult result = await Get.find<AuthViewModelImpl>()
+          .signUpWithEmail(
+              email: _emailController.text,
+              password: _pwController.text,
+              name: _nameController.text,
+              group: _groupName);
+      if (result.isCompleted) {
+        Get.back();
+      } else {
+        errorAlert(result.errorModel);
+      }
     }
   }
 
@@ -121,13 +126,12 @@ class _SignUpScreenState extends State<SignUpScreen>
               TextFormField(
                 controller: _nameController,
                 cursorColor: Colors.black54,
-                obscureText: true,
                 decoration: textInputDecor('이름'),
                 validator: (text) {
-                  if (text!.isNotEmpty && _pwController.text == text) {
+                  if (text!.isNotEmpty) {
                     return null;
                   } else {
-                    return '입력값이 비밀번호와 일치하지 않습니다.';
+                    return '이름을 입력해주세요';
                   }
                 },
               ),
