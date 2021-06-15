@@ -21,16 +21,15 @@ mixin ViewModelPipeLineMixin {
 
   Future<ViewModelResult> process(
       {required List<Function> functionList,
-      required Rxn<Status?> status}) async {
-    status.value = Status.loading;
+      required Rxn<Status?>? status}) async {
+    if (status != null) status.value = Status.loading;
 
     ViewModelResult result = await pipeline(functionList);
     if (!result.isCompleted) {
-      status.value = Status.error;
+      if (status != null) status.value = Status.error;
       return result;
     }
-
-    status.value = Status.loaded;
+    if (status != null) status.value = Status.loaded;
 
     return ViewModelResult(isCompleted: true);
   }
