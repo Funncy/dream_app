@@ -5,9 +5,11 @@ import 'package:dream/models/notice.dart';
 import 'package:dream/pages/common/empty_widget.dart';
 import 'package:dream/pages/common/error_message_widget.dart';
 import 'package:dream/pages/common/loading_widget.dart';
+import 'package:dream/pages/common/profile_app_bar.dart';
 import 'package:dream/pages/common/view_model_builder.dart';
 import 'package:dream/pages/common/alert_mixin.dart';
 import 'package:dream/pages/notice/components/notice_card.dart';
+import 'package:dream/viewmodels/auth_view_model_impl.dart';
 import 'package:dream/viewmodels/notice_view_model.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
@@ -22,11 +24,14 @@ class NoticeBodyScreen extends StatefulWidget {
 class _NoticeBodyScreenState extends State<NoticeBodyScreen> with AlertMixin {
   final ScrollController _scrollController = ScrollController();
   final noticeViewModel = Get.find<NoticeViewModel>();
+  final authViewModel = Get.find<AuthViewModelImpl>();
+  String? profileImageUrl;
 
   @override
   void initState() {
     super.initState();
     //build후에 함수 실행
+    profileImageUrl = authViewModel.user?.profileImageUrl;
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _scrollController.addListener(() {
         if (_scrollController.position.pixels ==
@@ -50,8 +55,9 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> with AlertMixin {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        title: Text("공지사항"),
+      appBar: ProfileAppBar(
+        onProfileTap: () {},
+        title: '공지사항',
       ),
       body: Column(
         children: [

@@ -1,4 +1,5 @@
 import 'package:dream/constants.dart';
+import 'package:dream/pages/common/profile_app_bar.dart';
 import 'package:dream/pages/pray/pray_send_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,12 +14,13 @@ class PrayScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('기도 보내기'),
-        ),
-        body: Container(
+    return Scaffold(
+      appBar: ProfileAppBar(
+        onProfileTap: () {},
+        title: '기도 보내기',
+      ),
+      body: SafeArea(
+        child: Container(
           child: Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,

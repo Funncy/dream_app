@@ -6,6 +6,7 @@ import 'package:dream/pages/common/alert_mixin.dart';
 import 'package:dream/pages/common/empty_widget.dart';
 import 'package:dream/pages/common/error_message_widget.dart';
 import 'package:dream/pages/common/loading_widget.dart';
+import 'package:dream/pages/common/profile_app_bar.dart';
 import 'package:dream/pages/common/screen_status_widget.dart';
 import 'package:dream/pages/common/view_model_builder.dart';
 import 'package:dream/pages/pray/components/pray_card.dart';
@@ -58,8 +59,9 @@ class _PrayListScreenState extends State<PrayListScreen> with AlertMixin {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        title: Text("중보 기도"),
+      appBar: ProfileAppBar(
+        onProfileTap: () {},
+        title: '중보 기도',
       ),
       body: SafeArea(
         child: Column(
