@@ -38,11 +38,12 @@ class AuthViewModelImpl extends GetxController
   @override
   void onInit() {
     _authRepository.getAuthStateChanges().listen((user) {
-      if (_user.value != null) {
-        if (_user.value!.id == user.id) return;
+      if (_user.value == null && user == null)
+        changeFireAuthStatus(status: FireAuthStatus.signout);
+      if (_user.value != user) {
+        _user.value = user;
+        changeFireAuthStatus();
       }
-      _user.value = user;
-      changeFireAuthStatus();
     });
     // _user.bindStream(_authRepository.getAuthStateChanges());
     super.onInit();

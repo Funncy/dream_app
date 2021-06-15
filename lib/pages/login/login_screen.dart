@@ -1,6 +1,7 @@
 import 'package:dream/pages/common/alert_mixin.dart';
 import 'package:dream/pages/common/input_mixin.dart';
 import 'package:dream/pages/login/sign_up_screen.dart';
+import 'package:dream/viewmodels/auth_view_model_impl.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -36,13 +37,12 @@ class _LoginInScreenState extends State<LoginInScreen>
     bool isValidate = _formKey.currentState?.validate() ?? false;
     if (isValidate) {
       currentFocus.unfocus();
-      // var result = await Get.find<AuthController>()
-      //     .signUpWithEamil(_emailController.text, _pwController.text);
-      // if (result.isComplete) {
-      //   Get.toNamed(TermsAndConditionsPage.routeName);
-      // } else {
-      //   showAlert(errorModel: result.errorModel);
-      // }
+      var result = await Get.find<AuthViewModelImpl>().signInWithEmail(
+          email: _emailController.text, password: _pwController.text);
+      if (!result.isCompleted) {
+        print("login error");
+        // showAlert(errorModel: result.errorModel);
+      }
     }
   }
 

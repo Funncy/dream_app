@@ -23,15 +23,15 @@ class AuthRepositoryImpl extends AuthRepository {
     _firebaseFirestore = firebaseFirestore;
   }
 
-  Stream<UserModel> getAuthStateChanges() {
+  Stream<UserModel?> getAuthStateChanges() {
     //from <User?>Stream to <UserModel>Stream
-    return _firebaseAuth.authStateChanges().transform<UserModel>(
-        StreamTransformer<User?, UserModel>.fromHandlers(
+    return _firebaseAuth.authStateChanges().transform<UserModel?>(
+        StreamTransformer<User?, UserModel?>.fromHandlers(
             handleData: (user, sink) async {
       var either = await getUser(user?.uid ?? "None");
       var result = either.fold((l) => l, (r) => r);
       if (either.isLeft()) {
-        sink.addError(result);
+        sink.add(null);
         return;
       }
       sink.add(result as UserModel);

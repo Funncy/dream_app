@@ -3,7 +3,7 @@ import 'package:dream/core/error/error_model.dart';
 import 'package:dream/models/user.dart';
 
 abstract class AuthRepository {
-  Stream<UserModel> getAuthStateChanges();
+  Stream<UserModel?> getAuthStateChanges();
   Future<Either<ErrorModel, UserModel>> getUser(String uid);
   // Future<Either<ErrorModel, void>> createUser(UserCredential _userCredential);
   // Future<Either<ErrorModel, UserModel>> signInWithGoogle();

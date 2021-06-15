@@ -1,3 +1,4 @@
+import 'package:dream/core/data_status/viewmodel_result.dart';
 import 'package:dream/models/user.dart';
 import 'package:dream/viewmodels/auth_view_model_impl.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void modifyProfileImage() {}
+
+  void signOut() async {
+    ViewModelResult result = await authViewModel.signOut();
+    if (result.isCompleted)
+      Get.back();
+    else {
+      //TODO: 경고창 띄워야함 . 로그아웃 실패
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +70,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onPressed: () {},
                 child: Text(
                   "내 정보 수정하기",
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+              MaterialButton(
+                onPressed: signOut,
+                child: Text(
+                  "로그 아웃",
                   style: TextStyle(fontSize: 20),
                 ),
               ),
