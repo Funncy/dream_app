@@ -5,6 +5,7 @@ import 'package:dream/pages/bottom_navigation/main_screen.dart';
 import 'package:dream/pages/login/sign_up_screen.dart';
 import 'package:dream/pages/notice_detail/notice_detail_screen.dart';
 import 'package:dream/pages/pray/pray_send_screen.dart';
+import 'package:dream/pages/profile/profile_screen.dart';
 import 'package:dream/pages/root_screen.dart';
 import 'package:dream/utils/time_util.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -57,6 +58,10 @@ class MyApp extends StatelessWidget {
           GetPage(
             name: SignUpScreen.routeName,
             page: () => SignUpScreen(),
+          ),
+          GetPage(
+            name: ProfileScreen.routeName,
+            page: () => ProfileScreen(),
           ),
         ],
       ),

@@ -9,6 +9,7 @@ import 'package:dream/pages/common/profile_app_bar.dart';
 import 'package:dream/pages/common/view_model_builder.dart';
 import 'package:dream/pages/common/alert_mixin.dart';
 import 'package:dream/pages/notice/components/notice_card.dart';
+import 'package:dream/pages/profile/profile_screen.dart';
 import 'package:dream/viewmodels/auth_view_model_impl.dart';
 import 'package:dream/viewmodels/notice_view_model.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -56,7 +57,9 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> with AlertMixin {
     var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: ProfileAppBar(
-        onProfileTap: () {},
+        onProfileTap: () {
+          Get.toNamed(ProfileScreen.routeName);
+        },
         title: '공지사항',
       ),
       body: Column(
