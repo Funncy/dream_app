@@ -57,25 +57,25 @@ class AuthRepositoryImpl extends AuthRepository {
     }
   }
 
-  Future<Either<ErrorModel, void>> createUser(
-      UserCredential _userCredential) async {
-    try {
-      UserModel user = UserModel(
-          id: _userCredential.user?.uid ?? "",
-          email: _userCredential.user?.email ?? "",
-          nickName: _userCredential.user?.displayName ?? "");
-      //TODO: 콜랙션 이름도 따로 관리해야함.
-      _firebaseFirestore
-          .collection(userCollectionName)
-          .doc(user.id)
-          .set(user.toJson());
-      return Right(null);
-    } on FirebaseAuthException catch (e) {
-      return Left(FireAuthErrorModel(code: e.code));
-    } catch (e) {
-      return Left(DefaultErrorModel(code: e.toString()));
-    }
-  }
+  // Future<Either<ErrorModel, void>> createUser(
+  //     UserCredential _userCredential) async {
+  //   try {
+  //     UserModel user = UserModel(
+  //         id: _userCredential.user?.uid ?? "",
+  //         email: _userCredential.user?.email ?? "",
+  //         nickName: _userCredential.user?.displayName ?? "");
+  //     //TODO: 콜랙션 이름도 따로 관리해야함.
+  //     _firebaseFirestore
+  //         .collection(userCollectionName)
+  //         .doc(user.id)
+  //         .set(user.toJson());
+  //     return Right(null);
+  //   } on FirebaseAuthException catch (e) {
+  //     return Left(FireAuthErrorModel(code: e.code));
+  //   } catch (e) {
+  //     return Left(DefaultErrorModel(code: e.toString()));
+  //   }
+  // }
 
   // Future<String> _verifyToken(String kakaoToken) async {
   //   try {
@@ -160,7 +160,10 @@ class AuthRepositoryImpl extends AuthRepository {
   // }
 
   Future<Either<ErrorModel, UserModel>> signUpWithEmail(
-      String email, String password) async {
+      {required String email,
+      required String password,
+      required String name,
+      required String group}) async {
     try {
       UserCredential _userCredential = await _firebaseAuth
           .createUserWithEmailAndPassword(email: email, password: password);
@@ -168,8 +171,9 @@ class AuthRepositoryImpl extends AuthRepository {
       UserModel userModel = UserModel(
           id: _userCredential.user?.uid ?? "",
           email: _userCredential.user?.email ?? "",
-          nickName: _userCredential.user?.displayName ?? "");
-      //TODO: 콜랙션 이름도 따로 관리해야함.
+          name: name,
+          group: group);
+
       _firebaseFirestore
           .collection(userCollectionName)
           .doc(userModel.id)
