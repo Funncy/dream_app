@@ -1,6 +1,8 @@
 import 'package:dream/pages/common/alert_mixin.dart';
 import 'package:dream/pages/common/input_mixin.dart';
+import 'package:dream/pages/login/sign_up_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../constants.dart';
 
@@ -44,6 +46,10 @@ class _LoginInScreenState extends State<LoginInScreen>
     }
   }
 
+  void pageToSignUp() {
+    Get.toNamed(SignUpScreen.routeName);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,6 +85,14 @@ class _LoginInScreenState extends State<LoginInScreen>
               SizedBox(height: Constants.commonLGap),
               _submitBtn(context, _formKey),
               SizedBox(height: Constants.commonLGap),
+              Align(
+                  alignment: Alignment.centerRight,
+                  child: InkWell(
+                      onTap: pageToSignUp,
+                      child: Text(
+                        "회원가입",
+                        style: TextStyle(color: Colors.blue),
+                      ))),
               Divider(),
             ],
           ),

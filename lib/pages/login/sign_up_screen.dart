@@ -1,10 +1,13 @@
 import 'package:dream/pages/common/alert_mixin.dart';
 import 'package:dream/pages/common/input_mixin.dart';
+import 'package:dream/viewmodels/auth_view_model_impl.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../constants.dart';
 
 class SignUpScreen extends StatefulWidget {
+  static final routeName = '/SignUp';
   const SignUpScreen({Key? key}) : super(key: key);
 
   @override
@@ -18,6 +21,15 @@ class _SignUpScreenState extends State<SignUpScreen>
   TextEditingController _emailController = TextEditingController();
   TextEditingController _pwController = TextEditingController();
   TextEditingController _cpwController = TextEditingController();
+  TextEditingController _nameController = TextEditingController();
+
+  var _groupNames = [
+    "시온",
+    "더드림",
+    "두드림",
+    "기타",
+  ];
+  String _groupName = "기타";
 
   @override
   void initState() {
@@ -36,8 +48,14 @@ class _SignUpScreenState extends State<SignUpScreen>
     bool isValidate = _formKey.currentState?.validate() ?? false;
     if (isValidate) {
       currentFocus.unfocus();
-      // var result = await Get.find<AuthController>()
-      //     .signUpWithEamil(_emailController.text, _pwController.text);
+      var result = await Get.find<AuthViewModelImpl>().signUpWithEmail(
+          email: _emailController.text,
+          password: _pwController.text,
+          name: _nameController.text,
+          group: _groupName);
+      print(result);
+      print(Get.find<AuthViewModelImpl>().user);
+      print("Test");
       // if (result.isComplete) {
       //   Get.toNamed(TermsAndConditionsPage.routeName);
       // } else {
@@ -62,7 +80,7 @@ class _SignUpScreenState extends State<SignUpScreen>
               TextFormField(
                 controller: _emailController,
                 cursorColor: Colors.black54,
-                decoration: textInputDecor('Email'),
+                decoration: textInputDecor('이메일'),
                 validator: (text) {
                   if (text!.isNotEmpty && text.contains('@')) {
                     return null;
@@ -76,7 +94,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                 controller: _pwController,
                 cursorColor: Colors.black54,
                 obscureText: true,
-                decoration: textInputDecor('Password'),
+                decoration: textInputDecor('비밀번호'),
                 validator: (text) {
                   if (text!.isNotEmpty && text.length > 4) {
                     return null;
@@ -90,7 +108,21 @@ class _SignUpScreenState extends State<SignUpScreen>
                 controller: _cpwController,
                 cursorColor: Colors.black54,
                 obscureText: true,
-                decoration: textInputDecor('Confirm Password'),
+                decoration: textInputDecor('비밀번호 확인'),
+                validator: (text) {
+                  if (text!.isNotEmpty && _pwController.text == text) {
+                    return null;
+                  } else {
+                    return '입력값이 비밀번호와 일치하지 않습니다.';
+                  }
+                },
+              ),
+              Divider(),
+              TextFormField(
+                controller: _nameController,
+                cursorColor: Colors.black54,
+                obscureText: true,
+                decoration: textInputDecor('이름'),
                 validator: (text) {
                   if (text!.isNotEmpty && _pwController.text == text) {
                     return null;
@@ -100,9 +132,30 @@ class _SignUpScreenState extends State<SignUpScreen>
                 },
               ),
               SizedBox(height: Constants.commonLGap),
-              _submitBtn(context, _formKey),
+              InputDecorator(
+                decoration: textInputDecor('지파를 선택해주세요.'),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: _groupName,
+                    isDense: true,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _groupName = newValue!;
+                      });
+                    },
+                    items: _groupNames.map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
               SizedBox(height: Constants.commonLGap),
+              _submitBtn(context, _formKey),
               Divider(),
+              SizedBox(height: Constants.commonLGap),
             ],
           ),
         ),
