@@ -4,7 +4,8 @@ import 'core.dart';
 
 class UserModel extends Core {
   late String id;
-  late String? nickName;
+  late String name;
+  late String group;
   late String email;
   late String? profileImageUrl;
   late bool isActivate;
@@ -13,7 +14,8 @@ class UserModel extends Core {
     required this.id,
     required this.email,
     this.isActivate = false,
-    this.nickName,
+    required this.name,
+    required this.group,
     this.profileImageUrl,
   }) : super(DateTime.now(), DateTime.now());
 
@@ -23,7 +25,8 @@ class UserModel extends Core {
       id: documentSnapshot.id,
       email: json['email'],
       isActivate: json['is_activate'],
-      nickName: json['nick_name'],
+      name: json['name'],
+      group: json['group'],
       profileImageUrl: json['profile_image_url'],
     );
     userModel.createdAt = (json['created_at'] as Timestamp).toDate();
@@ -34,8 +37,9 @@ class UserModel extends Core {
 
   Map<String, Object?> toJson() => {
         'id': id,
-        'nick_name': nickName,
+        'name': name,
         'email': email,
+        'group': group,
         'profile_image_url': profileImageUrl,
         'is_activate': isActivate,
         'created_at': createdAt,
