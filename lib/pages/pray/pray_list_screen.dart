@@ -10,6 +10,7 @@ import 'package:dream/pages/common/profile_app_bar.dart';
 import 'package:dream/pages/common/screen_status_widget.dart';
 import 'package:dream/pages/common/view_model_builder.dart';
 import 'package:dream/pages/pray/components/pray_card.dart';
+import 'package:dream/pages/profile/profile_screen.dart';
 import 'package:dream/viewmodels/pray_view_model.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +61,9 @@ class _PrayListScreenState extends State<PrayListScreen> with AlertMixin {
     var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: ProfileAppBar(
-        onProfileTap: () {},
+        onProfileTap: () {
+          Get.toNamed(ProfileScreen.routeName);
+        },
         title: '중보 기도',
       ),
       body: SafeArea(
