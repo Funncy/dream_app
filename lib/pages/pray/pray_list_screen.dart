@@ -127,8 +127,8 @@ class _PrayListScreenState extends State<PrayListScreen> with AlertMixin {
 
   ListView _bodyWidget(List<PrayModel> prayList) {
     return ListView.builder(
-        physics: const AlwaysScrollableScrollPhysics(),
         key: PageStorageKey("pray_listview"),
+        physics: const AlwaysScrollableScrollPhysics(),
         controller: _scrollController,
         itemCount: prayList.length,
         itemBuilder: (context, index) {
