@@ -5,6 +5,7 @@ import 'package:dream/pages/login/login_screen.dart';
 import 'package:dream/repositories/auth_repository_impl.dart';
 import 'package:dream/viewmodels/auth_view_model_impl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -17,6 +18,7 @@ class RootScreen extends StatelessWidget {
         authRepository: AuthRepositoryImpl(
           firebaseAuth: FirebaseAuth.instance,
           firebaseFirestore: FirebaseFirestore.instance,
+          firebaseStorage: FirebaseStorage.instance,
         ),
       ),
       builder: (_) {

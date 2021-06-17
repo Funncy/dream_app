@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:dream/core/error/error_model.dart';
 import 'package:dream/models/user.dart';
@@ -17,4 +19,6 @@ abstract class AuthRepository {
       String email, String password);
 
   Future<Either<ErrorModel, void>> signOut();
+  Future<Either<ErrorModel, String>> setProfileImage(
+      {required String uid, required File image});
 }

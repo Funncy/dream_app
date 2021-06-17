@@ -31,6 +31,6 @@ mixin ViewModelPipeLineMixin {
     }
     if (status != null) status.value = Status.loaded;
 
-    return ViewModelResult(isCompleted: true);
+    return ViewModelResult(isCompleted: true, data: result.data);
   }
 }

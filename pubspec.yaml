@@ -39,6 +39,7 @@ dependencies:
   dartz: ^0.10.0-nullsafety.2
   equatable: ^2.0.2
   logger: ^1.0.0
+  image_picker: ^0.8.0+3
 
 dev_dependencies:
   flutter_test:

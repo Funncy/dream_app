@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:dream/core/data_status/viewmodel_result.dart';
 import 'package:dream/models/user.dart';
 import 'package:dream/viewmodels/auth_view_model_impl.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfileScreen extends StatefulWidget {
   static final routeName = '/Profile';
@@ -15,15 +18,99 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   var authViewModel = Get.find<AuthViewModelImpl>();
   UserModel? user;
+  late ImageProvider profileImage;
+
+  late File _image;
+  final picker = ImagePicker();
 
   @override
   void initState() {
     //TODO: user가 없는 경우 처리 해줘야함.
     user = authViewModel.user;
+    if (user != null) {
+      if (user!.profileImageUrl == null) {
+        profileImage = AssetImage('assets/images/test-img.jpeg');
+      } else {
+        profileImage = NetworkImage(user!.profileImageUrl!);
+      }
+    } else {
+      profileImage = AssetImage('assets/images/test-img.jpeg');
+    }
     super.initState();
   }
 
-  void modifyProfileImage() {}
+  void _showPicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                      leading: new Icon(Icons.photo_library),
+                      title: new Text('Photo Library'),
+                      onTap: () {
+                        _imgFromGallery();
+                        Navigator.of(context).pop();
+                      }),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Camera'),
+                    onTap: () {
+                      _imgFromCamera();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  _imgFromCamera() async {
+    final pickedFile =
+        await picker.getImage(source: ImageSource.camera, imageQuality: 50);
+
+    if (pickedFile != null) {
+      _image = File(pickedFile.path);
+      var result = await authViewModel.setProfileImage(imageFile: _image);
+      if (!result.isCompleted) {
+        print("error 처리 alert");
+        return;
+      }
+      modifyProfileImage(result.data['profile_image_url']);
+    } else {
+      print('No image selected.');
+    }
+  }
+
+  _imgFromGallery() async {
+    final pickedFile =
+        await picker.getImage(source: ImageSource.gallery, imageQuality: 50);
+
+    if (pickedFile != null) {
+      _image = File(pickedFile.path);
+      var result = await authViewModel.setProfileImage(imageFile: _image);
+      if (!result.isCompleted) {
+        print("error 처리 alert");
+        return;
+      }
+      modifyProfileImage(result.data['profile_image_url']);
+    } else {
+      print('No image selected.');
+    }
+  }
+
+  void modifyProfileImage(String imageUrl) async {
+    user = authViewModel.user;
+    if (user != null) {
+      setState(() {
+        profileImage = NetworkImage(imageUrl);
+      });
+    }
+  }
 
   void signOut() async {
     ViewModelResult result = await authViewModel.signOut();
@@ -48,7 +135,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              GestureDetector(onTap: () {}, child: _profileImage()),
+              GestureDetector(
+                  onTap: () {
+                    _showPicker(context);
+                  },
+                  child: _profileImage()),
               SizedBox(
                 width: size.width,
                 height: 10,
@@ -93,7 +184,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           width: 100,
           height: 100,
           child: CircleAvatar(
-            backgroundImage: AssetImage('assets/images/test-img.jpeg'),
+            backgroundImage: profileImage,
           )),
       Positioned(
         right: 0,

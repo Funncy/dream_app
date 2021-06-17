@@ -1,12 +1,15 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dream/core/error/default_error_model.dart';
 import 'package:dream/core/error/error_model.dart';
 import 'package:dream/core/error/fire_auth_error_model.dart';
+import 'package:dream/core/error/server_error_model.dart';
 import 'package:dream/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 import '../constants.dart';
 import 'auth_repository.dart';
@@ -14,13 +17,16 @@ import 'auth_repository.dart';
 class AuthRepositoryImpl extends AuthRepository {
   late FirebaseAuth _firebaseAuth;
   late FirebaseFirestore _firebaseFirestore;
+  late FirebaseStorage _firebaseStorage;
 
   AuthRepositoryImpl({
     required firebaseAuth,
     required firebaseFirestore,
+    required firebaseStorage,
   }) {
     _firebaseAuth = firebaseAuth;
     _firebaseFirestore = firebaseFirestore;
+    _firebaseStorage = firebaseStorage;
   }
 
   Stream<UserModel?> getAuthStateChanges() {
@@ -36,6 +42,25 @@ class AuthRepositoryImpl extends AuthRepository {
       }
       sink.add(result as UserModel);
     }));
+  }
+
+  Future<Either<ErrorModel, String>> setProfileImage(
+      {required String uid, required File image}) async {
+    try {
+      var fileName = "$uid.jpeg";
+      TaskSnapshot result = await _firebaseStorage
+          .ref()
+          .child("profile/$fileName")
+          .putFile(image);
+      String imageUrl = await result.ref.getDownloadURL();
+
+      await _firebaseFirestore.collection(userCollectionName).doc(uid).update({
+        'profile_image_url': imageUrl,
+      });
+      return Right(imageUrl);
+    } catch (e) {
+      return Left(ServerErrorModel(code: e.toString()));
+    }
   }
 
   Future<Either<ErrorModel, UserModel>> getUser(String uid) async {

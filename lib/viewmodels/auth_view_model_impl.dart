@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:dream/core/data_status/data_result.dart';
 import 'package:dream/core/data_status/fireauth_status.dart';
@@ -19,6 +21,7 @@ class AuthViewModelImpl extends GetxController
   late AuthRepository _authRepository;
   Rxn<Status?> _signInStatus = Rxn<Status?>(Status.initial);
   Rxn<Status?> _signUpStatus = Rxn<Status?>(Status.initial);
+  Rxn<Status?> _profileStatus = Rxn<Status?>(Status.initial);
   Rxn<FireAuthStatus?> _fireauthStatus =
       Rxn<FireAuthStatus?>(FireAuthStatus.loading);
   FireAuthStatus? get fireauthStatus => _fireauthStatus.value;
@@ -26,6 +29,8 @@ class AuthViewModelImpl extends GetxController
   set signInStatus(Status? status) => _signInStatus.value = status;
   Status? get signUpStatus => _signUpStatus.value;
   set signUpStatus(Status? status) => _signUpStatus.value = status;
+  Status? get profileStatus => _profileStatus.value;
+  set profileStatus(Status? status) => _profileStatus.value = status;
 
   Rxn<UserModel> _user = Rxn<UserModel>();
   // Rxn<User> _firebaseUser = Rxn<User>();
@@ -80,6 +85,11 @@ class AuthViewModelImpl extends GetxController
 
   Future<ViewModelResult> signOut() =>
       process(functionList: [(_) => _signOut()], status: null);
+
+  Future<ViewModelResult> setProfileImage({required File imageFile}) =>
+      process(functionList: [
+        (_) => _setProfileImage(imageFile: imageFile),
+      ], status: _profileStatus);
 
   /*
   *
@@ -136,6 +146,22 @@ class AuthViewModelImpl extends GetxController
           isCompleted: false,
           errorModel: DefaultErrorModel(code: e.toString()));
     }
+  }
+
+  Future<DataResult> _setProfileImage({required File imageFile}) async {
+    if (user == null)
+      return DataResult(
+          isCompleted: false,
+          errorModel: DefaultErrorModel(code: 'user is null'));
+    Either<ErrorModel, String> either =
+        await _authRepository.setProfileImage(uid: user!.id, image: imageFile);
+    var result = either.fold((l) => l, (r) => r);
+    if (either.isLeft()) {
+      return DataResult(isCompleted: false, errorModel: result as ErrorModel);
+    }
+    return DataResult(isCompleted: true, data: {
+      'profile_image_url': result as String,
+    });
   }
 
   ///_signOut => data is void
