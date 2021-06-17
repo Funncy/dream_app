@@ -61,9 +61,6 @@ class _PrayListScreenState extends State<PrayListScreen> with AlertMixin {
     var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: ProfileAppBar(
-        onProfileTap: () {
-          Get.toNamed(ProfileScreen.routeName);
-        },
         title: '중보 기도',
       ),
       body: SafeArea(

@@ -16,7 +16,6 @@ class PrayScreen extends StatelessWidget {
     var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: ProfileAppBar(
-        onProfileTap: () {},
         title: '기도 보내기',
       ),
       body: SafeArea(

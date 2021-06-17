@@ -57,9 +57,6 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> with AlertMixin {
     var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: ProfileAppBar(
-        onProfileTap: () {
-          Get.toNamed(ProfileScreen.routeName);
-        },
         title: '공지사항',
       ),
       body: SafeArea(
