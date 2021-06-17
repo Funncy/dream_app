@@ -86,10 +86,33 @@ class AuthViewModelImpl extends GetxController
   Future<ViewModelResult> signOut() =>
       process(functionList: [(_) => _signOut()], status: null);
 
-  Future<ViewModelResult> setProfileImage({required File imageFile}) =>
-      process(functionList: [
-        (_) => _setProfileImage(imageFile: imageFile),
-      ], status: _profileStatus);
+  // Future<ViewModelResult> setProfileImage({required File imageFile}) =>
+  //     process(functionList: [
+  //       (_) => _setProfileImage(imageFile: imageFile),
+  //       (data) =>
+  //           _updateUserProfileInLocal(imageUrl: data['profile_image_url']),
+  //     ], status: _profileStatus);
+
+  Future<ViewModelResult> setProfileImage({required File imageFile}) async {
+    late String imageUrl;
+    late DataResult successOrError;
+
+    _profileStatus.value = Status.loading;
+
+    successOrError = await _setProfileImage(imageFile: imageFile);
+    if (!successOrError.isCompleted) {
+      _profileStatus.value = Status.error;
+      return successOrError;
+    }
+    imageUrl = successOrError.data['profile_image_url'];
+
+    successOrError = _updateUserProfileInLocal(imageUrl: imageUrl);
+    if (!successOrError.isCompleted) {
+      _profileStatus.value = Status.error;
+      return successOrError;
+    }
+    return ViewModelResult(isCompleted: true);
+  }
 
   /*
   *
@@ -164,11 +187,25 @@ class AuthViewModelImpl extends GetxController
     });
   }
 
+  DataResult _updateUserProfileInLocal({required String imageUrl}) {
+    try {
+      _user.update((user) {
+        user!.profileImageUrl = imageUrl;
+      });
+      return DataResult(isCompleted: true);
+    } catch (e) {
+      return DataResult(
+          isCompleted: false,
+          errorModel: DefaultErrorModel(code: e.toString()));
+    }
+  }
+
   ///_signOut => data is void
   Future<DataResult> _signOut() async {
     Either<ErrorModel, void> either = await _authRepository.signOut();
     var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
+      throw Exception();
       return DataResult(isCompleted: false, errorModel: result as ErrorModel);
     }
     return DataResult(isCompleted: true);

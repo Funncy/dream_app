@@ -7,6 +7,7 @@ typedef DataResult Process(DataResult successOrError);
 
 mixin ViewModelPipeLineMixin {
   Future<DataResult> pipeline(List<Function> functionList) async {
+    DataResult result = DataResult(isCompleted: true);
     DataResult successOrError = DataResult(isCompleted: true);
     Map<String, dynamic> data = {};
     for (var function in functionList) {
@@ -14,9 +15,12 @@ mixin ViewModelPipeLineMixin {
       if (!successOrError.isCompleted) {
         return successOrError;
       }
-      if (successOrError.data != null) data.addAll(successOrError.data);
+      if (successOrError.data != null) {
+        data.addAll(successOrError.data);
+      }
     }
-    return successOrError;
+    result.data = data;
+    return result;
   }
 
   Future<ViewModelResult> process(

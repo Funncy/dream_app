@@ -16,7 +16,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  var authViewModel = Get.find<AuthViewModelImpl>();
+  AuthViewModelImpl _authViewModel = Get.find<AuthViewModelImpl>();
   UserModel? user;
   late ImageProvider profileImage;
 
@@ -25,21 +25,140 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   void initState() {
-    //TODO: user가 없는 경우 처리 해줘야함.
-    user = authViewModel.user;
-    if (user != null) {
-      if (user!.profileImageUrl == null) {
-        profileImage = AssetImage('assets/images/test-img.jpeg');
-      } else {
-        profileImage = NetworkImage(user!.profileImageUrl!);
-      }
-    } else {
-      profileImage = AssetImage('assets/images/test-img.jpeg');
-    }
     super.initState();
   }
 
-  void _showPicker(context) {
+  ImageProvider getImageProvider(String? imageUrl) {
+    ImageProvider result;
+    if (imageUrl == null) {
+      result = AssetImage('assets/images/test-img.jpeg');
+    } else {
+      result = NetworkImage(imageUrl);
+    }
+    return result;
+  }
+
+  _imgFromCamera() async {
+    final pickedFile =
+        await picker.getImage(source: ImageSource.camera, imageQuality: 50);
+    await setProfileImage(pickedFile);
+  }
+
+  _imgFromGallery() async {
+    final pickedFile =
+        await picker.getImage(source: ImageSource.gallery, imageQuality: 50);
+    await setProfileImage(pickedFile);
+  }
+
+  setProfileImage(PickedFile? file) async {
+    if (file != null) {
+      _image = File(file.path);
+      var result = await _authViewModel.setProfileImage(imageFile: _image);
+      if (!result.isCompleted) {
+        print("error 처리 alert");
+        return;
+      }
+    } else {
+      print('No image selected.');
+    }
+  }
+
+  void signOut() async {
+    ViewModelResult result = await _authViewModel.signOut();
+    if (result.isCompleted)
+      Get.back();
+    else {
+      //TODO: 경고창 띄워야함 . 로그아웃 실패
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+    return Scaffold(
+        appBar: AppBar(
+          title: Text("프로필"),
+        ),
+        body: Obx(() {
+          UserModel? user = _authViewModel.user;
+          if (user == null) {}
+          return Container(
+            child: Padding(
+              padding: const EdgeInsets.all(30.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                      onTap: () {
+                        _showPickerBottomSheetWidget(context);
+                      },
+                      child: _profileImage(user!.profileImageUrl)),
+                  SizedBox(
+                    width: size.width,
+                    height: 10,
+                  ),
+                  Text("이름 : ${user.name}"),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text("그룹 : ${user.group}"),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                      "가입일 : ${user.createdAt?.year}-${user.createdAt?.month}-${user.createdAt?.day}"),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  MaterialButton(
+                    onPressed: () {},
+                    child: Text(
+                      "내 정보 수정하기",
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                  MaterialButton(
+                    onPressed: signOut,
+                    child: Text(
+                      "로그 아웃",
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }));
+  }
+
+  Stack _profileImage(String? imageUrl) {
+    return Stack(children: [
+      Container(
+          width: 100,
+          height: 100,
+          child: CircleAvatar(
+            backgroundImage: getImageProvider(imageUrl),
+          )),
+      Positioned(
+        right: 0,
+        bottom: 0,
+        child: Container(
+          width: 35,
+          height: 35,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30), color: Colors.white),
+          child: Center(
+              child: Icon(
+            Icons.edit,
+            color: Colors.black,
+          )),
+        ),
+      )
+    ]);
+  }
+
+  void _showPickerBottomSheetWidget(context) {
     showModalBottomSheet(
         context: context,
         builder: (BuildContext bc) {
@@ -67,140 +186,5 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           );
         });
-  }
-
-  _imgFromCamera() async {
-    final pickedFile =
-        await picker.getImage(source: ImageSource.camera, imageQuality: 50);
-
-    if (pickedFile != null) {
-      _image = File(pickedFile.path);
-      var result = await authViewModel.setProfileImage(imageFile: _image);
-      if (!result.isCompleted) {
-        print("error 처리 alert");
-        return;
-      }
-      modifyProfileImage(result.data['profile_image_url']);
-    } else {
-      print('No image selected.');
-    }
-  }
-
-  _imgFromGallery() async {
-    final pickedFile =
-        await picker.getImage(source: ImageSource.gallery, imageQuality: 50);
-
-    if (pickedFile != null) {
-      _image = File(pickedFile.path);
-      var result = await authViewModel.setProfileImage(imageFile: _image);
-      if (!result.isCompleted) {
-        print("error 처리 alert");
-        return;
-      }
-      modifyProfileImage(result.data['profile_image_url']);
-    } else {
-      print('No image selected.');
-    }
-  }
-
-  void modifyProfileImage(String imageUrl) async {
-    user = authViewModel.user;
-    if (user != null) {
-      setState(() {
-        profileImage = NetworkImage(imageUrl);
-      });
-    }
-  }
-
-  void signOut() async {
-    ViewModelResult result = await authViewModel.signOut();
-    if (result.isCompleted)
-      Get.back();
-    else {
-      //TODO: 경고창 띄워야함 . 로그아웃 실패
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("프로필"),
-      ),
-      body: Container(
-        child: Padding(
-          padding: const EdgeInsets.all(30.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              GestureDetector(
-                  onTap: () {
-                    _showPicker(context);
-                  },
-                  child: _profileImage()),
-              SizedBox(
-                width: size.width,
-                height: 10,
-              ),
-              Text("이름 : ${user!.name}"),
-              SizedBox(
-                height: 10,
-              ),
-              Text("그룹 : ${user!.group}"),
-              SizedBox(
-                height: 10,
-              ),
-              Text(
-                  "가입일 : ${user!.createdAt?.year}-${user!.createdAt?.month}-${user!.createdAt?.day}"),
-              SizedBox(
-                height: 10,
-              ),
-              MaterialButton(
-                onPressed: () {},
-                child: Text(
-                  "내 정보 수정하기",
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
-              MaterialButton(
-                onPressed: signOut,
-                child: Text(
-                  "로그 아웃",
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Stack _profileImage() {
-    return Stack(children: [
-      Container(
-          width: 100,
-          height: 100,
-          child: CircleAvatar(
-            backgroundImage: profileImage,
-          )),
-      Positioned(
-        right: 0,
-        bottom: 0,
-        child: Container(
-          width: 35,
-          height: 35,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30), color: Colors.white),
-          child: Center(
-              child: Icon(
-            Icons.edit,
-            color: Colors.black,
-          )),
-        ),
-      )
-    ]);
   }
 }
