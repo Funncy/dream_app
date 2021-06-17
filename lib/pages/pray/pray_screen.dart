@@ -1,7 +1,6 @@
 import 'package:dream/constants.dart';
 import 'package:dream/pages/common/profile_app_bar.dart';
 import 'package:dream/pages/pray/pray_send_screen.dart';
-import 'package:dream/pages/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/instance_manager.dart';
@@ -17,9 +16,7 @@ class PrayScreen extends StatelessWidget {
     var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: ProfileAppBar(
-        onProfileTap: () {
-          Get.toNamed(ProfileScreen.routeName);
-        },
+        onProfileTap: () {},
         title: '기도 보내기',
       ),
       body: SafeArea(
