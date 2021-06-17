@@ -47,11 +47,6 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> with AlertMixin {
     noticeViewModel.getNoticeList();
   }
 
-  void errorAlert(ErrorModel? errorModel) {
-    if (errorModel == null) return;
-    showAlert(title: '오류', content: '다시 시도해주세요.');
-  }
-
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;

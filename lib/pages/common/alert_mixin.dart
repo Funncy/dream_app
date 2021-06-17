@@ -1,6 +1,17 @@
+import 'package:dream/core/error/error_model.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
 mixin AlertMixin<T extends StatefulWidget> on State<T> {
+  void errorAlert(ErrorModel? errorModel) {
+    if (errorModel == null) {
+      var logger = Logger();
+      logger.d('errorModel is null in errorAlert');
+      return;
+    }
+    showAlert(title: errorModel.title, content: errorModel.content);
+  }
+
   void showAlert(
       {required String? title,
       required String? content,
