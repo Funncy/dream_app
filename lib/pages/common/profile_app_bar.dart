@@ -1,15 +1,14 @@
 import 'package:dream/models/user.dart';
+import 'package:dream/pages/profile/profile_screen.dart';
 import 'package:dream/viewmodels/auth_view_model_impl.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
-  final void Function()? onProfileTap;
   final AuthViewModelImpl _authViewModelImpl = Get.find<AuthViewModelImpl>();
   ProfileAppBar({
     required this.title,
-    required this.onProfileTap,
     Key? key,
   }) : super(key: key);
 
@@ -26,6 +25,10 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
     return result;
   }
 
+  void goToProfileScreen() {
+    Get.toNamed(ProfileScreen.routeName);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Obx(() {
@@ -38,7 +41,7 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
         centerTitle: true,
         actions: [
           GestureDetector(
-            onTap: onProfileTap,
+            onTap: goToProfileScreen,
             child: Padding(
               padding: const EdgeInsets.only(right: 10),
               child: CircleAvatar(
