@@ -3,7 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
 mixin AlertMixin<T extends StatefulWidget> on State<T> {
-  void errorAlert(ErrorModel? errorModel) {
+  void alertWithString(String title, String content) {
+    showAlert(title: title, content: content);
+  }
+
+  void alertWithErrorModel(ErrorModel? errorModel) {
     if (errorModel == null) {
       var logger = Logger();
       logger.d('errorModel is null in errorAlert');
