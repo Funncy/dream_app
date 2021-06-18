@@ -103,7 +103,7 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> with AlertMixin {
     if (dataStatus != Status.error || errorModel == null) return;
     //Alert 발생
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      errorAlert(errorModel);
+      alertWithErrorModel(errorModel);
     });
   }
 

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dream/core/data_status/viewmodel_result.dart';
 import 'package:dream/models/user.dart';
+import 'package:dream/pages/common/alert_mixin.dart';
 import 'package:dream/viewmodels/auth_view_model_impl.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,7 +16,7 @@ class ProfileScreen extends StatefulWidget {
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreenState extends State<ProfileScreen> with AlertMixin {
   AuthViewModelImpl _authViewModel = Get.find<AuthViewModelImpl>();
   UserModel? user;
   late ImageProvider profileImage;
@@ -55,7 +56,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _image = File(file.path);
       var result = await _authViewModel.setProfileImage(imageFile: _image);
       if (!result.isCompleted) {
-        print("error 처리 alert");
+        alertWithErrorModel(result.errorModel);
         return;
       }
     } else {

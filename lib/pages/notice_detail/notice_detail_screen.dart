@@ -60,11 +60,6 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
     super.dispose();
   }
 
-  void errorAlert(ErrorModel? errorModel) {
-    if (errorModel == null) return;
-    showAlert(title: '오류', content: '다시 시도해주세요.');
-  }
-
   void inputComment() {
     //TODO: uid 연동해야함.
     isScrollDown = true;
@@ -177,7 +172,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
     if (dataStatus != Status.error || errorModel == null) return;
     //Alert 발생
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      errorAlert(errorModel);
+      alertWithErrorModel(errorModel);
     });
   }
 

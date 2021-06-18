@@ -46,11 +46,6 @@ class _SignUpScreenState extends State<SignUpScreen>
     super.dispose();
   }
 
-  void errorAlert(ErrorModel? errorModel) {
-    if (errorModel == null) return;
-    showAlert(title: errorModel.title, content: errorModel.content);
-  }
-
   void submitLogin(FocusScopeNode currentFocus) async {
     bool isValidate = _formKey.currentState?.validate() ?? false;
     if (isValidate) {
@@ -64,7 +59,7 @@ class _SignUpScreenState extends State<SignUpScreen>
       if (result.isCompleted) {
         Get.back();
       } else {
-        errorAlert(result.errorModel);
+        alertWithErrorModel(result.errorModel);
       }
     }
   }

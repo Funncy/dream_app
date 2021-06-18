@@ -43,7 +43,7 @@ class _PrayListScreenState extends State<PrayListScreen> with AlertMixin {
     prayViewModel.initPrayList();
   }
 
-  void errorAlert(ErrorModel? errorModel) {
+  void alertWithErrorModel(ErrorModel? errorModel) {
     if (errorModel == null) return;
     showAlert(title: '오류', content: '다시 시도해주세요.');
   }
@@ -52,7 +52,7 @@ class _PrayListScreenState extends State<PrayListScreen> with AlertMixin {
     if (dataStatus != Status.error || errorModel == null) return;
     //Alert 발생
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      errorAlert(errorModel);
+      alertWithErrorModel(errorModel);
     });
   }
 
