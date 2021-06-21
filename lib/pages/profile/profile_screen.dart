@@ -1,9 +1,10 @@
 import 'dart:io';
 
-import 'package:dream/core/data_status/viewmodel_result.dart';
-import 'package:dream/models/user.dart';
+import 'package:dream/app/core/state/view_state.dart';
+import 'package:dream/app/data/models/user.dart';
 import 'package:dream/pages/common/alert_mixin.dart';
-import 'package:dream/viewmodels/auth_view_model_impl.dart';
+import 'package:dream/viewmodels/auth_view_model.dart';
+import 'package:dream/viewmodels/profile_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -17,7 +18,8 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> with AlertMixin {
-  AuthViewModelImpl _authViewModel = Get.find<AuthViewModelImpl>();
+  AuthViewModel _authViewModel = Get.find<AuthViewModel>();
+  ProfileViewModel _profileViewModel = Get.find<ProfileViewModel>();
   UserModel? user;
   late ImageProvider profileImage;
 
@@ -26,6 +28,11 @@ class _ProfileScreenState extends State<ProfileScreen> with AlertMixin {
 
   @override
   void initState() {
+    _profileViewModel.profileStateStream.listen((state) {
+      if (state == ViewState.error) {
+        alertWithErrorModel(_profileViewModel.errorModel);
+      }
+    });
     super.initState();
   }
 
@@ -54,23 +61,12 @@ class _ProfileScreenState extends State<ProfileScreen> with AlertMixin {
   setProfileImage(PickedFile? file) async {
     if (file != null) {
       _image = File(file.path);
-      var result = await _authViewModel.setProfileImage(imageFile: _image);
-      if (!result.isCompleted) {
-        alertWithErrorModel(result.errorModel);
-        return;
-      }
-    } else {
-      print('No image selected.');
+      _authViewModel.setProfileImage(imageFile: _image);
     }
   }
 
   void signOut() async {
-    ViewModelResult result = await _authViewModel.signOut();
-    if (result.isCompleted)
-      Get.back();
-    else {
-      //TODO: 경고창 띄워야함 . 로그아웃 실패
-    }
+    _authViewModel.signOut();
   }
 
   @override
