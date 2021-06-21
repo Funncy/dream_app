@@ -47,6 +47,10 @@ class ProfileViewModel extends GetxController {
     _setState(ViewState.loaded);
   }
 
+  void refresh() {
+    _profileState.refresh();
+  }
+
   _setState(ViewState state) {
     _profileState.value = state;
   }

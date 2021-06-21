@@ -161,6 +161,10 @@ class CommentViewModel extends GetxController {
     _setState(ViewState.loaded);
   }
 
+  void refresh() {
+    _commentState.refresh();
+  }
+
   _toggleCommentFavoriteLocal(
       CommentModel commentModel, String userId, bool isExist) {
     if (isExist)

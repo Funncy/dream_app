@@ -184,6 +184,10 @@ class ReplyViewModel extends GetxController {
     _setState(ViewState.loaded);
   }
 
+  void refresh() {
+    _replyState.refresh();
+  }
+
   _setState(ViewState state) {
     _replyState.value = state;
   }
