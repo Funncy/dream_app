@@ -1,8 +1,7 @@
-import 'package:dream/models/notice.dart';
-import 'package:dream/models/reply.dart';
-import 'package:dream/utils/time_util.dart';
-import 'package:dream/viewmodels/comment_reply_view_model.dart';
-import 'package:dream/viewmodels/notice_view_model.dart';
+import 'package:dream/app/core/utils/time_util.dart';
+import 'package:dream/app/data/models/reply.dart';
+import 'package:dream/viewmodels/comment_view_model.dart';
+import 'package:dream/viewmodels/reply_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -12,8 +11,8 @@ class NoticeReply extends StatelessWidget {
   final String? commentId;
   final ReplyModel replyModel;
   final Function? deleteReply;
-  CommentReplyViewModel commentReplyViewModel =
-      Get.find<CommentReplyViewModel>();
+  final ReplyViewModel replyViewModel = Get.find<ReplyViewModel>();
+  final CommentViewModel commentViewModel = Get.find<CommentViewModel>();
   NoticeReply({
     Key? key,
     required this.noticeId,
@@ -100,7 +99,7 @@ class NoticeReply extends StatelessWidget {
                       InkWell(
                         onTap: () {
                           //TODO: userID바꿔야함
-                          commentReplyViewModel.toggleReplyFavorite(
+                          replyViewModel.toggleReplyFavorite(
                               noticeId: noticeId,
                               commentId: commentId,
                               replyId: replyModel.id,
@@ -114,13 +113,13 @@ class NoticeReply extends StatelessWidget {
                       GestureDetector(
                         onTap: () async {
                           //TODO: userID바꿔야함
-                          await commentReplyViewModel.toggleReplyFavorite(
+                          await replyViewModel.toggleReplyFavorite(
                               noticeId: noticeId,
                               commentId: commentId,
                               replyId: replyModel.id,
                               userId: '123');
                           //답글의 좋아요 버튼을 눌러도 댓글화면에도 바로 반영하기 위함.
-                          commentReplyViewModel.refreshComment();
+                          commentViewModel.refresh();
                         },
                         child: Row(
                           children: [

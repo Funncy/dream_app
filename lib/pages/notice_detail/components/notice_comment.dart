@@ -1,10 +1,9 @@
-import 'package:dream/models/comment.dart';
-import 'package:dream/models/notice.dart';
+import 'package:dream/app/data/models/comment.dart';
 import 'package:dream/pages/notice_detail/components/notice_reply.dart';
 import 'package:dream/pages/notice_reply/notice_reply_screen.dart';
-import 'package:dream/utils/time_util.dart';
-import 'package:dream/viewmodels/comment_reply_view_model.dart';
-import 'package:dream/viewmodels/notice_view_model.dart';
+import 'package:dream/app/core/utils/time_util.dart';
+import 'package:dream/viewmodels/comment_view_model.dart';
+import 'package:dream/viewmodels/reply_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -29,8 +28,8 @@ class NoticeComment extends StatefulWidget {
 }
 
 class _NoticeCommentState extends State<NoticeComment> {
-  CommentReplyViewModel commentReplyViewModel =
-      Get.find<CommentReplyViewModel>();
+  CommentViewModel commentViewModel = Get.find<CommentViewModel>();
+  ReplyViewModel replyViewModel = Get.find<ReplyViewModel>();
 
   void pageToReply() {
     Get.to(NoticeReplyScreen(
@@ -122,7 +121,7 @@ class _NoticeCommentState extends State<NoticeComment> {
                           InkWell(
                             onTap: () {
                               //TODO: 댓글 좋아요 => userId 수정해야함.
-                              commentReplyViewModel.toggleCommentFavorite(
+                              commentViewModel.toggleCommentFavorite(
                                   noticeId: widget.noticeId,
                                   commentId: widget.noticeCommentModel!.id,
                                   userId: '123');
@@ -150,12 +149,12 @@ class _NoticeCommentState extends State<NoticeComment> {
                       GestureDetector(
                         onTap: () {
                           //TODO: 댓글 좋아요 => userId 수정해야함.
-                          commentReplyViewModel.toggleCommentFavorite(
+                          commentViewModel.toggleCommentFavorite(
                               noticeId: widget.noticeId,
                               commentId: widget.noticeCommentModel!.id,
                               userId: '123');
                           if (widget.isReplyScreen == true) {
-                            commentReplyViewModel.refreshReply();
+                            replyViewModel.refresh();
                           }
                         },
                         child: Row(

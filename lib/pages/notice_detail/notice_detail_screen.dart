@@ -1,12 +1,10 @@
 import 'dart:async';
 
-import 'package:dream/constants.dart';
-import 'package:dream/core/data_status/status_enum.dart';
-import 'package:dream/core/data_status/viewmodel_result.dart';
-import 'package:dream/core/error/error_model.dart';
-import 'package:dream/models/comment.dart';
-import 'package:dream/models/notice.dart';
-import 'package:dream/models/reply.dart';
+import 'package:dream/app/core/constants/constants.dart';
+import 'package:dream/app/core/state/view_state.dart';
+import 'package:dream/app/data/models/comment.dart';
+import 'package:dream/app/data/models/notice.dart';
+import 'package:dream/app/data/models/reply.dart';
 import 'package:dream/pages/common/error_message_widget.dart';
 import 'package:dream/pages/common/loading_widget.dart';
 import 'package:dream/pages/common/view_model_builder.dart';
@@ -14,7 +12,8 @@ import 'package:dream/pages/common/alert_mixin.dart';
 import 'package:dream/pages/notice/components/notice_card.dart';
 import 'package:dream/pages/notice_detail/components/bottom_input_bar.dart';
 import 'package:dream/pages/notice_detail/components/notice_comment.dart';
-import 'package:dream/viewmodels/comment_reply_view_model.dart';
+import 'package:dream/viewmodels/comment_view_model.dart';
+import 'package:dream/viewmodels/reply_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -26,11 +25,12 @@ class NoticeDetailScreen extends StatefulWidget {
 
 class _NoticeDetailScreenState extends State<NoticeDetailScreen>
     with AlertMixin {
-  final commentReplyViewModel = Get.find<CommentReplyViewModel>();
+  final CommentViewModel commentViewModel = Get.find<CommentViewModel>();
+  final ReplyViewModel replyViewModel = Get.find<ReplyViewModel>();
   final TextEditingController _textEditingController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  var notice = Get.arguments as NoticeModel?;
   late StreamSubscription alertSubscription;
+  var notice = Get.arguments as NoticeModel?;
 
   bool isScrollDown = false;
 
@@ -38,12 +38,17 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
   void initState() {
     super.initState();
     //댓글 추가 이후 스크롤 내리기
-    commentReplyViewModel.commentStatusStream().reduce(scrollAnimatorByStatus);
+    commentViewModel.commentStateStream.listen((state) {
+      if (state == ViewState.error || commentViewModel.errorModel != null) {
+        alertWithErrorModel(commentViewModel.errorModel);
+      }
+    });
+    commentViewModel.commentStateStream.reduce(scrollAnimatorByStatus);
   }
 
-  Status? scrollAnimatorByStatus(Status? preStatus, Status? status) {
-    if (preStatus == Status.loading &&
-        status == Status.loaded &&
+  ViewState? scrollAnimatorByStatus(ViewState? preStatus, ViewState? status) {
+    if (preStatus == ViewState.loading &&
+        status == ViewState.loaded &&
         isScrollDown) {
       isScrollDown = false;
       WidgetsBinding.instance!.addPostFrameCallback((_) {
@@ -63,7 +68,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
   void inputComment() {
     //TODO: uid 연동해야함.
     isScrollDown = true;
-    commentReplyViewModel.writeComment(
+    commentViewModel.writeComment(
         noticeModel: notice!,
         userId: '123',
         content: _textEditingController.text);
@@ -76,10 +81,10 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
         content: '정말 댓글을 삭제하시겠습니까?',
         isFunction: true,
         function: () async {
-          await commentReplyViewModel.deleteComment(
+          await commentViewModel.deleteComment(
               noticeModel: notice!, commentId: commentId);
-          commentReplyViewModel.refreshComment();
-          commentReplyViewModel.refreshReply();
+          commentViewModel.refresh();
+          replyViewModel.refresh();
         });
   }
 
@@ -89,12 +94,12 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
         content: '정말 답글을 삭제하시겠습니까?',
         isFunction: true,
         function: () async {
-          await commentReplyViewModel.deleteReply(
+          await replyViewModel.deleteReply(
               noticeId: notice!.id,
               commentId: commentId,
               replyModel: replyModel);
-          commentReplyViewModel.refreshComment();
-          commentReplyViewModel.refreshReply();
+          commentViewModel.refresh();
+          replyViewModel.refresh();
         });
   }
 
@@ -116,18 +121,15 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
                 child: SingleChildScrollView(
                     controller: _scrollController,
                     child: ViewModelBuilder(
-                        init: commentReplyViewModel.getCommentList(
+                        init: commentViewModel.getCommentList(
                             noticeId: notice!.id),
                         errorWidget: _errorWidget(),
                         loadingWidget: _loadingWidget(),
+                        getState: () => commentViewModel.commentState,
                         builder: (context, snapshot) {
                           return Obx(() {
-                            var dataStatus =
-                                commentReplyViewModel.commentStatus;
-                            var commentList = commentReplyViewModel.commentList;
-
-                            _ifErrorSendAlert(dataStatus!,
-                                (snapshot.data as ViewModelResult).errorModel);
+                            var dataStatus = commentViewModel.commentState;
+                            var commentList = commentViewModel.commentList;
 
                             return Stack(
                               children: [
@@ -144,7 +146,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
                                     _bodyWidget(commentList),
                                   ],
                                 ),
-                                if (dataStatus == Status.loading)
+                                if (dataStatus == ViewState.loading)
                                   _loadingWidget(),
                               ],
                             );
@@ -166,14 +168,6 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
     return Center(
       child: LoadingWidget(),
     );
-  }
-
-  void _ifErrorSendAlert(Status dataStatus, ErrorModel? errorModel) {
-    if (dataStatus != Status.error || errorModel == null) return;
-    //Alert 발생
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      alertWithErrorModel(errorModel);
-    });
   }
 
   ErrorMessageWidget _errorWidget() => ErrorMessageWidget(errorMessage: 'test');
