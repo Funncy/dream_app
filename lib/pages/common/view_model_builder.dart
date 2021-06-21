@@ -2,10 +2,10 @@ import 'package:dream/core/data_status/viewmodel_result.dart';
 import 'package:flutter/material.dart';
 
 class ViewModelBuilder extends StatelessWidget {
-  Future<dynamic> init;
-  Widget errorWidget;
-  Widget loadingWidget;
-  AsyncWidgetBuilder builder;
+  final Future<dynamic> init;
+  final Widget errorWidget;
+  final Widget loadingWidget;
+  final AsyncWidgetBuilder builder;
 
   ViewModelBuilder(
       {required this.init,
