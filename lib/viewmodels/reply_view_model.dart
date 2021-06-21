@@ -22,7 +22,8 @@ class ReplyViewModel extends GetxController {
 
   Rxn<ViewState?> _replyState = Rxn<ViewState?>(ViewState.initial);
   ViewState? get replyState => _replyState.value;
-  Stream<ViewState?> get commentStateStream => _replyState.stream;
+  Stream<ViewState?> get replyStateStream => _replyState.stream;
+  Rxn<ViewState?> get rxReplyState => _replyState;
 
   late ErrorModel _errorModel;
   ErrorModel? get errorModel => _errorModel;
@@ -41,6 +42,17 @@ class ReplyViewModel extends GetxController {
   onInit() {
     _commentList = _commentViewModel.commentList;
     super.onInit();
+  }
+
+  Future<void> isEixstReply({required String? commentId}) async {
+    _setState(ViewState.loading);
+    if (_commentList.where((e) => e!.id == commentId).isNotEmpty) {
+      _setState(ViewState.loaded);
+      return;
+    } else {
+      _setErrorModel(code: 'comment not found in list');
+      _setState(ViewState.error);
+    }
   }
 
   Future<void> writeReply(

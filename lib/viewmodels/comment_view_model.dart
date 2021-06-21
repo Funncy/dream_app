@@ -121,7 +121,7 @@ class CommentViewModel extends GetxController {
     _setState(ViewState.loaded);
   }
 
-  Future<void> toggleCommentFavroite(
+  Future<void> toggleCommentFavorite(
       {required String? noticeId,
       required String? commentId,
       required String userId}) async {
