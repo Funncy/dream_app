@@ -17,7 +17,7 @@ class NoticeViewModelImpl extends GetxController {
   Rxn<ViewState?> _noticeStatus = Rxn<ViewState?>(ViewState.initial);
   ViewState? get noticeStatus => _noticeStatus.value;
   Stream<ViewState?> get noticeStatusStream => _noticeStatus.stream;
-  late ErrorModel _errorModel;
+  ErrorModel? _errorModel;
   ErrorModel? get errorModel => _errorModel;
 
   NoticeViewModelImpl({required NoticeRepository noticeRepository}) {
