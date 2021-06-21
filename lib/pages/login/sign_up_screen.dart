@@ -1,12 +1,11 @@
-import 'package:dream/core/data_status/viewmodel_result.dart';
-import 'package:dream/core/error/error_model.dart';
+import 'package:dream/app/core/state/view_state.dart';
 import 'package:dream/pages/common/alert_mixin.dart';
 import 'package:dream/pages/common/input_mixin.dart';
-import 'package:dream/viewmodels/auth_view_model_impl.dart';
+import 'package:dream/viewmodels/auth_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../constants.dart';
+import '../../app/core/constants/constants.dart';
 
 class SignUpScreen extends StatefulWidget {
   static final routeName = '/SignUp';
@@ -18,6 +17,7 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen>
     with AlertMixin, InputMixin {
+  AuthViewModel _authViewModel = Get.find<AuthViewModel>();
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   TextEditingController _emailController = TextEditingController();
@@ -35,6 +35,11 @@ class _SignUpScreenState extends State<SignUpScreen>
 
   @override
   void initState() {
+    _authViewModel.authStateStream.listen((state) {
+      if (state == ViewState.error) {
+        alertWithErrorModel(_authViewModel.errorModel);
+      }
+    });
     super.initState();
   }
 
@@ -50,16 +55,13 @@ class _SignUpScreenState extends State<SignUpScreen>
     bool isValidate = _formKey.currentState?.validate() ?? false;
     if (isValidate) {
       currentFocus.unfocus();
-      ViewModelResult result = await Get.find<AuthViewModelImpl>()
-          .signUpWithEmail(
-              email: _emailController.text,
-              password: _pwController.text,
-              name: _nameController.text,
-              group: _groupName);
-      if (result.isCompleted) {
+      await _authViewModel.signUpWithEmail(
+          email: _emailController.text,
+          password: _pwController.text,
+          name: _nameController.text,
+          group: _groupName);
+      if (_authViewModel.authState == ViewState.loaded) {
         Get.back();
-      } else {
-        alertWithErrorModel(result.errorModel);
       }
     }
   }

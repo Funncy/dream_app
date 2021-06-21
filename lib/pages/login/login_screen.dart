@@ -1,11 +1,12 @@
+import 'package:dream/app/core/state/view_state.dart';
 import 'package:dream/pages/common/alert_mixin.dart';
 import 'package:dream/pages/common/input_mixin.dart';
 import 'package:dream/pages/login/sign_up_screen.dart';
-import 'package:dream/viewmodels/auth_view_model_impl.dart';
+import 'package:dream/viewmodels/auth_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../constants.dart';
+import '../../app/core/constants/constants.dart';
 
 class LoginInScreen extends StatefulWidget {
   const LoginInScreen({Key? key}) : super(key: key);
@@ -16,13 +17,18 @@ class LoginInScreen extends StatefulWidget {
 
 class _LoginInScreenState extends State<LoginInScreen>
     with AlertMixin, InputMixin {
+  AuthViewModel _authViewModel = Get.find<AuthViewModel>();
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
   TextEditingController _emailController = TextEditingController();
   TextEditingController _pwController = TextEditingController();
 
   @override
   void initState() {
+    _authViewModel.authStateStream.listen((state) {
+      if (state == ViewState.error) {
+        alertWithErrorModel(_authViewModel.errorModel);
+      }
+    });
     super.initState();
   }
 
@@ -37,12 +43,8 @@ class _LoginInScreenState extends State<LoginInScreen>
     bool isValidate = _formKey.currentState?.validate() ?? false;
     if (isValidate) {
       currentFocus.unfocus();
-      var result = await Get.find<AuthViewModelImpl>().signInWithEmail(
+      await _authViewModel.signInWithEmail(
           email: _emailController.text, password: _pwController.text);
-      if (!result.isCompleted) {
-        print("login error");
-        // showAlert(errorModel: result.errorModel);
-      }
     }
   }
 
