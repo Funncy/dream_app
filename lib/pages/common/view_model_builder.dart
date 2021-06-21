@@ -1,4 +1,4 @@
-import 'package:dream/core/data_status/viewmodel_result.dart';
+import 'package:dream/app/core/state/view_state.dart';
 import 'package:flutter/material.dart';
 
 class ViewModelBuilder extends StatelessWidget {
@@ -6,12 +6,14 @@ class ViewModelBuilder extends StatelessWidget {
   final Widget errorWidget;
   final Widget loadingWidget;
   final AsyncWidgetBuilder builder;
+  final Function getState;
 
   ViewModelBuilder(
       {required this.init,
       required this.errorWidget,
       required this.loadingWidget,
-      required this.builder});
+      required this.builder,
+      required this.getState});
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -20,9 +22,7 @@ class ViewModelBuilder extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return loadingWidget;
         } else if (snapshot.connectionState == ConnectionState.done) {
-          if ((snapshot.data as ViewModelResult).isCompleted) {
-            return builder(context, snapshot);
-          }
+          if (getState() == ViewState.loaded) return builder(context, snapshot);
         }
         return errorWidget;
       },
