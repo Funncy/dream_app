@@ -1,4 +1,4 @@
-import 'package:dream/core/data_status/status_enum.dart';
+import 'package:dream/core/data_status/view_state.dart';
 import 'package:dream/core/data_status/viewmodel_result.dart';
 import 'package:dream/core/error/error_model.dart';
 import 'package:dream/models/pray.dart';
@@ -48,8 +48,8 @@ class _PrayListScreenState extends State<PrayListScreen> with AlertMixin {
     showAlert(title: '오류', content: '다시 시도해주세요.');
   }
 
-  void _ifErrorSendAlert(Status dataStatus, ErrorModel? errorModel) {
-    if (dataStatus != Status.error || errorModel == null) return;
+  void _ifErrorSendAlert(ViewState dataStatus, ErrorModel? errorModel) {
+    if (dataStatus != ViewState.error || errorModel == null) return;
     //Alert 발생
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       alertWithErrorModel(errorModel);
@@ -92,7 +92,8 @@ class _PrayListScreenState extends State<PrayListScreen> with AlertMixin {
                         return Stack(
                           children: [
                             _bodyWidget(prayList),
-                            if (dataStatus == Status.loading) _loadingWidget(),
+                            if (dataStatus == ViewState.loading)
+                              _loadingWidget(),
                           ],
                         );
                       });

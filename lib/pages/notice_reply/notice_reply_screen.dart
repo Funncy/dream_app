@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:dream/core/data_status/status_enum.dart';
+import 'package:dream/core/data_status/view_state.dart';
 import 'package:dream/models/comment.dart';
 import 'package:dream/models/reply.dart';
 import 'package:dream/pages/common/empty_widget.dart';
@@ -44,7 +44,7 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> with AlertMixin {
       // });
       //새로운 답글 추가시 아래 스크롤 애니메이션
       debounce(commentReplyViewModel.replyStatusStream, (dynamic _) {
-        if (commentReplyViewModel.replyStatus == Status.loaded) {
+        if (commentReplyViewModel.replyStatus == ViewState.loaded) {
           _scrollController.animateTo(
               _scrollController.position.maxScrollExtent,
               duration: Duration(milliseconds: 500),
@@ -102,7 +102,7 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> with AlertMixin {
       ),
       body: SafeArea(
         child: Obx(() {
-          Status dataStatus = commentReplyViewModel.replyStatus!;
+          ViewState dataStatus = commentReplyViewModel.replyStatus!;
 
           return Container(
             child: Stack(children: [
@@ -131,7 +131,7 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> with AlertMixin {
                   ),
                 ],
               ),
-              if (dataStatus == Status.updating)
+              if (dataStatus == ViewState.updating)
                 Center(
                   child: CircularProgressIndicator(),
                 )
