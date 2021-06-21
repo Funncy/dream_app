@@ -1,7 +1,7 @@
 import 'package:dream/app/core/constants/constants.dart';
-import 'package:dream/pages/notice/notice_body_screen.dart';
-import 'package:dream/pages/pray/pray_list_screen.dart';
-import 'package:dream/pages/pray/pray_screen.dart';
+import 'package:dream/app/pages/notice/notice_body_screen.dart';
+import 'package:dream/app/pages/pray/pray_list_screen.dart';
+import 'package:dream/app/pages/pray/pray_screen.dart';
 import 'package:flutter/material.dart';
 
 class MainScreen extends StatefulWidget {

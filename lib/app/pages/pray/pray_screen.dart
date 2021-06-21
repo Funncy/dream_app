@@ -1,6 +1,6 @@
 import 'package:dream/app/core/constants/constants.dart';
-import 'package:dream/pages/common/profile_app_bar.dart';
-import 'package:dream/pages/pray/pray_send_screen.dart';
+import 'package:dream/app/pages/common/profile_app_bar.dart';
+import 'package:dream/app/pages/pray/pray_send_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/instance_manager.dart';
