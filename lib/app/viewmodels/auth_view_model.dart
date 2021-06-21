@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
-import 'package:dream/app/core/error/default_error_model.dart';
-import 'package:dream/app/core/error/error_model.dart';
+import 'package:dream/app/core/error/default_failure.dart';
+import 'package:dream/app/core/error/failure.dart';
 import 'package:dream/app/core/state/view_state.dart';
 import 'package:dream/app/data/models/user.dart';
 import 'package:dream/app/repositories/auth_repository.dart';
@@ -18,7 +18,7 @@ enum FireAuthState {
 class AuthViewModel extends GetxController {
   late AuthRepository _authRepository;
 
-  Rxn<ViewState?> _authState = Rxn<ViewState?>(ViewState.initial);
+  Rxn<ViewState?> _authState = Rxn<ViewState?>(Initial());
 
   Rxn<FireAuthState?> _fireauthStatus =
       Rxn<FireAuthState?>(FireAuthState.loading);
@@ -30,8 +30,8 @@ class AuthViewModel extends GetxController {
   // Rxn<User> _firebaseUser = Rxn<User>();
   UserModel? get user => _user.value;
 
-  late ErrorModel _errorModel;
-  ErrorModel? get errorModel => _errorModel;
+  late Failure _errorModel;
+  Failure? get errorModel => _errorModel;
 
   AuthViewModel({required authRepository}) {
     _authRepository = authRepository;
@@ -63,19 +63,18 @@ class AuthViewModel extends GetxController {
 
   Future<void> signInWithEmail(
       {required String email, required String password}) async {
-    _setState(ViewState.loading);
+    _setState(Loading());
 
-    Either<ErrorModel, UserModel> either =
+    Either<Failure, UserModel> either =
         await _authRepository.signInWithEmail(email, password);
     var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
-      _setErrorModel(errorModel: result as ErrorModel);
-      _setState(ViewState.error);
+      _setState(Error(result as Failure));
       return;
     }
 
     _user.value = result as UserModel;
-    _setState(ViewState.loaded);
+    _setState(Loaded());
   }
 
   Future<void> signUpWithEmail(
@@ -83,43 +82,39 @@ class AuthViewModel extends GetxController {
       required String password,
       required String name,
       required String group}) async {
-    _setState(ViewState.loading);
-    Either<ErrorModel, UserModel> either =
-        await _authRepository.signUpWithEmail(
-            email: email, password: password, name: name, group: group);
+    _setState(Loading());
+    Either<Failure, UserModel> either = await _authRepository.signUpWithEmail(
+        email: email, password: password, name: name, group: group);
     var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
-      _setErrorModel(errorModel: result as ErrorModel);
-      _setState(ViewState.error);
+      _setState(Error(result as Failure));
       return;
     }
 
     _user.value = result as UserModel;
-    _setState(ViewState.loaded);
+    _setState(Loaded());
   }
 
   Future<void> signOut() async {
-    _setState(ViewState.loading);
-    Either<ErrorModel, void> either = await _authRepository.signOut();
+    _setState(Loading());
+    Either<Failure, void> either = await _authRepository.signOut();
     var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
-      _setErrorModel(errorModel: result as ErrorModel);
-      _setState(ViewState.error);
+      _setState(Error(result as Failure));
       return;
     }
-    _setState(ViewState.loaded);
+    _setState(Loaded());
   }
 
   Future<void> setProfileImage({required File imageFile}) async {
-    _setState(ViewState.loading);
+    _setState(Loading());
     late String imageUrl;
 
-    Either<ErrorModel, String> either =
+    Either<Failure, String> either =
         await _authRepository.setProfileImage(uid: user!.id, image: imageFile);
     var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
-      _setErrorModel(errorModel: result as ErrorModel);
-      _setState(ViewState.error);
+      _setState(Error(result as Failure));
       return;
     }
 
@@ -128,20 +123,14 @@ class AuthViewModel extends GetxController {
     _user.update((user) {
       user!.profileImageUrl = imageUrl;
     });
-    _setState(ViewState.loaded);
-  }
-
-  _setState(ViewState state) {
-    _authState.value = state;
+    _setState(Loaded());
   }
 
   void userUpdate(Function(UserModel?) update) {
     _user.update(update);
   }
 
-  _setErrorModel({ErrorModel? errorModel, String? code}) {
-    if (errorModel != null)
-      _errorModel = errorModel;
-    else if (code != null) _errorModel = DefaultErrorModel(code: code);
+  _setState(ViewState state) {
+    _authState.value = state;
   }
 }
