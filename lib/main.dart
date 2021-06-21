@@ -1,18 +1,16 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dream/bindings/notice_bindings.dart';
-import 'package:dream/bindings/pray_bindings.dart';
-import 'package:dream/pages/bottom_navigation/main_screen.dart';
 import 'package:dream/pages/login/sign_up_screen.dart';
 import 'package:dream/pages/notice_detail/notice_detail_screen.dart';
 import 'package:dream/pages/pray/pray_send_screen.dart';
 import 'package:dream/pages/profile/profile_screen.dart';
 import 'package:dream/pages/root_screen.dart';
-import 'package:dream/utils/time_util.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:dream/app/core/utils/time_util.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+
+import 'pages/bindings/notice_bindings.dart';
+import 'pages/bindings/pray_bindings.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
