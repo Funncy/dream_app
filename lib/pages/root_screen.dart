@@ -1,9 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dream/core/data_status/fireauth_status.dart';
 import 'package:dream/pages/bottom_navigation/main_screen.dart';
 import 'package:dream/pages/login/login_screen.dart';
 import 'package:dream/repositories/auth_repository_impl.dart';
-import 'package:dream/viewmodels/auth_view_model_impl.dart';
+import 'package:dream/viewmodels/auth_view_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -13,8 +12,8 @@ class RootScreen extends StatelessWidget {
   static final routeName = '/';
   @override
   Widget build(BuildContext context) {
-    return GetX<AuthViewModelImpl>(
-      init: AuthViewModelImpl(
+    return GetX<AuthViewModel>(
+      init: AuthViewModel(
         authRepository: AuthRepositoryImpl(
           firebaseAuth: FirebaseAuth.instance,
           firebaseFirestore: FirebaseFirestore.instance,
@@ -22,14 +21,14 @@ class RootScreen extends StatelessWidget {
         ),
       ),
       builder: (_) {
-        var fireauthStatus = Get.find<AuthViewModelImpl>().fireauthStatus;
+        var fireauthStatus = Get.find<AuthViewModel>().fireauthState;
 
         switch (fireauthStatus) {
-          case FireAuthStatus.signin:
+          case FireAuthState.signin:
             return MainScreen();
-          case FireAuthStatus.signout:
+          case FireAuthState.signout:
             return LoginInScreen();
-          case FireAuthStatus.loading:
+          case FireAuthState.loading:
           default:
             return Scaffold(
               body: Center(
