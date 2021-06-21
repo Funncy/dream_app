@@ -19,14 +19,14 @@ class PrayListScreen extends StatefulWidget {
 
 class _PrayListScreenState extends State<PrayListScreen> with AlertMixin {
   final ScrollController _scrollController = ScrollController();
-  final PrayListViewModel prayViewModel = Get.find<PrayListViewModel>();
+  final PrayListViewModel prayListViewModel = Get.find<PrayListViewModel>();
 
   @override
   void initState() {
     super.initState();
-    prayViewModel.listStateStream.listen((state) {
+    prayListViewModel.listStateStream.listen((state) {
       if (state == ViewState.error) {
-        alertWithErrorModel(prayViewModel.errorModel);
+        alertWithErrorModel(prayListViewModel.errorModel);
       }
     });
     //build후에 함수 실행
@@ -34,14 +34,14 @@ class _PrayListScreenState extends State<PrayListScreen> with AlertMixin {
       _scrollController.addListener(() {
         if (_scrollController.position.pixels ==
             _scrollController.position.maxScrollExtent) {
-          prayViewModel.getMorePrayList();
+          prayListViewModel.getMorePrayList();
         }
       });
     });
   }
 
   Future<void> refreshPrayList() async {
-    prayViewModel.getPrayList();
+    prayListViewModel.getPrayList();
   }
 
   @override
@@ -61,13 +61,14 @@ class _PrayListScreenState extends State<PrayListScreen> with AlertMixin {
                 child: Container(
                   color: Colors.black12,
                   child: ViewModelBuilder(
-                    init: prayViewModel.getPrayList(),
+                    init: prayListViewModel.getPrayList(),
                     errorWidget: _errorWidget(),
                     loadingWidget: _loadingWidget(),
+                    getState: () => prayListViewModel.listState,
                     builder: (context, snapshot) {
                       return Obx(() {
-                        var dataStatus = prayViewModel.listState;
-                        List<PrayModel> prayList = prayViewModel.prayList;
+                        var dataStatus = prayListViewModel.listState;
+                        List<PrayModel> prayList = prayListViewModel.prayList;
 
                         if (prayList.length == 0) {
                           //Empty Widget

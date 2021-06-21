@@ -1,9 +1,7 @@
 import 'package:dream/app/core/constants/constants.dart';
 import 'package:dream/app/core/utils/time_util.dart';
 import 'package:dream/app/data/models/pray.dart';
-import 'package:dream/viewmodels/pray_list_view_model.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PrayCard extends StatelessWidget {
