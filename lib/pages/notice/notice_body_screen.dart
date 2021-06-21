@@ -1,7 +1,5 @@
-import 'package:dream/core/data_status/status_enum.dart';
-import 'package:dream/core/data_status/viewmodel_result.dart';
-import 'package:dream/core/error/error_model.dart';
-import 'package:dream/models/notice.dart';
+import 'package:dream/app/core/state/view_state.dart';
+import 'package:dream/app/data/models/notice.dart';
 import 'package:dream/pages/common/empty_widget.dart';
 import 'package:dream/pages/common/error_message_widget.dart';
 import 'package:dream/pages/common/loading_widget.dart';
@@ -9,8 +7,7 @@ import 'package:dream/pages/common/profile_app_bar.dart';
 import 'package:dream/pages/common/view_model_builder.dart';
 import 'package:dream/pages/common/alert_mixin.dart';
 import 'package:dream/pages/notice/components/notice_card.dart';
-import 'package:dream/pages/profile/profile_screen.dart';
-import 'package:dream/viewmodels/auth_view_model_impl.dart';
+import 'package:dream/viewmodels/auth_view_model.dart';
 import 'package:dream/viewmodels/notice_view_model.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
@@ -24,8 +21,8 @@ class NoticeBodyScreen extends StatefulWidget {
 
 class _NoticeBodyScreenState extends State<NoticeBodyScreen> with AlertMixin {
   final ScrollController _scrollController = ScrollController();
-  final noticeViewModel = Get.find<NoticeViewModel>();
-  final authViewModel = Get.find<AuthViewModelImpl>();
+  final NoticeViewModel noticeViewModel = Get.find<NoticeViewModel>();
+  final AuthViewModel authViewModel = Get.find<AuthViewModel>();
   String? profileImageUrl;
 
   @override
@@ -33,6 +30,14 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> with AlertMixin {
     super.initState();
     //build후에 함수 실행
     profileImageUrl = authViewModel.user?.profileImageUrl;
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      noticeViewModel.noticeStateStream.listen((viewState) {
+        if (viewState == ViewState.error ||
+            noticeViewModel.errorModel != null) {
+          alertWithErrorModel(noticeViewModel.errorModel);
+        }
+      });
+    });
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _scrollController.addListener(() {
         if (_scrollController.position.pixels ==
@@ -67,14 +72,12 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> with AlertMixin {
                       init: noticeViewModel.getNoticeList(),
                       errorWidget: _errorWidget(),
                       loadingWidget: _loadingWidget(),
+                      getState: () => authViewModel.authState,
                       builder: (context, snapshot) {
                         return Obx(() {
-                          var dataStatus = noticeViewModel.noticeStatus;
+                          var dataStatus = noticeViewModel.noticeState;
                           List<NoticeModel> noticeList =
                               noticeViewModel.noticeList;
-
-                          _ifErrorSendAlert(dataStatus!,
-                              (snapshot.data as ViewModelResult).errorModel);
 
                           if (noticeList.length == 0) {
                             //Empty Widget
@@ -84,7 +87,7 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> with AlertMixin {
                           return Stack(
                             children: [
                               _bodyWidget(noticeList),
-                              if (dataStatus == Status.loading)
+                              if (dataStatus == ViewState.loading)
                                 _loadingWidget(),
                             ],
                           );
@@ -97,14 +100,6 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> with AlertMixin {
         ),
       ),
     );
-  }
-
-  void _ifErrorSendAlert(Status dataStatus, ErrorModel? errorModel) {
-    if (dataStatus != Status.error || errorModel == null) return;
-    //Alert 발생
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      alertWithErrorModel(errorModel);
-    });
   }
 
   ListView _bodyWidget(List<NoticeModel> noticeList) {

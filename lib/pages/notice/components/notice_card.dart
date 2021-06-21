@@ -1,8 +1,8 @@
-import 'package:dream/constants.dart';
-import 'package:dream/models/notice.dart';
+import 'package:dream/app/core/constants/constants.dart';
+import 'package:dream/app/data/models/notice.dart';
 import 'package:dream/pages/image_slider/image_slider_screen.dart';
-import 'package:dream/utils/time_util.dart';
-import 'package:dream/viewmodels/comment_reply_view_model.dart';
+import 'package:dream/app/core/utils/time_util.dart';
+import 'package:dream/viewmodels/comment_view_model.dart';
 import 'package:dream/viewmodels/notice_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -78,7 +78,7 @@ class NoticeCard extends StatelessWidget {
                       noticeViewModel.toggleNoticeFavorite(
                           noticeId: notice!.id, userId: userId);
                       if (isCommentScreen) {
-                        Get.find<CommentReplyViewModel>().refreshComment();
+                        Get.find<CommentViewModel>().refresh();
                       }
                     },
                     behavior: HitTestBehavior.opaque,
