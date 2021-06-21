@@ -1,17 +1,13 @@
-import 'package:dream/core/data_status/view_state.dart';
-import 'package:dream/core/data_status/viewmodel_result.dart';
-import 'package:dream/core/error/error_model.dart';
-import 'package:dream/models/pray.dart';
+import 'package:dream/app/core/state/view_state.dart';
+import 'package:dream/app/data/models/pray.dart';
 import 'package:dream/pages/common/alert_mixin.dart';
 import 'package:dream/pages/common/empty_widget.dart';
 import 'package:dream/pages/common/error_message_widget.dart';
 import 'package:dream/pages/common/loading_widget.dart';
 import 'package:dream/pages/common/profile_app_bar.dart';
-import 'package:dream/pages/common/screen_status_widget.dart';
 import 'package:dream/pages/common/view_model_builder.dart';
 import 'package:dream/pages/pray/components/pray_card.dart';
-import 'package:dream/pages/profile/profile_screen.dart';
-import 'package:dream/viewmodels/pray_view_model.dart';
+import 'package:dream/viewmodels/pray_list_view_model.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,11 +19,16 @@ class PrayListScreen extends StatefulWidget {
 
 class _PrayListScreenState extends State<PrayListScreen> with AlertMixin {
   final ScrollController _scrollController = ScrollController();
-  final prayViewModel = Get.find<PrayViewModel>();
+  final PrayListViewModel prayViewModel = Get.find<PrayListViewModel>();
 
   @override
   void initState() {
     super.initState();
+    prayViewModel.listStateStream.listen((state) {
+      if (state == ViewState.error) {
+        alertWithErrorModel(prayViewModel.errorModel);
+      }
+    });
     //build후에 함수 실행
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _scrollController.addListener(() {
@@ -40,20 +41,7 @@ class _PrayListScreenState extends State<PrayListScreen> with AlertMixin {
   }
 
   Future<void> refreshPrayList() async {
-    prayViewModel.initPrayList();
-  }
-
-  void alertWithErrorModel(ErrorModel? errorModel) {
-    if (errorModel == null) return;
-    showAlert(title: '오류', content: '다시 시도해주세요.');
-  }
-
-  void _ifErrorSendAlert(ViewState dataStatus, ErrorModel? errorModel) {
-    if (dataStatus != ViewState.error || errorModel == null) return;
-    //Alert 발생
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      alertWithErrorModel(errorModel);
-    });
+    prayViewModel.getPrayList();
   }
 
   @override
@@ -73,16 +61,13 @@ class _PrayListScreenState extends State<PrayListScreen> with AlertMixin {
                 child: Container(
                   color: Colors.black12,
                   child: ViewModelBuilder(
-                    init: prayViewModel.initPrayList(),
+                    init: prayViewModel.getPrayList(),
                     errorWidget: _errorWidget(),
                     loadingWidget: _loadingWidget(),
                     builder: (context, snapshot) {
                       return Obx(() {
-                        var dataStatus = prayViewModel.listStatus;
+                        var dataStatus = prayViewModel.listState;
                         List<PrayModel> prayList = prayViewModel.prayList;
-
-                        _ifErrorSendAlert(dataStatus,
-                            (snapshot.data as ViewModelResult).errorModel);
 
                         if (prayList.length == 0) {
                           //Empty Widget

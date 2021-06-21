@@ -1,4 +1,4 @@
-import 'package:dream/constants.dart';
+import 'package:dream/app/core/constants/constants.dart';
 import 'package:dream/pages/common/profile_app_bar.dart';
 import 'package:dream/pages/pray/pray_send_screen.dart';
 import 'package:flutter/material.dart';

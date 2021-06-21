@@ -1,5 +1,6 @@
-import 'package:dream/core/data_status/status_enum.dart';
-import 'package:dream/viewmodels/pray_view_model.dart';
+import 'package:dream/app/core/state/view_state.dart';
+import 'package:dream/pages/common/alert_mixin.dart';
+import 'package:dream/viewmodels/pray_send_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -9,11 +10,21 @@ class PraySendScreen extends StatefulWidget {
   _PraySendScreenState createState() => _PraySendScreenState();
 }
 
-class _PraySendScreenState extends State<PraySendScreen> {
+class _PraySendScreenState extends State<PraySendScreen> with AlertMixin {
   bool? isPublic = Get.arguments;
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
-  PrayViewModel prayViewModel = Get.find<PrayViewModel>();
+  PraySendViewModel prayViewModel = Get.find<PraySendViewModel>();
+
+  @override
+  void initState() {
+    prayViewModel.sendStateStream.listen((state) {
+      if (state == ViewState.error) {
+        alertWithErrorModel(prayViewModel.errorModel);
+      }
+    });
+    super.initState();
+  }
 
   void sendPray() async {
     await prayViewModel.sendPray(
@@ -22,7 +33,7 @@ class _PraySendScreenState extends State<PraySendScreen> {
         content: contentController.text,
         isPublic: isPublic);
 
-    if (prayViewModel.sendStatus == Status.loaded) {
+    if (prayViewModel.sendState == ViewState.loaded) {
       //전송 완료 뒤로가기
       Get.back();
     }
