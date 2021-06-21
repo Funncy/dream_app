@@ -91,9 +91,9 @@ class NoticeViewModelImpl extends GetxController {
 
     //local에서도 증가
     if (isExist)
-      notice.favoriteUserList!.remove(userId);
+      noticeModel.favoriteUserList!.remove(userId);
     else
-      notice.favoriteUserList!.add(userId);
+      noticeModel.favoriteUserList!.add(userId);
     _setState(ViewState.loaded);
   }
 
@@ -130,6 +130,6 @@ class NoticeViewModelImpl extends GetxController {
   _setErrorModel({ErrorModel? errorModel, String? code}) {
     if (errorModel != null)
       _errorModel = errorModel;
-    else if (code != null) _errorModel = DefaultErrorModel(code: code!);
+    else if (code != null) _errorModel = DefaultErrorModel(code: code);
   }
 }
