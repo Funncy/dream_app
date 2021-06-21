@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../constants.dart';
+import '../../app/core/constants/constants.dart';
 
 mixin InputMixin<T extends StatefulWidget> on State<T> {
   InputDecoration textInputDecor(String text) {

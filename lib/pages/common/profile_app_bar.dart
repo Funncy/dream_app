@@ -1,12 +1,12 @@
-import 'package:dream/models/user.dart';
+import 'package:dream/app/data/models/user.dart';
 import 'package:dream/pages/profile/profile_screen.dart';
-import 'package:dream/viewmodels/auth_view_model_impl.dart';
+import 'package:dream/viewmodels/auth_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
-  final AuthViewModelImpl _authViewModelImpl = Get.find<AuthViewModelImpl>();
+  final AuthViewModel _authViewModelImpl = Get.find<AuthViewModel>();
   ProfileAppBar({
     required this.title,
     Key? key,

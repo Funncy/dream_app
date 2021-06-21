@@ -1,4 +1,4 @@
-import 'package:dream/core/error/error_model.dart';
+import 'package:dream/app/core/error/error_model.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
