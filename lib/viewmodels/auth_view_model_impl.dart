@@ -86,13 +86,6 @@ class AuthViewModelImpl extends GetxController
   Future<ViewModelResult> signOut() =>
       process(functionList: [(_) => _signOut()], status: null);
 
-  // Future<ViewModelResult> setProfileImage({required File imageFile}) =>
-  //     process(functionList: [
-  //       (_) => _setProfileImage(imageFile: imageFile),
-  //       (data) =>
-  //           _updateUserProfileInLocal(imageUrl: data['profile_image_url']),
-  //     ], status: _profileStatus);
-
   Future<ViewModelResult> setProfileImage({required File imageFile}) async {
     late String imageUrl;
     late DataResult successOrError;

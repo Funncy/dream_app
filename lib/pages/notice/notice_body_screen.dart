@@ -119,7 +119,7 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> with AlertMixin {
                 await Get.toNamed('/notice_detail',
                     arguments: noticeList[index]);
 
-                noticeViewModel.refreshNotice();
+                refreshNoticeList();
               },
               child: Column(
                 children: [
