@@ -68,7 +68,7 @@ class NoticeViewModelImpl extends GetxController {
   Future<void> toggleNoticeFavorite(
       {required String? noticeId, required String userId}) async {
     _setState(ViewState.loading);
-//Notice의 좋아요 리스트 가져오기
+    //Notice의 좋아요 리스트 가져오기
     NoticeModel? noticeModel = _getNoticeById(noticeId!);
     if (noticeModel == null) {
       _setErrorModel(code: 'noticeList item count is 0');
@@ -90,15 +90,20 @@ class NoticeViewModelImpl extends GetxController {
     }
 
     //local에서도 증가
-    if (isExist)
-      noticeModel.favoriteUserList!.remove(userId);
-    else
-      noticeModel.favoriteUserList!.add(userId);
+    _toggleFavoriteLocal(noticeModel, userId, isExist);
     _setState(ViewState.loaded);
   }
 
   void refreshNotice() {
     _noticeStatus.refresh();
+  }
+
+  void _toggleFavoriteLocal(
+      NoticeModel noticeModel, String userId, bool isExist) {
+    if (isExist)
+      noticeModel.favoriteUserList!.remove(userId);
+    else
+      noticeModel.favoriteUserList!.add(userId);
   }
 
   NoticeModel? _getNoticeById(String noticeId) {
