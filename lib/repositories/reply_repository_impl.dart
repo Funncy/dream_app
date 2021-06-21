@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-import 'package:dream/core/error/error_model.dart';
-import 'package:dream/core/error/server_error_model.dart';
-import 'package:dream/models/reply.dart';
+import 'package:dream/app/core/error/error_model.dart';
+import 'package:dream/app/core/error/server_error_model.dart';
+import 'package:dream/app/data/models/reply.dart';
 import 'package:dream/repositories/reply_repository.dart';
-import 'package:flutter/foundation.dart';
 
-import 'package:dream/constants.dart';
+import 'package:dream/app/core/constants/constants.dart';
 
 class ReplyRepositoryImpl extends ReplyRepository {
   late FirebaseFirestore _firebaseFirestore;

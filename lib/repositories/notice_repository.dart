@@ -1,10 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-import 'package:dream/core/error/error_model.dart';
-import 'package:dream/models/comment.dart';
-import 'package:dream/models/notice.dart';
-import 'package:dream/models/reply.dart';
-import 'package:flutter/foundation.dart';
+import 'package:dream/app/core/error/error_model.dart';
+import 'package:dream/app/data/models/notice.dart';
 
 abstract class NoticeRepository {
   Future<void> createDummyData();

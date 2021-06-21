@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-import 'package:dream/core/error/error_model.dart';
-import 'package:dream/core/error/server_error_model.dart';
-import 'package:dream/models/comment.dart';
+import 'package:dream/app/core/error/error_model.dart';
+import 'package:dream/app/core/error/server_error_model.dart';
+import 'package:dream/app/data/models/comment.dart';
 import 'package:dream/repositories/comment_repository.dart';
 
-import 'package:dream/constants.dart';
+import 'package:dream/app/core/constants/constants.dart';
 
 class CommentRepositoryImpl extends CommentRepository {
   late FirebaseFirestore _firebaseFirestore;

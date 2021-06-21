@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-import 'package:dream/core/error/error_model.dart';
-import 'package:dream/models/pray.dart';
+import 'package:dream/app/core/error/error_model.dart';
+import 'package:dream/app/data/models/pray.dart';
 
 abstract class PrayRepository {
   //기도 페이지

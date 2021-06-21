@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:dream/core/error/error_model.dart';
-import 'package:dream/models/comment.dart';
-import 'package:flutter/foundation.dart';
+import 'package:dream/app/core/error/error_model.dart';
+import 'package:dream/app/data/models/comment.dart';
 
 abstract class CommentRepository {
   Future<Either<ErrorModel, List<CommentModel>>> getCommentList(

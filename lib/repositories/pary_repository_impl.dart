@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-import 'package:dream/core/error/error_model.dart';
-import 'package:dream/core/error/server_error_model.dart';
-import 'package:dream/models/pray.dart';
+import 'package:dream/app/core/error/error_model.dart';
+import 'package:dream/app/core/error/server_error_model.dart';
+import 'package:dream/app/data/models/pray.dart';
 import 'package:dream/repositories/pray_repository.dart';
 
 class PrayRepositoryImpl extends PrayRepository {

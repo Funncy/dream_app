@@ -1,8 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:dream/core/error/error_model.dart';
-import 'package:dream/models/comment.dart';
-import 'package:dream/models/reply.dart';
-import 'package:flutter/foundation.dart';
+import 'package:dream/app/core/error/error_model.dart';
+import 'package:dream/app/data/models/reply.dart';
 
 abstract class ReplyRepository {
   Future<Either<ErrorModel, void>> writeReply(

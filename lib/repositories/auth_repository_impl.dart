@@ -3,15 +3,15 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-import 'package:dream/core/error/default_error_model.dart';
-import 'package:dream/core/error/error_model.dart';
-import 'package:dream/core/error/fire_auth_error_model.dart';
-import 'package:dream/core/error/server_error_model.dart';
-import 'package:dream/models/user.dart';
+import 'package:dream/app/core/error/default_error_model.dart';
+import 'package:dream/app/core/error/error_model.dart';
+import 'package:dream/app/core/error/fire_auth_error_model.dart';
+import 'package:dream/app/core/error/server_error_model.dart';
+import 'package:dream/app/data/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-import '../constants.dart';
+import '../app/core/constants/constants.dart';
 import 'auth_repository.dart';
 
 class AuthRepositoryImpl extends AuthRepository {
