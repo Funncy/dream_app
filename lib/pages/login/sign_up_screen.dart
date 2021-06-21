@@ -36,7 +36,7 @@ class _SignUpScreenState extends State<SignUpScreen>
   @override
   void initState() {
     _authViewModel.authStateStream.listen((state) {
-      if (state == ViewState.error) {
+      if (state == ViewState.error || _authViewModel.errorModel != null) {
         alertWithErrorModel(_authViewModel.errorModel);
       }
     });
