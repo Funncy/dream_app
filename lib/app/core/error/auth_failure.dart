@@ -1,7 +1,7 @@
-import 'error_model.dart';
+import 'failure.dart';
 
-class FireAuthErrorModel extends ErrorModel {
-  Map<String, Map<String, Object>> messageMap = {
+class AuthFailure extends Failure {
+  static Map<String, Map<String, Object>> messageMap = {
     //FireAuth Login
     'expired-action-code': {'title': '에러 발생', 'content': '다시 시도해주세요.'},
     'invalid-action-code': {'title': '에러 발생', 'content': '다시 시도해주세요.'},
@@ -16,7 +16,7 @@ class FireAuthErrorModel extends ErrorModel {
     'invalid-email': {'title': '이메일 오류', 'content': '이메일 형태에 문제가 있습니다.'},
     'operation-not-allowed': {'title': '에러 발생', 'content': '다시 시도해주세요.'},
   };
-  FireAuthErrorModel({required String code}) : super(code: code) {
+  AuthFailure({required String code}) : super(code: code) {
     Map<String, Object>? errorMessage = (messageMap[code] ?? null);
     if (errorMessage == null) {
       title = '에러';

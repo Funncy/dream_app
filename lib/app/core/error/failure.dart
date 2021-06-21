@@ -1,11 +1,11 @@
 import 'package:logger/logger.dart';
 
-abstract class ErrorModel {
+abstract class Failure {
   late String code;
   late String title;
   late String content;
 
-  ErrorModel({required this.code}) {
+  Failure({required this.code}) {
     var logger = Logger();
     logger.d("error code : $code");
   }
