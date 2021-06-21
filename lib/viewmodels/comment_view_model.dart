@@ -1,9 +1,9 @@
 import 'package:dartz/dartz.dart';
-import 'package:dream/core/data_status/view_state.dart';
-import 'package:dream/core/error/default_error_model.dart';
-import 'package:dream/core/error/error_model.dart';
-import 'package:dream/models/comment.dart';
-import 'package:dream/models/notice.dart';
+import 'package:dream/app/core/error/default_error_model.dart';
+import 'package:dream/app/core/error/error_model.dart';
+import 'package:dream/app/core/state/view_state.dart';
+import 'package:dream/app/data/models/comment.dart';
+import 'package:dream/app/data/models/notice.dart';
 import 'package:dream/repositories/comment_repository.dart';
 import 'package:dream/repositories/notice_repository.dart';
 import 'package:get/get.dart';
@@ -16,10 +16,10 @@ class CommentViewModel extends GetxController {
   List<CommentModel?> _commentList = <CommentModel?>[];
   List<CommentModel?> get commentList => _commentList;
 
-  Rxn<ViewState?> _commentStatus =
+  Rxn<ViewState?> _commentState =
       Rxn<ViewState?>(ViewState.initial); // Status.initial.obs;
-  ViewState? get commentStatus => _commentStatus.value;
-  Stream<ViewState?> get commentStatusStream => _commentStatus.stream;
+  ViewState? get commentState => _commentState.value;
+  Stream<ViewState?> get commentStateStream => _commentState.stream;
 
   late ErrorModel _errorModel;
   ErrorModel? get errorModel => _errorModel;
@@ -170,7 +170,7 @@ class CommentViewModel extends GetxController {
   }
 
   _setState(ViewState state) {
-    _commentStatus.value = state;
+    _commentState.value = state;
   }
 
   _setErrorModel({ErrorModel? errorModel, String? code}) {

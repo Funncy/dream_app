@@ -8,9 +8,9 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 
 class PraySendViewModel extends GetxController {
   late PrayRepository _prayRepository;
-  Rx<ViewState> _sendStatus = ViewState.initial.obs;
-  ViewState get sendStatus => _sendStatus.value;
-  Stream<ViewState?> get sendStatusStream => _sendStatus.stream;
+  Rx<ViewState> _sendState = ViewState.initial.obs;
+  ViewState get sendState => _sendState.value;
+  Stream<ViewState?> get sendStateStream => _sendState.stream;
 
   ErrorModel? _errorModel;
   ErrorModel? get errorModel => _errorModel;
@@ -37,11 +37,11 @@ class PraySendViewModel extends GetxController {
   }
 
   refresh() {
-    _sendStatus.refresh();
+    _sendState.refresh();
   }
 
   _setState(ViewState state) {
-    _sendStatus.value = state;
+    _sendState.value = state;
   }
 
   _setErrorModel({ErrorModel? errorModel, String? code}) {

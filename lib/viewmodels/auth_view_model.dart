@@ -1,26 +1,30 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
-import 'package:dream/core/data_status/fireauth_status.dart';
-import 'package:dream/core/data_status/view_state.dart';
-import 'package:dream/core/error/default_error_model.dart';
-import 'package:dream/core/error/error_model.dart';
-import 'package:dream/models/user.dart';
+import 'package:dream/app/core/error/default_error_model.dart';
+import 'package:dream/app/core/error/error_model.dart';
+import 'package:dream/app/core/state/view_state.dart';
+import 'package:dream/app/data/models/user.dart';
 import 'package:dream/repositories/auth_repository.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 
+enum FireAuthState {
+  loading,
+  signin,
+  signout,
+}
+
 class AuthViewModel extends GetxController {
   late AuthRepository _authRepository;
 
-  Rxn<ViewState?> _authStatus = Rxn<ViewState?>(ViewState.initial);
+  Rxn<ViewState?> _authState = Rxn<ViewState?>(ViewState.initial);
 
-  Rxn<FireAuthStatus?> _fireauthStatus =
-      Rxn<FireAuthStatus?>(FireAuthStatus.loading);
-  FireAuthStatus? get fireauthStatus => _fireauthStatus.value;
-  ViewState? get authStatus => _authStatus.value;
-  set authStatus(ViewState? status) => _authStatus.value = status;
-  Stream<ViewState?> get authStatusStream => _authStatus.stream;
+  Rxn<FireAuthState?> _fireauthStatus =
+      Rxn<FireAuthState?>(FireAuthState.loading);
+  FireAuthState? get fireauthState => _fireauthStatus.value;
+  ViewState? get authState => _authState.value;
+  Stream<ViewState?> get authStateStream => _authState.stream;
 
   Rxn<UserModel> _user = Rxn<UserModel>();
   // Rxn<User> _firebaseUser = Rxn<User>();
@@ -37,7 +41,7 @@ class AuthViewModel extends GetxController {
   void onInit() {
     _authRepository.getAuthStateChanges().listen((user) {
       if (_user.value == null && user == null)
-        _changeFireAuthStatus(status: FireAuthStatus.signout);
+        _changeFireAuthStatus(status: FireAuthState.signout);
       if (_user.value != user) {
         _user.value = user;
         _changeFireAuthStatus();
@@ -46,14 +50,14 @@ class AuthViewModel extends GetxController {
     super.onInit();
   }
 
-  void _changeFireAuthStatus({FireAuthStatus? status}) {
+  void _changeFireAuthStatus({FireAuthState? status}) {
     if (status != null) {
       _fireauthStatus.value = status;
     } else {
       if (_user.value != null)
-        _fireauthStatus.value = FireAuthStatus.signin;
+        _fireauthStatus.value = FireAuthState.signin;
       else
-        _fireauthStatus.value = FireAuthStatus.signout;
+        _fireauthStatus.value = FireAuthState.signout;
     }
   }
 
@@ -128,7 +132,11 @@ class AuthViewModel extends GetxController {
   }
 
   _setState(ViewState state) {
-    _authStatus.value = state;
+    _authState.value = state;
+  }
+
+  void userUpdate(Function(UserModel?) update) {
+    _user.update(update);
   }
 
   _setErrorModel({ErrorModel? errorModel, String? code}) {

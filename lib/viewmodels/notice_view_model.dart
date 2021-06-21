@@ -1,9 +1,8 @@
 import 'package:dartz/dartz.dart';
-import 'package:dream/core/data_status/data_result.dart';
-import 'package:dream/core/data_status/view_state.dart';
-import 'package:dream/core/error/default_error_model.dart';
-import 'package:dream/core/error/error_model.dart';
-import 'package:dream/models/notice.dart';
+import 'package:dream/app/core/error/default_error_model.dart';
+import 'package:dream/app/core/error/error_model.dart';
+import 'package:dream/app/core/state/view_state.dart';
+import 'package:dream/app/data/models/notice.dart';
 import 'package:dream/repositories/notice_repository.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
@@ -14,9 +13,9 @@ class NoticeViewModelImpl extends GetxController {
   //화면 상태가 아니라 데이터의 상태를 관리하자.
   List<NoticeModel> _noticeList = <NoticeModel>[];
   List<NoticeModel> get noticeList => _noticeList;
-  Rxn<ViewState?> _noticeStatus = Rxn<ViewState?>(ViewState.initial);
-  ViewState? get noticeStatus => _noticeStatus.value;
-  Stream<ViewState?> get noticeStatusStream => _noticeStatus.stream;
+  Rxn<ViewState?> _noticeState = Rxn<ViewState?>(ViewState.initial);
+  ViewState? get noticeState => _noticeState.value;
+  Stream<ViewState?> get noticeStateStream => _noticeState.stream;
   ErrorModel? _errorModel;
   ErrorModel? get errorModel => _errorModel;
 
@@ -101,7 +100,7 @@ class NoticeViewModelImpl extends GetxController {
   }
 
   void refreshNotice() {
-    _noticeStatus.refresh();
+    _noticeState.refresh();
   }
 
   void _toggleFavoriteLocal(
@@ -135,7 +134,7 @@ class NoticeViewModelImpl extends GetxController {
   }
 
   _setState(ViewState state) {
-    _noticeStatus.value = state;
+    _noticeState.value = state;
   }
 
   _setErrorModel({ErrorModel? errorModel, String? code}) {
