@@ -13,9 +13,9 @@ class ProfileViewModel extends GetxController {
   late AuthRepository _authRepository;
   late AuthViewModel _authViewModel;
 
-  Rxn<ViewState?> _authStatus = Rxn<ViewState?>(ViewState.initial);
-  ViewState? get authStatus => _authStatus.value;
-  Stream<ViewState?> get authStatusStream => _authStatus.stream;
+  Rxn<ViewState?> _profileStatus = Rxn<ViewState?>(ViewState.initial);
+  ViewState? get authStatus => _profileStatus.value;
+  Stream<ViewState?> get authStatusStream => _profileStatus.stream;
 
   late ErrorModel _errorModel;
   ErrorModel? get errorModel => _errorModel;
@@ -48,7 +48,7 @@ class ProfileViewModel extends GetxController {
   }
 
   _setState(ViewState state) {
-    _authStatus.value = state;
+    _profileStatus.value = state;
   }
 
   _setErrorModel({ErrorModel? errorModel, String? code}) {
