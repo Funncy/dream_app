@@ -38,6 +38,7 @@ class NoticeViewModelImpl extends GetxController {
     if (either.isLeft()) {
       _setErrorModel(errorModel: result as ErrorModel);
       _setState(ViewState.error);
+      return;
     }
 
     noticeList.clear();
@@ -50,6 +51,7 @@ class NoticeViewModelImpl extends GetxController {
     if (noticeList.length == 0) {
       _setErrorModel(code: 'noticeList item count is 0');
       _setState(ViewState.loading);
+      return;
     }
 
     Either<ErrorModel, List<NoticeModel>?> either = await _noticeRepository
@@ -59,6 +61,7 @@ class NoticeViewModelImpl extends GetxController {
     if (either.isLeft()) {
       _setErrorModel(errorModel: result as ErrorModel);
       _setState(ViewState.loading);
+      return;
     }
 
     noticeList.addAll(result as List<NoticeModel>);
@@ -73,20 +76,23 @@ class NoticeViewModelImpl extends GetxController {
     if (noticeModel == null) {
       _setErrorModel(code: 'noticeList item count is 0');
       _setState(ViewState.error);
+      return;
     }
     //이미 등록되있다면 삭제
-    bool? isExist = _isExistFavoriteUser(noticeModel!, userId);
+    bool? isExist = _isExistFavoriteUser(noticeModel, userId);
     if (isExist == null) {
       _setErrorModel(code: '_isExistFavoriteUser error');
       _setState(ViewState.error);
+      return;
     }
 
     var either = await _noticeRepository.toggleNoticeFavorite(
-        noticeId: noticeId, userId: userId, isDelete: isExist!);
+        noticeId: noticeId, userId: userId, isDelete: isExist);
     var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
       _setErrorModel(errorModel: result as ErrorModel);
       _setState(ViewState.error);
+      return;
     }
 
     //local에서도 증가
