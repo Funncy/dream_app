@@ -7,7 +7,7 @@ import 'package:dream/repositories/notice_repository.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 
-class NoticeViewModelImpl extends GetxController {
+class NoticeViewModel extends GetxController {
   late NoticeRepository _noticeRepository;
   //obs는 observer로 Rx로 데이터 관리되게 됩니다.
   //화면 상태가 아니라 데이터의 상태를 관리하자.
@@ -19,7 +19,7 @@ class NoticeViewModelImpl extends GetxController {
   ErrorModel? _errorModel;
   ErrorModel? get errorModel => _errorModel;
 
-  NoticeViewModelImpl({required NoticeRepository noticeRepository}) {
+  NoticeViewModel({required NoticeRepository noticeRepository}) {
     _noticeRepository = noticeRepository;
   }
 
