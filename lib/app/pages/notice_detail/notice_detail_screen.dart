@@ -39,17 +39,15 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
     super.initState();
     //댓글 추가 이후 스크롤 내리기
     commentViewModel.commentStateStream.listen((state) {
-      if (state == ViewState.error || commentViewModel.errorModel != null) {
-        alertWithErrorModel(commentViewModel.errorModel);
+      if (state is Error) {
+        alertWithFailure(state.failure);
       }
     });
     commentViewModel.commentStateStream.reduce(scrollAnimatorByStatus);
   }
 
   ViewState? scrollAnimatorByStatus(ViewState? preStatus, ViewState? status) {
-    if (preStatus == ViewState.loading &&
-        status == ViewState.loaded &&
-        isScrollDown) {
+    if (preStatus is Loading && status is Loaded && isScrollDown) {
       isScrollDown = false;
       WidgetsBinding.instance!.addPostFrameCallback((_) {
         _scrollController.animateTo(_scrollController.position.maxScrollExtent,
@@ -146,8 +144,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
                                     _bodyWidget(commentList),
                                   ],
                                 ),
-                                if (dataStatus == ViewState.loading)
-                                  _loadingWidget(),
+                                if (dataStatus is Loading) _loadingWidget(),
                               ],
                             );
                           });
