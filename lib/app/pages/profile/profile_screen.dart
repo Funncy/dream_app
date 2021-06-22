@@ -66,7 +66,8 @@ class _ProfileScreenState extends State<ProfileScreen> with AlertMixin {
   }
 
   void signOut() async {
-    _authViewModel.signOut();
+    await _authViewModel.signOut();
+    if (_authViewModel.authState is Loaded) Get.back();
   }
 
   @override
