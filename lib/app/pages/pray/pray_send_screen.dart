@@ -19,9 +19,7 @@ class _PraySendScreenState extends State<PraySendScreen> with AlertMixin {
   @override
   void initState() {
     prayViewModel.sendStateStream.listen((state) {
-      if (state == ViewState.error) {
-        alertWithErrorModel(prayViewModel.errorModel);
-      }
+      if (state is Error) alertWithFailure(state.failure);
     });
     super.initState();
   }
@@ -33,7 +31,7 @@ class _PraySendScreenState extends State<PraySendScreen> with AlertMixin {
         content: contentController.text,
         isPublic: isPublic);
 
-    if (prayViewModel.sendState == ViewState.loaded) {
+    if (prayViewModel.sendState is Loaded) {
       //전송 완료 뒤로가기
       Get.back();
     }
@@ -41,7 +39,6 @@ class _PraySendScreenState extends State<PraySendScreen> with AlertMixin {
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
     String title = isPublic! ? "공개 기도편지" : "비밀 기도편지";
     return Scaffold(
       appBar: AppBar(

@@ -25,9 +25,7 @@ class _PrayListScreenState extends State<PrayListScreen> with AlertMixin {
   void initState() {
     super.initState();
     prayListViewModel.listStateStream.listen((state) {
-      if (state == ViewState.error) {
-        alertWithErrorModel(prayListViewModel.errorModel);
-      }
+      if (state is Error) alertWithFailure(state.failure);
     });
     //build후에 함수 실행
     WidgetsBinding.instance!.addPostFrameCallback((_) {
@@ -78,8 +76,7 @@ class _PrayListScreenState extends State<PrayListScreen> with AlertMixin {
                         return Stack(
                           children: [
                             _bodyWidget(prayList),
-                            if (dataStatus == ViewState.loading)
-                              _loadingWidget(),
+                            if (dataStatus is Loading) _loadingWidget(),
                           ],
                         );
                       });
