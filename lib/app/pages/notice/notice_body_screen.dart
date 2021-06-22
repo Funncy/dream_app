@@ -31,11 +31,8 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> with AlertMixin {
     //build후에 함수 실행
     profileImageUrl = authViewModel.user?.profileImageUrl;
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      noticeViewModel.noticeStateStream.listen((viewState) {
-        if (viewState == ViewState.error ||
-            noticeViewModel.errorModel != null) {
-          alertWithErrorModel(noticeViewModel.errorModel);
-        }
+      noticeViewModel.noticeStateStream.listen((state) {
+        if (state is Error) alertWithFailure(state.failure);
       });
     });
     WidgetsBinding.instance!.addPostFrameCallback((_) {
@@ -87,8 +84,7 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> with AlertMixin {
                           return Stack(
                             children: [
                               _bodyWidget(noticeList),
-                              if (dataStatus == ViewState.loading)
-                                _loadingWidget(),
+                              if (dataStatus is Loading) _loadingWidget(),
                             ],
                           );
                         });
