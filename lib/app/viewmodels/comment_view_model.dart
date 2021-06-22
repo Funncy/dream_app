@@ -21,9 +21,6 @@ class CommentViewModel extends GetxController {
   ViewState? get commentState => _commentState.value;
   Stream<ViewState?> get commentStateStream => _commentState.stream;
 
-  late Failure _errorModel;
-  Failure? get errorModel => _errorModel;
-
   CommentViewModel({
     required NoticeRepository noticeRepository,
     required CommentRepository commentRepository,
@@ -167,11 +164,5 @@ class CommentViewModel extends GetxController {
 
   _setState(ViewState state) {
     _commentState.value = state;
-  }
-
-  _setErrorModel({Failure? errorModel, String? code}) {
-    if (errorModel != null)
-      _errorModel = errorModel;
-    else if (code != null) _errorModel = DefaultFailure(code: code);
   }
 }
