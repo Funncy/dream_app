@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:dream/app/core/error/default_error_model.dart';
-import 'package:dream/app/core/error/error_model.dart';
+import 'package:dream/app/core/error/default_failure.dart';
+import 'package:dream/app/core/error/failure.dart';
 import 'package:dream/app/core/state/view_state.dart';
 import 'package:dream/app/data/models/notice.dart';
 import 'package:dream/app/repositories/notice_repository.dart';
@@ -13,11 +13,9 @@ class NoticeViewModel extends GetxController {
   //화면 상태가 아니라 데이터의 상태를 관리하자.
   List<NoticeModel> _noticeList = <NoticeModel>[];
   List<NoticeModel> get noticeList => _noticeList;
-  Rxn<ViewState?> _noticeState = Rxn<ViewState?>(ViewState.initial);
+  Rxn<ViewState?> _noticeState = Rxn<ViewState?>(Initial());
   ViewState? get noticeState => _noticeState.value;
   Stream<ViewState?> get noticeStateStream => _noticeState.stream;
-  ErrorModel? _errorModel;
-  ErrorModel? get errorModel => _errorModel;
 
   NoticeViewModel({required NoticeRepository noticeRepository}) {
     _noticeRepository = noticeRepository;
@@ -28,60 +26,55 @@ class NoticeViewModel extends GetxController {
   }
 
   Future<void> getNoticeList() async {
-    _setState(ViewState.loading);
-    Either<ErrorModel, List<NoticeModel>> either =
+    _setState(Loading());
+    Either<Failure, List<NoticeModel>> either =
         await _noticeRepository.getNoticeList();
     var result = either.fold((l) => l, (r) => r);
 
     //에러인 경우 종료
     if (either.isLeft()) {
-      _setErrorModel(errorModel: result as ErrorModel);
-      _setState(ViewState.error);
+      _setState(Error(result as Failure));
       return;
     }
 
     noticeList.clear();
     noticeList.addAll(result as List<NoticeModel>);
-    _setState(ViewState.loaded);
+    _setState(Loaded());
   }
 
   Future<void> getMoreNoticeList() async {
-    _setState(ViewState.loading);
+    _setState(Loading());
     if (noticeList.length == 0) {
-      _setErrorModel(code: 'noticeList item count is 0');
-      _setState(ViewState.loading);
+      _setState(Error(DefaultFailure(code: 'noticeList item count is 0')));
       return;
     }
 
-    Either<ErrorModel, List<NoticeModel>?> either = await _noticeRepository
+    Either<Failure, List<NoticeModel>?> either = await _noticeRepository
         .getMoreNoticeList(noticeList.last.documentReference);
     var result = either.fold((l) => l, (r) => r);
 
     if (either.isLeft()) {
-      _setErrorModel(errorModel: result as ErrorModel);
-      _setState(ViewState.loading);
+      _setState(Error(result as Failure));
       return;
     }
 
     noticeList.addAll(result as List<NoticeModel>);
-    _setState(ViewState.loaded);
+    _setState(Loaded());
   }
 
   Future<void> toggleNoticeFavorite(
       {required String? noticeId, required String userId}) async {
-    _setState(ViewState.loading);
+    _setState(Loading());
     //Notice의 좋아요 리스트 가져오기
     NoticeModel? noticeModel = _getNoticeById(noticeId!);
     if (noticeModel == null) {
-      _setErrorModel(code: 'noticeList item count is 0');
-      _setState(ViewState.error);
+      _setState(Error(DefaultFailure(code: 'noticeList item count is 0')));
       return;
     }
     //이미 등록되있다면 삭제
     bool? isExist = _isExistFavoriteUser(noticeModel, userId);
     if (isExist == null) {
-      _setErrorModel(code: '_isExistFavoriteUser error');
-      _setState(ViewState.error);
+      _setState(Error(DefaultFailure(code: '_isExistFavoriteUser error')));
       return;
     }
 
@@ -89,14 +82,13 @@ class NoticeViewModel extends GetxController {
         noticeId: noticeId, userId: userId, isDelete: isExist);
     var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
-      _setErrorModel(errorModel: result as ErrorModel);
-      _setState(ViewState.error);
+      _setState(Error(result as Failure));
       return;
     }
 
     //local에서도 증가
     _toggleFavoriteLocal(noticeModel, userId, isExist);
-    _setState(ViewState.loaded);
+    _setState(Loaded());
   }
 
   void refresh() {
@@ -135,11 +127,5 @@ class NoticeViewModel extends GetxController {
 
   _setState(ViewState state) {
     _noticeState.value = state;
-  }
-
-  _setErrorModel({ErrorModel? errorModel, String? code}) {
-    if (errorModel != null)
-      _errorModel = errorModel;
-    else if (code != null) _errorModel = DefaultErrorModel(code: code);
   }
 }
