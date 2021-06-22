@@ -1,4 +1,4 @@
-import 'package:dream/app/core/error/error_model.dart';
+import 'package:dream/app/core/error/failure.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
@@ -7,13 +7,13 @@ mixin AlertMixin<T extends StatefulWidget> on State<T> {
     showAlert(title: title, content: content);
   }
 
-  void alertWithErrorModel(ErrorModel? errorModel) {
-    if (errorModel == null) {
+  void alertWithFailure(Failure? failure) {
+    if (failure == null) {
       var logger = Logger();
-      logger.d('errorModel is null in errorAlert');
+      logger.d('Failure is null in errorAlert');
       return;
     }
-    showAlert(title: errorModel.title, content: errorModel.content);
+    showAlert(title: failure.title, content: failure.content);
   }
 
   void showAlert(
