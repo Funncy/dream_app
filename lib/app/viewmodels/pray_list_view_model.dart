@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:dream/app/core/error/default_error_model.dart';
-import 'package:dream/app/core/error/error_model.dart';
+import 'package:dream/app/core/error/failure.dart';
 import 'package:dream/app/core/state/view_state.dart';
 import 'package:dream/app/data/models/pray.dart';
 import 'package:dream/app/repositories/pray_repository.dart';
@@ -9,47 +8,42 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 
 class PrayListViewModel extends GetxController {
   late PrayRepository _prayRepository;
-  Rx<ViewState> _listState = ViewState.initial.obs;
-  ViewState get listState => _listState.value;
+  Rxn<ViewState> _listState = Rxn(Initial());
+  ViewState? get listState => _listState.value;
   Stream<ViewState?> get listStateStream => _listState.stream;
 
   List<PrayModel> prayList = [];
-
-  ErrorModel? _errorModel;
-  ErrorModel? get errorModel => _errorModel;
 
   PrayListViewModel({required PrayRepository prayRepository}) {
     _prayRepository = prayRepository;
   }
 
   Future<void> getPrayList() async {
-    _setState(ViewState.loading);
-    Either<ErrorModel, List<PrayModel>?> either =
+    _setState(Loading());
+    Either<Failure, List<PrayModel>?> either =
         await _prayRepository.initPublicPrayList();
     var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
-      _setErrorModel(errorModel: result as ErrorModel);
-      _setState(ViewState.error);
+      _setState(Error(result as Failure));
       return;
     }
     prayList.clear();
     prayList.addAll(either.getOrElse(() => null)!);
-    _setState(ViewState.loaded);
+    _setState(Loaded());
   }
 
   Future<void> getMorePrayList() async {
-    _setState(ViewState.loading);
-    Either<ErrorModel, List<PrayModel>?> either = await _prayRepository
+    _setState(Loading());
+    Either<Failure, List<PrayModel>?> either = await _prayRepository
         .getMorePublicPrayList(prayList.last.documentReference);
     var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
-      _setErrorModel(errorModel: result as ErrorModel);
-      _setState(ViewState.error);
+      _setState(Error(result as Failure));
       return;
     }
 
     prayList.addAll(result as List<PrayModel>);
-    _setState(ViewState.loaded);
+    _setState(Loaded());
   }
 
   refresh() {
@@ -58,11 +52,5 @@ class PrayListViewModel extends GetxController {
 
   _setState(ViewState state) {
     _listState.value = state;
-  }
-
-  _setErrorModel({ErrorModel? errorModel, String? code}) {
-    if (errorModel != null)
-      _errorModel = errorModel;
-    else if (code != null) _errorModel = DefaultErrorModel(code: code);
   }
 }
