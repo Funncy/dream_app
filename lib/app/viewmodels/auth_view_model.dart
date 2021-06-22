@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
-import 'package:dream/app/core/error/default_failure.dart';
 import 'package:dream/app/core/error/failure.dart';
 import 'package:dream/app/core/state/view_state.dart';
 import 'package:dream/app/data/models/user.dart';
@@ -29,9 +28,6 @@ class AuthViewModel extends GetxController {
   Rxn<UserModel> _user = Rxn<UserModel>();
   // Rxn<User> _firebaseUser = Rxn<User>();
   UserModel? get user => _user.value;
-
-  late Failure _errorModel;
-  Failure? get errorModel => _errorModel;
 
   AuthViewModel({required authRepository}) {
     _authRepository = authRepository;
