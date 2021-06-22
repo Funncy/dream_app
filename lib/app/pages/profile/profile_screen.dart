@@ -29,8 +29,8 @@ class _ProfileScreenState extends State<ProfileScreen> with AlertMixin {
   @override
   void initState() {
     _profileViewModel.profileStateStream.listen((state) {
-      if (state == ViewState.error) {
-        alertWithErrorModel(_profileViewModel.errorModel);
+      if (state is Error) {
+        alertWithFailure(state.failure);
       }
     });
     super.initState();
