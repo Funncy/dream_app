@@ -14,7 +14,6 @@ import 'package:dream/app/viewmodels/comment_view_model.dart';
 import 'package:dream/app/viewmodels/reply_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class NoticeReplyScreen extends StatefulWidget {
   final String? noticeId;
@@ -40,14 +39,12 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> with AlertMixin {
       // replyViewModel.isExistCommentById(commentId: widget.commentId);
 
       replyViewModel.replyStateStream.listen((state) {
-        if (state == ViewState.error || replyViewModel.errorModel != null) {
-          alertWithErrorModel(replyViewModel.errorModel);
-        }
+        if (state is Error) alertWithFailure(state.failure);
       });
 
       //새로운 답글 추가시 아래 스크롤 애니메이션
       debounce(replyViewModel.rxReplyState, (_) {
-        if (replyViewModel.replyState == ViewState.loaded) {
+        if (replyViewModel.replyState is Loaded) {
           _scrollController.animateTo(
               _scrollController.position.maxScrollExtent,
               duration: Duration(milliseconds: 500),
@@ -126,8 +123,7 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> with AlertMixin {
                             return Stack(
                               children: [
                                 _commentBody(comment),
-                                if (dataStatus == ViewState.loading)
-                                  _loadingWidget(),
+                                if (dataStatus is Loading) _loadingWidget(),
                               ],
                             );
                           });
