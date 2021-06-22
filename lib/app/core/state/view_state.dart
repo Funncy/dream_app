@@ -1,6 +1,4 @@
-// enum ViewState { initial, loading, loaded, error }
-
-import 'package:dream/app/core/error/error_model.dart';
+import 'package:dream/app/core/error/failure.dart';
 
 abstract class ViewState {}
 
@@ -11,6 +9,6 @@ class Loading extends ViewState {}
 class Loaded extends ViewState {}
 
 class Error extends ViewState {
-  ErrorModel errorModel;
-  Error(this.errorModel);
+  Failure failure;
+  Error(this.failure);
 }
