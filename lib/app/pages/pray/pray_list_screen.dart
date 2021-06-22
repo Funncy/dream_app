@@ -45,48 +45,43 @@ class _PrayListScreenState extends State<PrayListScreen> with AlertMixin {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: ProfileAppBar(
-        title: '중보 기도',
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              flex: 1,
-              child: RefreshIndicator(
-                onRefresh: refreshPrayList,
-                child: Container(
-                  color: Colors.black12,
-                  child: ViewModelBuilder(
-                    init: prayListViewModel.getPrayList(),
-                    errorWidget: _errorWidget(),
-                    loadingWidget: _loadingWidget(),
-                    getState: () => prayListViewModel.listState,
-                    builder: (context, snapshot) {
-                      return Obx(() {
-                        var dataStatus = prayListViewModel.listState;
-                        List<PrayModel> prayList = prayListViewModel.prayList;
+    return SafeArea(
+      child: Column(
+        children: [
+          Expanded(
+            flex: 1,
+            child: RefreshIndicator(
+              onRefresh: refreshPrayList,
+              child: Container(
+                color: Colors.black12,
+                child: ViewModelBuilder(
+                  init: prayListViewModel.getPrayList(),
+                  errorWidget: _errorWidget(),
+                  loadingWidget: _loadingWidget(),
+                  getState: () => prayListViewModel.listState,
+                  builder: (context, snapshot) {
+                    return Obx(() {
+                      var dataStatus = prayListViewModel.listState;
+                      List<PrayModel> prayList = prayListViewModel.prayList;
 
-                        if (prayList.length == 0) {
-                          //Empty Widget
-                          return _emptyWidget(size);
-                        }
+                      if (prayList.length == 0) {
+                        //Empty Widget
+                        return _emptyWidget(size);
+                      }
 
-                        return Stack(
-                          children: [
-                            _bodyWidget(prayList),
-                            if (dataStatus is Loading) _loadingWidget(),
-                          ],
-                        );
-                      });
-                    },
-                  ),
+                      return Stack(
+                        children: [
+                          _bodyWidget(prayList),
+                          if (dataStatus is Loading) _loadingWidget(),
+                        ],
+                      );
+                    });
+                  },
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

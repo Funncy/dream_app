@@ -22,6 +22,7 @@ class ViewModelBuilder extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return loadingWidget;
         } else if (snapshot.connectionState == ConnectionState.done) {
+          print(getState());
           if (getState() is Loaded) return builder(context, snapshot);
         }
         return errorWidget;

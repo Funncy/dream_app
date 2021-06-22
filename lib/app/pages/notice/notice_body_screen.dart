@@ -52,48 +52,43 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> with AlertMixin {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: ProfileAppBar(
-        title: '공지사항',
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              flex: 1,
-              child: RefreshIndicator(
-                onRefresh: refreshNoticeList,
-                child: Container(
-                    color: Colors.black12,
-                    child: ViewModelBuilder(
-                      init: noticeViewModel.getNoticeList(),
-                      errorWidget: _errorWidget(),
-                      loadingWidget: _loadingWidget(),
-                      getState: () => authViewModel.authState,
-                      builder: (context, snapshot) {
-                        return Obx(() {
-                          var dataStatus = noticeViewModel.noticeState;
-                          List<NoticeModel> noticeList =
-                              noticeViewModel.noticeList;
+    return SafeArea(
+      child: Column(
+        children: [
+          Expanded(
+            flex: 1,
+            child: RefreshIndicator(
+              onRefresh: refreshNoticeList,
+              child: Container(
+                  color: Colors.black12,
+                  child: ViewModelBuilder(
+                    init: noticeViewModel.getNoticeList(),
+                    errorWidget: _errorWidget(),
+                    loadingWidget: _loadingWidget(),
+                    getState: () => noticeViewModel.noticeState,
+                    builder: (context, snapshot) {
+                      return Obx(() {
+                        var dataStatus = noticeViewModel.noticeState;
+                        List<NoticeModel> noticeList =
+                            noticeViewModel.noticeList;
 
-                          if (noticeList.length == 0) {
-                            //Empty Widget
-                            return _emptyWidget(size);
-                          }
+                        if (noticeList.length == 0) {
+                          //Empty Widget
+                          return _emptyWidget(size);
+                        }
 
-                          return Stack(
-                            children: [
-                              _bodyWidget(noticeList),
-                              if (dataStatus is Loading) _loadingWidget(),
-                            ],
-                          );
-                        });
-                      },
-                    )),
-              ),
+                        return Stack(
+                          children: [
+                            _bodyWidget(noticeList),
+                            if (dataStatus is Loading) _loadingWidget(),
+                          ],
+                        );
+                      });
+                    },
+                  )),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

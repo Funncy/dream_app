@@ -1,4 +1,5 @@
 import 'package:dream/app/core/constants/constants.dart';
+import 'package:dream/app/pages/common/profile_app_bar.dart';
 import 'package:dream/app/pages/notice/notice_body_screen.dart';
 import 'package:dream/app/pages/pray/pray_list_screen.dart';
 import 'package:dream/app/pages/pray/pray_screen.dart';
@@ -11,10 +12,14 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
+  List<String> _titleList = ['공지사항', '기도 보내기', '중보 기도'];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: ProfileAppBar(
+          title: _titleList[_selectedIndex],
+        ),
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           backgroundColor: Constants.backgroundColor,

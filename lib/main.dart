@@ -44,7 +44,9 @@ class MyApp extends StatelessWidget {
         //페이지 라우터
         getPages: [
           GetPage(
-              name: '/', page: () => RootScreen(), binding: NoticeBindings()),
+              name: '/',
+              page: () => RootScreen(),
+              bindings: [NoticeBindings(), PrayBindings()]),
           GetPage(
               name: NoticeDetailScreen.routeName,
               page: () => NoticeDetailScreen(),
