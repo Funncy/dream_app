@@ -25,9 +25,7 @@ class _LoginInScreenState extends State<LoginInScreen>
   @override
   void initState() {
     _authViewModel.authStateStream.listen((state) {
-      if (state == ViewState.error || _authViewModel.errorModel != null) {
-        alertWithErrorModel(_authViewModel.errorModel);
-      }
+      if (state is Error) alertWithFailure(state.failure);
     });
     super.initState();
   }
