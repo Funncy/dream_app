@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-import 'package:dream/app/core/error/error_model.dart';
-import 'package:dream/app/core/error/server_error_model.dart';
+import 'package:dream/app/core/error/failure.dart';
+import 'package:dream/app/core/error/server_failure.dart';
 import 'package:dream/app/data/models/comment.dart';
 import 'package:dream/app/repositories/comment_repository.dart';
 
@@ -16,7 +16,7 @@ class CommentRepositoryImpl extends CommentRepository {
   }
 
   @override
-  Future<Either<ErrorModel, List<CommentModel>>> getCommentList(
+  Future<Either<Failure, List<CommentModel>>> getCommentList(
       {required String? noticeId}) async {
     try {
       var querySnapshot = await _firebaseFirestore
@@ -29,12 +29,12 @@ class CommentRepositoryImpl extends CommentRepository {
           querySnapshot.docs.map((e) => CommentModel.fromFirestore(e)).toList();
       return Right(result);
     } catch (e) {
-      return Left(ServerErrorModel(code: e.toString()));
+      return Left(ServerFailure(code: e.toString()));
     }
   }
 
   @override
-  Future<Either<ErrorModel, CommentModel?>> getCommentById(
+  Future<Either<Failure, CommentModel?>> getCommentById(
       {required String? noticeId, required String? commentId}) async {
     try {
       DocumentSnapshot documentSnapshot = await _firebaseFirestore
@@ -45,12 +45,12 @@ class CommentRepositoryImpl extends CommentRepository {
           .get();
       return Right(CommentModel.fromFirestore(documentSnapshot));
     } catch (e) {
-      return Left(ServerErrorModel(code: e.toString()));
+      return Left(ServerFailure(code: e.toString()));
     }
   }
 
   @override
-  Future<Either<ErrorModel, void>> updateCommentById(
+  Future<Either<Failure, void>> updateCommentById(
       {required String? noticeId,
       required String? commentId,
       required CommentModel commentModel}) async {
@@ -63,12 +63,12 @@ class CommentRepositoryImpl extends CommentRepository {
           .update(commentModel.toJson());
       return Right(null);
     } catch (e) {
-      return Left(ServerErrorModel(code: e.toString()));
+      return Left(ServerFailure(code: e.toString()));
     }
   }
 
   @override
-  Future<Either<ErrorModel, void>> writeComment(
+  Future<Either<Failure, void>> writeComment(
       {required String? noticeId,
       required String userId,
       required String content}) async {
@@ -92,11 +92,11 @@ class CommentRepositoryImpl extends CommentRepository {
 
       return Right(null);
     } catch (e) {
-      return Left(ServerErrorModel(code: e.toString()));
+      return Left(ServerFailure(code: e.toString()));
     }
   }
 
-  Future<Either<ErrorModel, void>> deleteComment(
+  Future<Either<Failure, void>> deleteComment(
       {required String? noticeId, required String commentId}) async {
     try {
       await _firebaseFirestore
@@ -108,12 +108,12 @@ class CommentRepositoryImpl extends CommentRepository {
 
       return Right(null);
     } catch (e) {
-      return Left(ServerErrorModel(code: e.toString()));
+      return Left(ServerFailure(code: e.toString()));
     }
   }
 
   @override
-  Future<Either<ErrorModel, void>> toggleCommentFavorite(
+  Future<Either<Failure, void>> toggleCommentFavorite(
       {required String? noticeId,
       required String? commentId,
       required String userId,
@@ -133,7 +133,7 @@ class CommentRepositoryImpl extends CommentRepository {
           .update({'favorite_user_list': fieldValue});
       return Right(null);
     } catch (e) {
-      return Left(ServerErrorModel(code: e.toString()));
+      return Left(ServerFailure(code: e.toString()));
     }
   }
 }

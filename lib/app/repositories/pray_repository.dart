@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-import 'package:dream/app/core/error/error_model.dart';
+import 'package:dream/app/core/error/failure.dart';
 import 'package:dream/app/data/models/pray.dart';
 
 abstract class PrayRepository {
@@ -8,9 +8,9 @@ abstract class PrayRepository {
   //1. 기도 보내기
   //3. 공개 기도 목록 가져오기
 
-  Future<Either<ErrorModel, void>> sendPray(
+  Future<Either<Failure, void>> sendPray(
       String userId, String title, String content, bool? isPublic);
-  Future<Either<ErrorModel, List<PrayModel>?>> initPublicPrayList();
-  Future<Either<ErrorModel, List<PrayModel>?>> getMorePublicPrayList(
+  Future<Either<Failure, List<PrayModel>?>> initPublicPrayList();
+  Future<Either<Failure, List<PrayModel>?>> getMorePublicPrayList(
       DocumentReference? documentReference);
 }

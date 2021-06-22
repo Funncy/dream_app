@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-import 'package:dream/app/core/error/error_model.dart';
-import 'package:dream/app/core/error/server_error_model.dart';
+import 'package:dream/app/core/error/failure.dart';
+import 'package:dream/app/core/error/server_failure.dart';
 import 'package:dream/app/data/models/reply.dart';
 import 'package:dream/app/repositories/reply_repository.dart';
 
@@ -16,7 +16,7 @@ class ReplyRepositoryImpl extends ReplyRepository {
   }
 
   @override
-  Future<Either<ErrorModel, void>> writeReply(
+  Future<Either<Failure, void>> writeReply(
       {required String? noticeId,
       required String? commentId,
       required String replyIndex,
@@ -39,12 +39,12 @@ class ReplyRepositoryImpl extends ReplyRepository {
       });
       return Right(null);
     } catch (e) {
-      return Left(ServerErrorModel(code: e.toString()));
+      return Left(ServerFailure(code: e.toString()));
     }
   }
 
   @override
-  Future<Either<ErrorModel, void>> deleteReply({
+  Future<Either<Failure, void>> deleteReply({
     required String? noticeId,
     required String commentId,
     required ReplyModel replyModel,
@@ -60,12 +60,12 @@ class ReplyRepositoryImpl extends ReplyRepository {
       });
       return Right(null);
     } catch (e) {
-      return Left(ServerErrorModel(code: e.toString()));
+      return Left(ServerFailure(code: e.toString()));
     }
   }
 
   @override
-  Future<Either<ErrorModel, void>> toggleReplyFavorite({
+  Future<Either<Failure, void>> toggleReplyFavorite({
     required String? noticeId,
     required String? commentId,
     required ReplyModel reply,
@@ -98,7 +98,7 @@ class ReplyRepositoryImpl extends ReplyRepository {
       });
       return Right(null);
     } catch (e) {
-      return Left(ServerErrorModel(code: e.toString()));
+      return Left(ServerFailure(code: e.toString()));
     }
   }
 }

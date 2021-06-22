@@ -1,26 +1,26 @@
 import 'package:dartz/dartz.dart';
-import 'package:dream/app/core/error/error_model.dart';
+import 'package:dream/app/core/error/failure.dart';
 import 'package:dream/app/data/models/comment.dart';
 
 abstract class CommentRepository {
-  Future<Either<ErrorModel, List<CommentModel>>> getCommentList(
+  Future<Either<Failure, List<CommentModel>>> getCommentList(
       {required String? noticeId});
-  Future<Either<ErrorModel, CommentModel?>> getCommentById(
+  Future<Either<Failure, CommentModel?>> getCommentById(
       {required String? noticeId, required String? commentId});
-  Future<Either<ErrorModel, void>> updateCommentById(
+  Future<Either<Failure, void>> updateCommentById(
       {required String? noticeId,
       required String? commentId,
       required CommentModel commentModel});
 
-  Future<Either<ErrorModel, void>> writeComment(
+  Future<Either<Failure, void>> writeComment(
       {required String? noticeId,
       required String userId,
       required String content});
 
-  Future<Either<ErrorModel, void>> deleteComment(
+  Future<Either<Failure, void>> deleteComment(
       {required String? noticeId, required String commentId});
 
-  Future<Either<ErrorModel, void>> toggleCommentFavorite(
+  Future<Either<Failure, void>> toggleCommentFavorite(
       {required String? noticeId,
       required String? commentId,
       required String userId,

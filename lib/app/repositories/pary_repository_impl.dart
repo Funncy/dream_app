@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-import 'package:dream/app/core/error/error_model.dart';
-import 'package:dream/app/core/error/server_error_model.dart';
+import 'package:dream/app/core/error/failure.dart';
+import 'package:dream/app/core/error/server_failure.dart';
 import 'package:dream/app/data/models/pray.dart';
 import 'package:dream/app/repositories/pray_repository.dart';
 
@@ -13,7 +13,7 @@ class PrayRepositoryImpl extends PrayRepository {
   }
 
   @override
-  Future<Either<ErrorModel, List<PrayModel>?>> initPublicPrayList() async {
+  Future<Either<Failure, List<PrayModel>?>> initPublicPrayList() async {
     try {
       var querySnapshot = await _firebaseFirestore
           .collection('public_pray')
@@ -24,12 +24,12 @@ class PrayRepositoryImpl extends PrayRepository {
           querySnapshot.docs.map((e) => PrayModel.fromFirestore(e)).toList();
       return Right(result);
     } catch (e) {
-      return Left(ServerErrorModel(code: e.toString()));
+      return Left(ServerFailure(code: e.toString()));
     }
   }
 
   @override
-  Future<Either<ErrorModel, List<PrayModel>?>> getMorePublicPrayList(
+  Future<Either<Failure, List<PrayModel>?>> getMorePublicPrayList(
       DocumentReference? documentReference) async {
     try {
       DocumentSnapshot documentSnapshot = await documentReference!.get();
@@ -43,12 +43,12 @@ class PrayRepositoryImpl extends PrayRepository {
           querySnapshot.docs.map((e) => PrayModel.fromFirestore(e)).toList();
       return Right(result);
     } catch (e) {
-      return Left(ServerErrorModel(code: e.toString()));
+      return Left(ServerFailure(code: e.toString()));
     }
   }
 
   @override
-  Future<Either<ErrorModel, void>> sendPray(
+  Future<Either<Failure, void>> sendPray(
       String userId, String title, String content, bool? isPublic) async {
     try {
       var model = PrayModel(userId: userId, title: title, content: content);
@@ -61,7 +61,7 @@ class PrayRepositoryImpl extends PrayRepository {
       collectionReference.add(model.toJson());
       return Right(null);
     } catch (e) {
-      return Left(ServerErrorModel(code: e.toString()));
+      return Left(ServerFailure(code: e.toString()));
     }
   }
 }

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-import 'package:dream/app/core/error/error_model.dart';
-import 'package:dream/app/core/error/server_error_model.dart';
+import 'package:dream/app/core/error/failure.dart';
+import 'package:dream/app/core/error/server_failure.dart';
 import 'package:dream/app/data/models/comment.dart';
 import 'package:dream/app/data/models/notice.dart';
 import 'package:dream/app/data/models/reply.dart';
@@ -97,7 +97,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
   }
 
   @override
-  Future<Either<ErrorModel, List<NoticeModel>>> getNoticeList() async {
+  Future<Either<Failure, List<NoticeModel>>> getNoticeList() async {
     try {
       var querySnapshot = await _firebaseFirestore
           .collection(noticeCollectionName)
@@ -118,12 +118,12 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
       return Right(result);
     } catch (e) {
-      return Left(ServerErrorModel(code: e.toString()));
+      return Left(ServerFailure(code: e.toString()));
     }
   }
 
   @override
-  Future<Either<ErrorModel, List<NoticeModel>?>> getMoreNoticeList(
+  Future<Either<Failure, List<NoticeModel>?>> getMoreNoticeList(
       DocumentReference? documentReference) async {
     try {
       DocumentSnapshot documentSnapshot = await documentReference!.get();
@@ -147,12 +147,12 @@ class NoticeRepositoryImpl extends NoticeRepository {
 
       return Right(result);
     } catch (e) {
-      return Left(ServerErrorModel(code: e.toString()));
+      return Left(ServerFailure(code: e.toString()));
     }
   }
 
   @override
-  Future<Either<ErrorModel, void>> updateCommentCount(
+  Future<Either<Failure, void>> updateCommentCount(
       {required String? noticeId, bool isIncreasement = true}) async {
     try {
       late int count;
@@ -181,12 +181,12 @@ class NoticeRepositoryImpl extends NoticeRepository {
       });
       return Right(null);
     } catch (e) {
-      return Left(ServerErrorModel(code: e.toString()));
+      return Left(ServerFailure(code: e.toString()));
     }
   }
 
   @override
-  Future<Either<ErrorModel, void>> toggleNoticeFavorite(
+  Future<Either<Failure, void>> toggleNoticeFavorite(
       {required String? noticeId,
       required String userId,
       required bool isDelete}) async {
@@ -202,7 +202,7 @@ class NoticeRepositoryImpl extends NoticeRepository {
           .update({'favorite_user_list': fieldValue});
       return Right(null);
     } catch (e) {
-      return Left(ServerErrorModel(code: e.toString()));
+      return Left(ServerFailure(code: e.toString()));
     }
   }
 }
