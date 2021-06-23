@@ -6,7 +6,6 @@ class AuthFailure extends Failure {
     'expired-action-code': {'title': '에러 발생', 'content': '다시 시도해주세요.'},
     'invalid-action-code': {'title': '에러 발생', 'content': '다시 시도해주세요.'},
     'user-disabled': {'title': '에러 발생', 'content': '해당 아이디가 비활성화 상태입니다.'},
-    'user-not-found': {'title': '에러 발생', 'content': '아이디와 비밀번호를 확인해주세요.'},
     //FireAuth SignUp
     'weak-password': {'title': '에러 발생', 'content': '비밀번호가 너무 쉽습니다.'},
     'email-already-in-use': {
@@ -15,6 +14,8 @@ class AuthFailure extends Failure {
     },
     'invalid-email': {'title': '이메일 오류', 'content': '이메일 형태에 문제가 있습니다.'},
     'operation-not-allowed': {'title': '에러 발생', 'content': '다시 시도해주세요.'},
+    'wrong-password': {'title': '로그인 실패', 'content': '로그인 정보를 다시 확인해주세요.'},
+    'user-not-found': {'title': '로그인 실패', 'content': '로그인 정보를 다시 확인해주세요.'},
   };
   AuthFailure({required String code}) : super(code: code) {
     Map<String, Object>? errorMessage = (messageMap[code] ?? null);
