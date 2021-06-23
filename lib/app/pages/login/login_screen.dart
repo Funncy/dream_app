@@ -1,6 +1,7 @@
 import 'package:dream/app/core/state/view_state.dart';
 import 'package:dream/app/pages/common/alert_mixin.dart';
 import 'package:dream/app/pages/common/input_mixin.dart';
+import 'package:dream/app/pages/common/loading_widget.dart';
 import 'package:dream/app/pages/login/sign_up_screen.dart';
 import 'package:dream/app/viewmodels/auth_view_model.dart';
 import 'package:flutter/material.dart';
@@ -52,56 +53,70 @@ class _LoginInScreenState extends State<LoginInScreen>
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: Text("로그인"),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(Constants.commonGap),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: <Widget>[
-              SizedBox(height: Constants.commonLGap),
-              TextFormField(
-                controller: _emailController,
-                cursorColor: Colors.black54,
-                decoration: textInputDecor('Email'),
-                validator: (text) {
-                  if (text!.isNotEmpty && text.contains('@')) {
-                    return null;
-                  } else {
-                    return '정확한 이메일 주소를 입력해주세요.';
-                  }
-                },
-              ),
-              SizedBox(height: Constants.commonLGap),
-              TextFormField(
-                controller: _pwController,
-                cursorColor: Colors.black54,
-                obscureText: true,
-                decoration: textInputDecor('Password'),
-              ),
-              SizedBox(height: Constants.commonLGap),
-              _submitBtn(context, _formKey),
-              SizedBox(height: Constants.commonLGap),
-              Align(
-                  alignment: Alignment.centerRight,
-                  child: InkWell(
-                      onTap: pageToSignUp,
-                      child: Text(
-                        "회원가입",
-                        style: TextStyle(color: Colors.blue),
-                      ))),
-              Divider(),
-            ],
-          ),
+      body: Obx(() {
+        ViewState authState = _authViewModel.authState!;
+        return Stack(
+          children: [
+            _loginForm(),
+            if (authState is Loading) _blackBodyWidget(size),
+            if (authState is Loading) _loadingWidget(),
+          ],
+        );
+      }),
+    );
+  }
+
+  Widget _loginForm() {
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Form(
+        key: _formKey,
+        child: ListView(
+          children: <Widget>[
+            SizedBox(height: Constants.commonLGap),
+            TextFormField(
+              controller: _emailController,
+              cursorColor: Colors.black54,
+              decoration: textInputDecor('Email'),
+              validator: (text) {
+                if (text!.isNotEmpty && text.contains('@')) {
+                  return null;
+                } else {
+                  return '정확한 이메일 주소를 입력해주세요.';
+                }
+              },
+            ),
+            SizedBox(height: Constants.commonLGap),
+            TextFormField(
+              controller: _pwController,
+              cursorColor: Colors.black54,
+              obscureText: true,
+              decoration: textInputDecor('Password'),
+            ),
+            SizedBox(height: Constants.commonLGap),
+            _submitBtn(_formKey),
+            SizedBox(height: Constants.commonLGap),
+            Align(
+                alignment: Alignment.centerRight,
+                child: InkWell(
+                    onTap: pageToSignUp,
+                    child: Text(
+                      "회원가입",
+                      style: TextStyle(color: Colors.blue),
+                    ))),
+            Divider(),
+          ],
         ),
       ),
     );
   }
 
-  TextButton _submitBtn(BuildContext context, GlobalKey<FormState> _formKey) {
+  TextButton _submitBtn(GlobalKey<FormState> _formKey) {
     FocusScopeNode currentFocus = FocusScope.of(context);
 
     return TextButton(
@@ -114,4 +129,12 @@ class _LoginInScreenState extends State<LoginInScreen>
       child: Text('로그인', style: TextStyle(color: Colors.black)),
     );
   }
+
+  LoadingWidget _loadingWidget() => LoadingWidget();
+
+  Widget _blackBodyWidget(Size size) => Container(
+        height: size.height,
+        width: size.width,
+        color: Colors.black38,
+      );
 }
