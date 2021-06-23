@@ -53,7 +53,6 @@ class _LoginInScreenState extends State<LoginInScreen>
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: Text("로그인"),
@@ -63,7 +62,7 @@ class _LoginInScreenState extends State<LoginInScreen>
         return Stack(
           children: [
             _loginForm(),
-            if (authState is Loading) _blackBodyWidget(size),
+            if (authState is Loading) _blackBodyWidget(),
             if (authState is Loading) _loadingWidget(),
           ],
         );
@@ -132,9 +131,9 @@ class _LoginInScreenState extends State<LoginInScreen>
 
   LoadingWidget _loadingWidget() => LoadingWidget();
 
-  Widget _blackBodyWidget(Size size) => Container(
-        height: size.height,
-        width: size.width,
+  Widget _blackBodyWidget() => Container(
+        height: double.maxFinite,
+        width: double.maxFinite,
         color: Colors.black38,
       );
 }
