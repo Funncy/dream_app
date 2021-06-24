@@ -24,7 +24,6 @@ class ProfileViewModel extends GetxController {
   Future<void> setProfileImage(
       {required String userId, required File imageFile}) async {
     _setState(Loading());
-    late String imageUrl;
 
     Either<Failure, String> either =
         await _authRepository.setProfileImage(uid: userId, image: imageFile);
@@ -34,7 +33,7 @@ class ProfileViewModel extends GetxController {
       return;
     }
 
-    imageUrl = result as String;
+    late String imageUrl = result as String;
 
     _authViewModel.userUpdate((user) {
       user!.profileImageUrl = imageUrl;

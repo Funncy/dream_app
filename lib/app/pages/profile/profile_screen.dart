@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dream/app/core/state/view_state.dart';
 import 'package:dream/app/data/models/user.dart';
 import 'package:dream/app/pages/common/alert_mixin.dart';
+import 'package:dream/app/pages/common/loading_widget.dart';
 import 'package:dream/app/viewmodels/auth_view_model.dart';
 import 'package:dream/app/viewmodels/profile_view_model.dart';
 import 'package:flutter/material.dart';
@@ -19,20 +20,14 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> with AlertMixin {
   AuthViewModel _authViewModel = Get.find<AuthViewModel>();
+  late UserModel? user = _authViewModel.user;
   ProfileViewModel _profileViewModel = Get.find<ProfileViewModel>();
-  UserModel? user;
   late ImageProvider profileImage;
-
   late File _image;
   final picker = ImagePicker();
 
   @override
   void initState() {
-    _profileViewModel.profileStateStream.listen((state) {
-      if (state is Error) {
-        alertWithFailure(state.failure);
-      }
-    });
     super.initState();
   }
 
@@ -61,73 +56,87 @@ class _ProfileScreenState extends State<ProfileScreen> with AlertMixin {
   setProfileImage(PickedFile? file) async {
     if (file != null) {
       _image = File(file.path);
-      _authViewModel.setProfileImage(imageFile: _image);
+      //TODO: user null 처리 필요
+      _profileViewModel.setProfileImage(imageFile: _image, userId: user!.id);
     }
   }
 
   void signOut() async {
     await _authViewModel.signOut();
-    if (_authViewModel.authState is Loaded) Get.back();
+    if (_authViewModel.signOutState is Loaded) Get.back();
   }
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
     return Scaffold(
         appBar: AppBar(
           title: Text("프로필"),
         ),
         body: Obx(() {
-          UserModel? user = _authViewModel.user;
-          if (user == null) {}
-          return Container(
-            child: Padding(
-              padding: const EdgeInsets.all(30.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  GestureDetector(
-                      onTap: () {
-                        _showPickerBottomSheetWidget(context);
-                      },
-                      child: _profileImage(user!.profileImageUrl)),
-                  SizedBox(
-                    width: size.width,
-                    height: 10,
-                  ),
-                  Text("이름 : ${user.name}"),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text("그룹 : ${user.group}"),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                      "가입일 : ${user.createdAt?.year}-${user.createdAt?.month}-${user.createdAt?.day}"),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  MaterialButton(
-                    onPressed: () {},
-                    child: Text(
-                      "내 정보 수정하기",
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ),
-                  MaterialButton(
-                    onPressed: signOut,
-                    child: Text(
-                      "로그 아웃",
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          ViewState profileState = _profileViewModel.profileState!;
+          //로그아웃 에러용 state
+          ViewState signOutState = _authViewModel.signOutState!;
+          if (profileState is Error) alert(profileState);
+          if (signOutState is Error) alert(signOutState);
+
+          return Stack(
+            children: [
+              _profileBodyWidget(user!),
+              if (profileState is Loading) _blackBodyWidget(),
+              if (profileState is Loading) _loadingWidget(),
+            ],
           );
         }));
+  }
+
+  Container _profileBodyWidget(UserModel user) {
+    return Container(
+      child: Padding(
+        padding: const EdgeInsets.all(30.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            GestureDetector(
+                onTap: () {
+                  _showPickerBottomSheetWidget(context);
+                },
+                child: _profileImage(user.profileImageUrl)),
+            SizedBox(
+              width: double.maxFinite,
+              height: 10,
+            ),
+            Text("이름 : ${user.name}"),
+            SizedBox(
+              height: 10,
+            ),
+            Text("그룹 : ${user.group}"),
+            SizedBox(
+              height: 10,
+            ),
+            Text(
+                "가입일 : ${user.createdAt?.year}-${user.createdAt?.month}-${user.createdAt?.day}"),
+            SizedBox(
+              height: 10,
+            ),
+            MaterialButton(
+              onPressed: () {},
+              child: Text(
+                "내 정보 수정하기",
+                style: TextStyle(fontSize: 20),
+              ),
+            ),
+            MaterialButton(
+              onPressed: signOut,
+              child: Text(
+                "로그 아웃",
+                style: TextStyle(fontSize: 20),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Stack _profileImage(String? imageUrl) {
@@ -185,4 +194,12 @@ class _ProfileScreenState extends State<ProfileScreen> with AlertMixin {
           );
         });
   }
+
+  LoadingWidget _loadingWidget() => LoadingWidget();
+
+  Widget _blackBodyWidget() => Container(
+        height: double.maxFinite,
+        width: double.maxFinite,
+        color: Colors.black38,
+      );
 }
