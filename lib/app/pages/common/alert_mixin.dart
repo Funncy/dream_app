@@ -1,10 +1,13 @@
 import 'package:dream/app/core/error/failure.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import '../../core/state/view_state.dart';
 
 mixin AlertMixin<T extends StatefulWidget> on State<T> {
-  void alertWithString(String title, String content) {
-    showAlert(title: title, content: content);
+  void alert(Error state) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      alertWithFailure(state.failure);
+    });
   }
 
   void alertWithFailure(Failure? failure) {
