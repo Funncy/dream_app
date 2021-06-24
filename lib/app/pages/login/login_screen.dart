@@ -25,9 +25,6 @@ class _LoginInScreenState extends State<LoginInScreen>
 
   @override
   void initState() {
-    _authViewModel.authStateStream.listen((state) {
-      if (state is Error) alertWithFailure(state.failure);
-    });
     super.initState();
   }
 
@@ -51,6 +48,12 @@ class _LoginInScreenState extends State<LoginInScreen>
     Get.toNamed(SignUpScreen.routeName);
   }
 
+  void alert(Error state) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      alertWithFailure(state.failure);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,12 +61,13 @@ class _LoginInScreenState extends State<LoginInScreen>
         title: Text("로그인"),
       ),
       body: Obx(() {
-        ViewState authState = _authViewModel.authState!;
+        ViewState loginState = _authViewModel.loginState!;
+        if (loginState is Error) alert(loginState);
         return Stack(
           children: [
             _loginForm(),
-            if (authState is Loading) _blackBodyWidget(),
-            if (authState is Loading) _loadingWidget(),
+            if (loginState is Loading) _blackBodyWidget(),
+            if (loginState is Loading) _loadingWidget(),
           ],
         );
       }),
