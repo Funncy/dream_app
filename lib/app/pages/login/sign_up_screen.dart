@@ -36,9 +36,9 @@ class _SignUpScreenState extends State<SignUpScreen>
 
   @override
   void initState() {
-    _authViewModel.authStateStream.listen((state) {
-      if (state is Error) alertWithFailure(state.failure);
-    });
+    // _authViewModel.authStateStream.listen((state) {
+    //   if (state is Error) alertWithFailure(state.failure);
+    // });
     super.initState();
   }
 
@@ -59,10 +59,16 @@ class _SignUpScreenState extends State<SignUpScreen>
           password: _pwController.text,
           name: _nameController.text,
           group: _groupName);
-      if (_authViewModel.authState is Loaded) {
+      if (_authViewModel.loginState is Loaded) {
         Get.back();
       }
     }
+  }
+
+  void alert(Error state) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      alertWithFailure(state.failure);
+    });
   }
 
   @override
@@ -72,12 +78,14 @@ class _SignUpScreenState extends State<SignUpScreen>
         title: Text("회원 가입"),
       ),
       body: Obx(() {
-        var authState = _authViewModel.authState;
+        ViewState signUpState = _authViewModel.signUpState!;
+        if (signUpState is Error) alert(signUpState);
+
         return Stack(
           children: [
             _signUpFormWidget(),
-            if (authState is Loading) _blackBodyWidget(),
-            if (authState is Loading) _loadingWidget(),
+            if (signUpState is Loading) _blackBodyWidget(),
+            if (signUpState is Loading) _loadingWidget(),
           ],
         );
       }),
