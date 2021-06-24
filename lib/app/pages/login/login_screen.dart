@@ -48,12 +48,6 @@ class _LoginInScreenState extends State<LoginInScreen>
     Get.toNamed(SignUpScreen.routeName);
   }
 
-  void alert(Error state) {
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      alertWithFailure(state.failure);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

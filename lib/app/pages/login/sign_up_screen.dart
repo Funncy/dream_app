@@ -65,12 +65,6 @@ class _SignUpScreenState extends State<SignUpScreen>
     }
   }
 
-  void alert(Error state) {
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      alertWithFailure(state.failure);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
