@@ -16,17 +16,20 @@ enum FireAuthState {
 
 class AuthViewModel extends GetxController {
   late AuthRepository _authRepository;
-
-  Rxn<ViewState?> _authState = Rxn<ViewState?>(Initial());
-
+  //화면용 상태
+  Rxn<ViewState?> _loginState = Rxn<ViewState?>(Initial());
+  Rxn<ViewState?> _signUpState = Rxn<ViewState?>(Initial());
+  Rxn<ViewState?> _signOutState = Rxn<ViewState?>(Initial());
+  //root Page용 firebase auth 로그인 상태
   Rxn<FireAuthState?> _fireauthStatus =
       Rxn<FireAuthState?>(FireAuthState.loading);
-  FireAuthState? get fireauthState => _fireauthStatus.value;
-  ViewState? get authState => _authState.value;
-  Stream<ViewState?> get authStateStream => _authState.stream;
 
+  FireAuthState? get fireauthState => _fireauthStatus.value;
+  ViewState? get loginState => _loginState.value;
+  ViewState? get signUpState => _signUpState.value;
+  ViewState? get signOutState => _signOutState.value;
+  //Firebase통해서 들어오는 유저 데이터
   Rxn<UserModel> _user = Rxn<UserModel>();
-  // Rxn<User> _firebaseUser = Rxn<User>();
   UserModel? get user => _user.value;
 
   AuthViewModel({required authRepository}) {
@@ -59,18 +62,18 @@ class AuthViewModel extends GetxController {
 
   Future<void> signInWithEmail(
       {required String email, required String password}) async {
-    _setState(Loading());
+    _setState(_loginState, Loading());
 
     Either<Failure, UserModel> either =
         await _authRepository.signInWithEmail(email, password);
     var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
-      _setState(Error(result as Failure));
+      _setState(_loginState, Error(result as Failure));
       return;
     }
 
     _user.value = result as UserModel;
-    _setState(Loaded());
+    _setState(_loginState, Loaded());
   }
 
   Future<void> signUpWithEmail(
@@ -78,55 +81,35 @@ class AuthViewModel extends GetxController {
       required String password,
       required String name,
       required String group}) async {
-    _setState(Loading());
+    _setState(_signUpState, Loading());
     Either<Failure, UserModel> either = await _authRepository.signUpWithEmail(
         email: email, password: password, name: name, group: group);
     var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
-      _setState(Error(result as Failure));
+      _setState(_signUpState, Error(result as Failure));
       return;
     }
 
     _user.value = result as UserModel;
-    _setState(Loaded());
+    _setState(_signUpState, Loaded());
   }
 
   Future<void> signOut() async {
-    _setState(Loading());
+    _setState(_signOutState, Loading());
     Either<Failure, void> either = await _authRepository.signOut();
     var result = either.fold((l) => l, (r) => r);
     if (either.isLeft()) {
-      _setState(Error(result as Failure));
+      _setState(_signOutState, Error(result as Failure));
       return;
     }
-    _setState(Loaded());
-  }
-
-  Future<void> setProfileImage({required File imageFile}) async {
-    _setState(Loading());
-    late String imageUrl;
-
-    Either<Failure, String> either =
-        await _authRepository.setProfileImage(uid: user!.id, image: imageFile);
-    var result = either.fold((l) => l, (r) => r);
-    if (either.isLeft()) {
-      _setState(Error(result as Failure));
-      return;
-    }
-
-    imageUrl = result as String;
-
-    _user.update((user) {
-      user!.profileImageUrl = imageUrl;
-    });
-    _setState(Loaded());
+    _setState(_signOutState, Loaded());
   }
 
   void userUpdate(Function(UserModel?) update) {
     _user.update(update);
   }
 
-  _setState(ViewState state) {
-    _authState.value = state;
+  _setState(Rxn authState, ViewState state) {
+    authState.value = state;
   }
 }
