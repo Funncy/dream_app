@@ -24,10 +24,7 @@ class _PrayListScreenState extends State<PrayListScreen> with AlertMixin {
   @override
   void initState() {
     super.initState();
-    prayListViewModel.listStateStream.listen((state) {
-      if (state is Error) alertWithFailure(state.failure);
-    });
-    //build후에 함수 실행
+    //무한 스크롤
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _scrollController.addListener(() {
         if (_scrollController.position.pixels ==
@@ -61,8 +58,10 @@ class _PrayListScreenState extends State<PrayListScreen> with AlertMixin {
                   getState: () => prayListViewModel.listState,
                   builder: (context, snapshot) {
                     return Obx(() {
-                      var dataStatus = prayListViewModel.listState;
+                      ViewState prayListState = prayListViewModel.listState!;
                       List<PrayModel> prayList = prayListViewModel.prayList;
+
+                      if (prayListState is Error) alert(prayListState);
 
                       if (prayList.length == 0) {
                         //Empty Widget
@@ -72,7 +71,7 @@ class _PrayListScreenState extends State<PrayListScreen> with AlertMixin {
                       return Stack(
                         children: [
                           _bodyWidget(prayList),
-                          if (dataStatus is Loading) _loadingWidget(),
+                          if (prayListState is Loading) _loadingWidget(),
                         ],
                       );
                     });
