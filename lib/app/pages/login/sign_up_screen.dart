@@ -36,9 +36,6 @@ class _SignUpScreenState extends State<SignUpScreen>
 
   @override
   void initState() {
-    // _authViewModel.authStateStream.listen((state) {
-    //   if (state is Error) alertWithFailure(state.failure);
-    // });
     super.initState();
   }
 
@@ -59,9 +56,7 @@ class _SignUpScreenState extends State<SignUpScreen>
           password: _pwController.text,
           name: _nameController.text,
           group: _groupName);
-      if (_authViewModel.loginState is Loaded) {
-        Get.back();
-      }
+      if (_authViewModel.loginState is Loaded) Get.back();
     }
   }
 
