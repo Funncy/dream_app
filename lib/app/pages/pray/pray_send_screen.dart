@@ -18,9 +18,6 @@ class _PraySendScreenState extends State<PraySendScreen> with AlertMixin {
 
   @override
   void initState() {
-    prayViewModel.sendStateStream.listen((state) {
-      if (state is Error) alertWithFailure(state.failure);
-    });
     super.initState();
   }
 
@@ -30,11 +27,11 @@ class _PraySendScreenState extends State<PraySendScreen> with AlertMixin {
         title: titleController.text,
         content: contentController.text,
         isPublic: isPublic);
-
-    if (prayViewModel.sendState is Loaded) {
+    ViewState sendState = prayViewModel.sendState!;
+    if (sendState is Loaded)
       //전송 완료 뒤로가기
       Get.back();
-    }
+    else if (sendState is Error) alert(sendState);
   }
 
   @override
