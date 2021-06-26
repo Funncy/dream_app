@@ -23,18 +23,11 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> with AlertMixin {
   final ScrollController _scrollController = ScrollController();
   final NoticeViewModel noticeViewModel = Get.find<NoticeViewModel>();
   final AuthViewModel authViewModel = Get.find<AuthViewModel>();
-  String? profileImageUrl;
 
   @override
   void initState() {
     super.initState();
     //build후에 함수 실행
-    profileImageUrl = authViewModel.user?.profileImageUrl;
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      noticeViewModel.noticeStateStream.listen((state) {
-        if (state is Error) alertWithFailure(state.failure);
-      });
-    });
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _scrollController.addListener(() {
         if (_scrollController.position.pixels ==
@@ -68,9 +61,11 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> with AlertMixin {
                     getState: () => noticeViewModel.noticeState,
                     builder: (context, snapshot) {
                       return Obx(() {
-                        var dataStatus = noticeViewModel.noticeState;
+                        ViewState noticeState = noticeViewModel.noticeState!;
                         List<NoticeModel> noticeList =
                             noticeViewModel.noticeList;
+
+                        if (noticeState is Error) alert(noticeState);
 
                         if (noticeList.length == 0) {
                           //Empty Widget
@@ -80,7 +75,7 @@ class _NoticeBodyScreenState extends State<NoticeBodyScreen> with AlertMixin {
                         return Stack(
                           children: [
                             _bodyWidget(noticeList),
-                            if (dataStatus is Loading) _loadingWidget(),
+                            if (noticeState is Loading) _loadingWidget(),
                           ],
                         );
                       });

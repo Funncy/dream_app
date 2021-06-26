@@ -38,11 +38,6 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
   void initState() {
     super.initState();
     //댓글 추가 이후 스크롤 내리기
-    commentViewModel.commentStateStream.listen((state) {
-      if (state is Error) {
-        alertWithFailure(state.failure);
-      }
-    });
     commentViewModel.commentStateStream.reduce(scrollAnimatorByStatus);
   }
 
@@ -126,8 +121,11 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
                         getState: () => commentViewModel.commentState,
                         builder: (context, snapshot) {
                           return Obx(() {
-                            var dataStatus = commentViewModel.commentState;
+                            ViewState commentState =
+                                commentViewModel.commentState!;
                             var commentList = commentViewModel.commentList;
+
+                            if (commentState is Error) alert(commentState);
 
                             return Stack(
                               children: [
@@ -144,7 +142,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
                                     _bodyWidget(commentList),
                                   ],
                                 ),
-                                if (dataStatus is Loading) _loadingWidget(),
+                                if (commentState is Loading) _loadingWidget(),
                               ],
                             );
                           });

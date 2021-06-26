@@ -36,12 +36,6 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> with AlertMixin {
     super.initState();
     //id에 해당하는 댓글 존재 확인
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      // replyViewModel.isExistCommentById(commentId: widget.commentId);
-
-      replyViewModel.replyStateStream.listen((state) {
-        if (state is Error) alertWithFailure(state.failure);
-      });
-
       //새로운 답글 추가시 아래 스크롤 애니메이션
       debounce(replyViewModel.rxReplyState, (_) {
         if (replyViewModel.replyState is Loaded) {
@@ -116,14 +110,16 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> with AlertMixin {
                         getState: () => commentViewModel.commentState,
                         builder: (context, snapshot) {
                           return Obx(() {
-                            var dataStatus = replyViewModel.replyState;
+                            ViewState replyState = replyViewModel.replyState!;
                             var comment = commentViewModel.commentList
                                 .firstWhere((e) => e!.id == widget.commentId);
+
+                            if (replyState is Error) alert(replyState);
 
                             return Stack(
                               children: [
                                 _commentBody(comment),
-                                if (dataStatus is Loading) _loadingWidget(),
+                                if (replyState is Loading) _loadingWidget(),
                               ],
                             );
                           });

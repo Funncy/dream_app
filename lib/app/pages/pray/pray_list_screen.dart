@@ -24,7 +24,11 @@ class _PrayListScreenState extends State<PrayListScreen> with AlertMixin {
   @override
   void initState() {
     super.initState();
+<<<<<<< HEAD
     //build후에 함수 실행
+=======
+    //무한 스크롤
+>>>>>>> 892fb6f4f1f2db0815f5f46ef08c27a1788b56e1
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _scrollController.addListener(() {
         if (_scrollController.position.pixels ==
@@ -58,10 +62,17 @@ class _PrayListScreenState extends State<PrayListScreen> with AlertMixin {
                   getState: () => prayListViewModel.listState,
                   builder: (context, snapshot) {
                     return Obx(() {
+<<<<<<< HEAD
                       ViewState listState = prayListViewModel.listState!;
                       List<PrayModel> prayList = prayListViewModel.prayList;
 
                       if (listState is Error) alert(listState);
+=======
+                      ViewState prayListState = prayListViewModel.listState!;
+                      List<PrayModel> prayList = prayListViewModel.prayList;
+
+                      if (prayListState is Error) alert(prayListState);
+>>>>>>> 892fb6f4f1f2db0815f5f46ef08c27a1788b56e1
 
                       if (prayList.length == 0) {
                         //Empty Widget
@@ -71,7 +82,11 @@ class _PrayListScreenState extends State<PrayListScreen> with AlertMixin {
                       return Stack(
                         children: [
                           _bodyWidget(prayList),
+<<<<<<< HEAD
                           if (listState is Loading) _loadingWidget(),
+=======
+                          if (prayListState is Loading) _loadingWidget(),
+>>>>>>> 892fb6f4f1f2db0815f5f46ef08c27a1788b56e1
                         ],
                       );
                     });
