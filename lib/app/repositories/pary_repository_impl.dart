@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
+import 'package:dream/app/core/constants/constants.dart';
 import 'package:dream/app/core/error/failure.dart';
 import 'package:dream/app/core/error/server_failure.dart';
 import 'package:dream/app/data/models/pray.dart';
@@ -54,9 +55,11 @@ class PrayRepositoryImpl extends PrayRepository {
       var model = PrayModel(userId: userId, title: title, content: content);
       CollectionReference collectionReference;
       if (isPublic!) {
-        collectionReference = _firebaseFirestore.collection('public_pray');
+        collectionReference =
+            _firebaseFirestore.collection(publicPrayCollectionName);
       } else {
-        collectionReference = _firebaseFirestore.collection('private_pray');
+        collectionReference =
+            _firebaseFirestore.collection(privatePrayCollectionName);
       }
       collectionReference.add(model.toJson());
       return Right(null);
