@@ -6,13 +6,15 @@ class PrayModel extends Core {
   String? userId;
   String? title;
   String? content;
-  List<String>? prayUserList;
+  List<String> prayUserList;
+  int commentCount;
   DocumentReference? documentReference;
 
   PrayModel(
       {required this.userId,
       required this.title,
       required this.content,
+      this.commentCount = 0,
       this.prayUserList = const []})
       : super(DateTime.now(), DateTime.now());
 
@@ -22,6 +24,7 @@ class PrayModel extends Core {
       userId: json['user_id'],
       title: json['title'],
       content: json['content'],
+      commentCount: json['commentCount'],
       prayUserList: json['pray_user_list']?.cast<String>()?.toList(),
     );
     model.id = documentSnapshot.id;
@@ -36,6 +39,7 @@ class PrayModel extends Core {
         'title': title,
         'content': content,
         'pray_user_list': prayUserList,
+        'comment_count': commentCount,
         'created_at': createdAt,
         'updated_at': updatedAt,
       };
