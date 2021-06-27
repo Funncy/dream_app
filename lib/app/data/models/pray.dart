@@ -24,7 +24,7 @@ class PrayModel extends Core {
       userId: json['user_id'],
       title: json['title'],
       content: json['content'],
-      commentCount: json['commentCount'],
+      commentCount: json['comment_count'],
       prayUserList: json['pray_user_list']?.cast<String>()?.toList(),
     );
     model.id = documentSnapshot.id;
