@@ -48,6 +48,26 @@ class PrayRepositoryImpl extends PrayRepository {
     }
   }
 
+  Future<Either<Failure, void>> togglePrayFavorite(
+      {required String prayId,
+      required String userId,
+      required bool isDelete}) async {
+    try {
+      FieldValue fieldValue;
+      if (isDelete)
+        fieldValue = FieldValue.arrayRemove([userId]);
+      else
+        fieldValue = FieldValue.arrayUnion([userId]);
+      _firebaseFirestore
+          .collection(publicPrayCollectionName)
+          .doc(prayId)
+          .update({'pray_user_list': fieldValue});
+      return Right(null);
+    } catch (e) {
+      return Left(ServerFailure(code: e.toString()));
+    }
+  }
+
   @override
   Future<Either<Failure, void>> sendPray(
       String userId, String title, String content, bool? isPublic) async {

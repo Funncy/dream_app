@@ -13,4 +13,6 @@ abstract class PrayRepository {
   Future<Either<Failure, List<PrayModel>?>> initPublicPrayList();
   Future<Either<Failure, List<PrayModel>?>> getMorePublicPrayList(
       DocumentReference? documentReference);
+  Future<Either<Failure, void>> togglePrayFavorite(
+      {required String prayId, required String userId, required bool isDelete});
 }
