@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dream/app/repositories/pary_repository_impl.dart';
+import 'package:dream/app/repositories/pray_repository_impl.dart';
 import 'package:dream/app/viewmodels/pray_list_view_model.dart';
 import 'package:dream/app/viewmodels/pray_send_view_model.dart';
 import 'package:get/get.dart';
