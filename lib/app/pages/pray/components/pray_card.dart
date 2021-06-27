@@ -1,15 +1,18 @@
 import 'package:dream/app/core/constants/constants.dart';
 import 'package:dream/app/core/utils/time_util.dart';
 import 'package:dream/app/data/models/pray.dart';
+import 'package:dream/app/viewmodels/pray_list_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 class PrayCard extends StatelessWidget {
   final PrayModel prayModel;
   //TODO: 실제 유저 아이디로 변경해야함.
   final String userId = '123';
+  final PrayListViewModel _prayListViewModel = Get.find<PrayListViewModel>();
 
-  const PrayCard({Key? key, required this.prayModel}) : super(key: key);
+  PrayCard({Key? key, required this.prayModel}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -58,30 +61,30 @@ class PrayCard extends StatelessWidget {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      // prayViewModel.toggleNoticeFavorite(
-                      //     noticeId: prayModel.id, userId: userId);
+                      _prayListViewModel.togglePrayFavorite(
+                          prayId: prayModel.id!, userId: userId);
                     },
                     behavior: HitTestBehavior.opaque,
                     child: Row(
                       children: [
                         //TODO: PrayMOdel에 favorite기능 넣어야함 (용어를 prayUserList로 바꿔서)
-                        // if (prayModel.favoriteUserList
-                        //     .where((u) => u == userId)
-                        //     .isNotEmpty)
-                        //   Icon(
-                        //     Icons.favorite,
-                        //     color: Constants.favoriteAndCommentColor,
-                        //   )
-                        // else
-                        Icon(
-                          Icons.favorite_border,
-                          color: Constants.favoriteAndCommentColor,
-                        ),
+                        if (prayModel.prayUserList
+                            .where((u) => u == userId)
+                            .isNotEmpty)
+                          Icon(
+                            Icons.favorite,
+                            color: Constants.favoriteAndCommentColor,
+                          )
+                        else
+                          Icon(
+                            Icons.favorite_border,
+                            color: Constants.favoriteAndCommentColor,
+                          ),
                         Container(
                           width: 5.w,
                         ),
-                        // Text("좋아요 ${prayModel.favoriteUserList.length ?? ""}",
-                        //     style: Theme.of(context).textTheme.bodyText2)
+                        Text("좋아요 ${prayModel.prayUserList.length}",
+                            style: Theme.of(context).textTheme.bodyText2)
                       ],
                     ),
                   ),
@@ -95,10 +98,10 @@ class PrayCard extends StatelessWidget {
                       SizedBox(
                         width: 5.w,
                       ),
-                      // Text(
-                      //     //TODO: NULL처리 해줘야함.
-                      //     '댓글 ${prayModel.commentCount < 1 ? '쓰기' : prayModel.commentCount}',
-                      //     style: Theme.of(context).textTheme.bodyText2)
+                      Text(
+                          //TODO: NULL처리 해줘야함.
+                          '댓글 ${prayModel.commentCount < 1 ? '쓰기' : prayModel.commentCount}',
+                          style: Theme.of(context).textTheme.bodyText2)
                     ],
                   )
                 ],
