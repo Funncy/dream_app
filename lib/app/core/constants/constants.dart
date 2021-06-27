@@ -24,6 +24,8 @@ const String commentCollectionName = 'comment';
 const String replyCollectionName = 'notice_reply';
 const String noticeColumnName = 'notice_id';
 const String favoriteCollectionName = 'favorite_list';
+const String publicPrayCollectionName = 'public_pray';
+const String privatePrayCollectionName = 'private_pray';
 
 //Firebase Storage URL
 const String noticeImagePath = '/notice';
