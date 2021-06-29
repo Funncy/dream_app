@@ -37,14 +37,14 @@ class PrayCommentViewModel extends GetxController {
     _setState(Loading());
     //댓글 작성
     Either<Failure, void> either = await _prayCommentRepository.writeComment(
-        noticeId: prayModel.id, userId: userId, content: content);
+        prayId: prayModel.id!, userId: userId, content: content);
     either.fold((l) {
       _setState(Error(l));
     }, (r) => r);
     if (either.isLeft()) return;
     //카운트 증가
     //TODO: 추후에는 CloudFunction으로
-    either = await _prayRepository.updateCommentCount(noticeId: prayModel.id);
+    either = await _prayRepository.updateCommentCount(prayId: prayModel.id!);
     either.fold((l) {
       _setState(Error(l));
     }, (r) => r);
@@ -52,7 +52,7 @@ class PrayCommentViewModel extends GetxController {
 
     //댓글 리로드
     Either<Failure, List<CommentModel>> either2 =
-        await _prayCommentRepository.getCommentList(noticeId: prayModel.id);
+        await _prayCommentRepository.getCommentList(prayId: prayModel.id!);
     var result = either2.fold((l) => l, (r) => r);
 
     if (either.isLeft()) {
@@ -64,7 +64,7 @@ class PrayCommentViewModel extends GetxController {
     commentList.addAll(result as Iterable<CommentModel?>);
 
     //공지사항 댓글 카운트 증가 (로컬)
-    int commentCount = prayModel.commentCount!;
+    int commentCount = prayModel.commentCount;
     prayModel.commentCount = commentCount + 1;
 
     _setState(Loaded());
@@ -73,7 +73,7 @@ class PrayCommentViewModel extends GetxController {
   Future<void> getCommentList({required String? prayId}) async {
     _setState(Loading());
     Either<Failure, List<CommentModel>> either =
-        await _prayCommentRepository.getCommentList(prayId: prayId);
+        await _prayCommentRepository.getCommentList(prayId: prayId!);
     var result = either.fold((l) => l, (r) => r);
 
     if (either.isLeft()) {
@@ -91,7 +91,7 @@ class PrayCommentViewModel extends GetxController {
     _setState(Loading());
     //댓글 삭제 server
     Either<Failure, void> either = await _prayCommentRepository.deleteComment(
-        noticeId: prayModel.id, commentId: commentId);
+        prayId: prayModel.id!, commentId: commentId);
     either.fold((l) {
       _setState(Error(l));
     }, (r) => r);
@@ -100,7 +100,7 @@ class PrayCommentViewModel extends GetxController {
     commentList.removeWhere((e) => e!.id == commentId);
     //댓글 카운트 수정 server
     either = await _prayRepository.updateCommentCount(
-        noticeId: prayModel.id, isIncreasement: false);
+        prayId: prayModel.id!, isIncreasement: false);
     either.fold((l) {
       _setState(Error(l));
     }, (r) => r);
@@ -136,8 +136,8 @@ class PrayCommentViewModel extends GetxController {
     // 좋아요 토글 서버
     Either<Failure, void> either =
         await _prayCommentRepository.toggleCommentFavorite(
-            prayId: prayId,
-            commentId: commentId,
+            prayId: prayId!,
+            commentId: commentId!,
             userId: userId,
             isDelete: !isExist);
     either.fold((l) {
