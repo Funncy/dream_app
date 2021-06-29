@@ -1,6 +1,7 @@
 import 'package:dream/app/pages/bindings/profile_bindins.dart';
 import 'package:dream/app/pages/login/sign_up_screen.dart';
 import 'package:dream/app/pages/notice_detail/notice_detail_screen.dart';
+import 'package:dream/app/pages/pray/pray_detail_screen.dart';
 import 'package:dream/app/pages/pray/pray_send_screen.dart';
 import 'package:dream/app/pages/profile/profile_screen.dart';
 import 'package:dream/app/pages/root_screen.dart';
@@ -64,6 +65,10 @@ class MyApp extends StatelessWidget {
               name: ProfileScreen.routeName,
               page: () => ProfileScreen(),
               binding: ProfileBindins()),
+          GetPage(
+              name: PrayDetailScreen.routeName,
+              page: () => PrayDetailScreen(),
+              binding: PrayBindings()),
         ],
       ),
     );
