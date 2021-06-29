@@ -95,7 +95,7 @@ class ReplyViewModel extends GetxController {
     Either<Failure, CommentModel?> either2 = await _commentRepository
         .getCommentById(noticeId: noticeId, commentId: commentId);
     var result = either2.fold((l) => l, (r) => r);
-    if (either.isLeft()) {
+    if (either2.isLeft()) {
       _setState(Error(result as Failure));
       return;
     }
@@ -174,7 +174,7 @@ class ReplyViewModel extends GetxController {
     Either<Failure, CommentModel?> either2 = await _commentRepository
         .getCommentById(noticeId: noticeId, commentId: commentId);
     var result = either2.fold((l) => l, (r) => r);
-    if (either.isLeft()) {
+    if (either2.isLeft()) {
       _setState(Error(result as Failure));
       return;
     }
