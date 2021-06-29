@@ -87,4 +87,38 @@ class PrayRepositoryImpl extends PrayRepository {
       return Left(ServerFailure(code: e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> updateCommentCount(
+      {required String prayId, bool isIncreasement = true}) async {
+    try {
+      late int count;
+      if (isIncreasement)
+        count = 1;
+      else
+        count = -1;
+      //notice doc에서 commentCount 증가
+      DocumentReference documentReference =
+          _firebaseFirestore.collection(publicPrayCollectionName).doc(prayId);
+      await _firebaseFirestore.runTransaction((transaction) async {
+        DocumentSnapshot snapshot = await transaction.get(documentReference);
+
+        if (!snapshot.exists) {
+          throw Exception("Comment does not exist!");
+        }
+
+        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+
+        int? newCommentCount = (data['comment_count'] as int) + count;
+
+        transaction
+            .update(documentReference, {'comment_count': newCommentCount});
+
+        return newCommentCount;
+      });
+      return Right(null);
+    } catch (e) {
+      return Left(ServerFailure(code: e.toString()));
+    }
+  }
 }

@@ -15,4 +15,6 @@ abstract class PrayRepository {
       DocumentReference? documentReference);
   Future<Either<Failure, void>> togglePrayFavorite(
       {required String prayId, required String userId, required bool isDelete});
+  Future<Either<Failure, void>> updateCommentCount(
+      {required String prayId, bool isIncreasement = true});
 }
