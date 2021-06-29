@@ -121,7 +121,7 @@ class _PrayCommentState extends State<PrayComment> {
                             onTap: () {
                               //TODO: 댓글 좋아요 => userId 수정해야함.
                               commentViewModel.toggleCommentFavorite(
-                                  prayId: widget.prayId,
+                                  prayId: widget.id,
                                   commentId: widget.commentModel!.id,
                                   userId: '123');
                             },
@@ -149,7 +149,7 @@ class _PrayCommentState extends State<PrayComment> {
                         onTap: () {
                           //TODO: 댓글 좋아요 => userId 수정해야함.
                           commentViewModel.toggleCommentFavorite(
-                              prayId: widget.prayId,
+                              prayId: widget.id,
                               commentId: widget.commentModel!.id,
                               userId: '123');
                           if (widget.isReplyScreen == true) {

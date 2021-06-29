@@ -108,7 +108,7 @@ class _PrayDetailScreenState extends State<PrayDetailScreen> with AlertMixin {
                 child: SingleChildScrollView(
                     controller: _scrollController,
                     child: ViewModelBuilder(
-                        init: commentViewModel.getCommentList(id: pray!.id),
+                        init: commentViewModel.getCommentList(prayId: pray!.id),
                         errorWidget: _errorWidget(),
                         loadingWidget: _loadingWidget(),
                         getState: () => commentViewModel.commentState,
