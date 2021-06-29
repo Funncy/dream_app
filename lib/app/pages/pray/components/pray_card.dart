@@ -10,18 +10,19 @@ class PrayCard extends StatelessWidget {
   final PrayModel prayModel;
   //TODO: 실제 유저 아이디로 변경해야함.
   final String userId = '123';
+  final bool isCommentScreen;
   final PrayListViewModel _prayListViewModel = Get.find<PrayListViewModel>();
 
-  PrayCard({Key? key, required this.prayModel}) : super(key: key);
+  PrayCard({Key? key, required this.prayModel, this.isCommentScreen = false})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
     //시간 로드
     var date =
         TimeUtil.getDateString(prayModel.updatedAt ?? prayModel.createdAt!);
 
     String content = prayModel.content!;
-    if (content.length > 80) {
+    if (isCommentScreen) if (content.length > 80) {
       content = content.substring(0, 80);
       content += "....";
     }
