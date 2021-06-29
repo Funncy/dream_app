@@ -108,7 +108,11 @@ class _PrayListScreenState extends State<PrayListScreen> with AlertMixin {
         itemCount: prayList.length,
         itemBuilder: (context, index) {
           return GestureDetector(
-              onTap: () async {},
+              onTap: () async {
+                await Get.toNamed('/pray_detail', arguments: prayList[index]);
+
+                refreshPrayList();
+              },
               child: Column(
                 children: [
                   PrayCard(prayModel: prayList[index]),

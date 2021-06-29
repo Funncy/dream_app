@@ -17,6 +17,7 @@ import 'components/bottom_input_bar.dart';
 import 'components/pray_comment.dart';
 
 class PrayDetailScreen extends StatefulWidget {
+  static final routeName = '/pray_detail';
   const PrayDetailScreen({Key? key}) : super(key: key);
 
   @override
@@ -35,7 +36,7 @@ class _PrayDetailScreenState extends State<PrayDetailScreen> with AlertMixin {
   void initState() {
     super.initState();
     //댓글 추가 이후 스크롤 내리기
-    // commentViewModel.commentStateStream.reduce(scrollAnimatorByStatus);
+    commentViewModel.commentStateStream.reduce(scrollAnimatorByStatus);
   }
 
   ViewState? scrollAnimatorByStatus(ViewState? preStatus, ViewState? status) {
@@ -55,39 +56,35 @@ class _PrayDetailScreenState extends State<PrayDetailScreen> with AlertMixin {
 
   void inputComment() {
     //TODO: uid 연동해야함.
-    // commentViewModel.writeComment(
-    //     noticeModel: notice!,
-    //     userId: '123',
-    //     content: _textEditingController.text);
-    // _textEditingController.text = '';
+    commentViewModel.writeComment(
+        prayModel: pray!, userId: '123', content: _textEditingController.text);
+    _textEditingController.text = '';
   }
 
   void deleteComment(String commentId) {
-    // showAlert(
-    //     title: '댓글 삭제',
-    //     content: '정말 댓글을 삭제하시겠습니까?',
-    //     isFunction: true,
-    //     function: () async {
-    //       await commentViewModel.deleteComment(
-    //           noticeModel: notice!, commentId: commentId);
-    //       commentViewModel.refresh();
-    //       replyViewModel.refresh();
-    //     });
+    showAlert(
+        title: '댓글 삭제',
+        content: '정말 댓글을 삭제하시겠습니까?',
+        isFunction: true,
+        function: () async {
+          await commentViewModel.deleteComment(
+              prayModel: pray!, commentId: commentId);
+          commentViewModel.refresh();
+          replyViewModel.refresh();
+        });
   }
 
   void deleteReply(String commentId, ReplyModel replyModel) {
-    // showAlert(
-    //     title: '답글 삭제',
-    //     content: '정말 답글을 삭제하시겠습니까?',
-    //     isFunction: true,
-    //     function: () async {
-    //       await replyViewModel.deleteReply(
-    //           noticeId: notice!.id,
-    //           commentId: commentId,
-    //           replyModel: replyModel);
-    //       commentViewModel.refresh();
-    //       replyViewModel.refresh();
-    //     });
+    showAlert(
+        title: '답글 삭제',
+        content: '정말 답글을 삭제하시겠습니까?',
+        isFunction: true,
+        function: () async {
+          await replyViewModel.deleteReply(
+              prayId: pray!.id, commentId: commentId, replyModel: replyModel);
+          commentViewModel.refresh();
+          replyViewModel.refresh();
+        });
   }
 
   @override
