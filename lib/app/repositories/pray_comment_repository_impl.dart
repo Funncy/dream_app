@@ -102,7 +102,7 @@ class PrayCommentRepositoryImpl implements PrayCommentRepository {
           .collection(publicPrayCollectionName)
           .doc(prayId)
           .collection(commentCollectionName)
-          .doc(commentId + 'qweqwe')
+          .doc(commentId)
           .delete();
 
       return Right(null);

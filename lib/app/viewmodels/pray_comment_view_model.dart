@@ -108,7 +108,7 @@ class PrayCommentViewModel extends GetxController {
     //댓글 카운트 수정 local
     int commentCount = prayModel.commentCount;
     prayModel.commentCount = commentCount - 1;
-    if (prayModel.commentCount == 0) prayModel.commentCount = 0;
+    if (prayModel.commentCount < 0) prayModel.commentCount = 0;
     _setState(Loaded());
   }
 
