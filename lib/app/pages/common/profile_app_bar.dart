@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dream/app/data/models/user.dart';
 import 'package:dream/app/pages/profile/profile_screen.dart';
 import 'package:dream/app/viewmodels/auth_view_model.dart';
@@ -20,7 +21,7 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
     if (imageUrl == null) {
       result = AssetImage('assets/images/test-img.jpeg');
     } else {
-      result = NetworkImage(imageUrl);
+      result = CachedNetworkImageProvider(imageUrl);
     }
     return result;
   }
