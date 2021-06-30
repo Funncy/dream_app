@@ -30,7 +30,6 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> with AlertMixin {
   CommentViewModel commentViewModel = Get.find<CommentViewModel>();
   final TextEditingController _textEditingController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  late StreamSubscription alertSubscription;
   @override
   void initState() {
     super.initState();
@@ -50,7 +49,6 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> with AlertMixin {
 
   @override
   void dispose() {
-    alertSubscription.cancel();
     super.dispose();
   }
 
