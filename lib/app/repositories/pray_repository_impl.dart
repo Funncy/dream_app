@@ -17,7 +17,7 @@ class PrayRepositoryImpl extends PrayRepository {
   Future<Either<Failure, List<PrayModel>?>> initPublicPrayList() async {
     try {
       var querySnapshot = await _firebaseFirestore
-          .collection('public_pray')
+          .collection(publicPrayCollectionName)
           .orderBy('updated_at')
           .limit(5)
           .get();
@@ -35,7 +35,7 @@ class PrayRepositoryImpl extends PrayRepository {
     try {
       DocumentSnapshot documentSnapshot = await documentReference!.get();
       var querySnapshot = await _firebaseFirestore
-          .collection('public_pray')
+          .collection(publicPrayCollectionName)
           .orderBy('updated_at')
           .startAfterDocument(documentSnapshot)
           .limit(5)
