@@ -100,14 +100,16 @@ class PrayReplyViewModel extends GetxController {
       _setState(Error(result as Failure));
       return;
     }
+    CommentModel modifiedCommentModel = result as CommentModel;
     //댓글 모델 교체
-    int index = _commentList.indexWhere((e) => e!.id == commentModel.id);
+    int index =
+        _commentList.indexWhere((e) => e!.id == modifiedCommentModel.id);
     if (index == -1) {
       _setState(Error(DefaultFailure(
           code: '_commentList index is not found at writeReply')));
       return;
     }
-    _commentList[index] = commentModel;
+    _commentList[index] = modifiedCommentModel;
     _setState(Loaded());
   }
 
