@@ -1,6 +1,7 @@
 import 'package:dream/app/core/utils/time_util.dart';
 import 'package:dream/app/data/models/comment.dart';
-import 'package:dream/app/pages/pray/components/pray_reply.dart';
+import 'package:dream/app/pages/pray_detail/components/pray_reply.dart';
+import 'package:dream/app/pages/pray_reply/pray_reply_screen.dart';
 import 'package:dream/app/viewmodels/pray_comment_view_model.dart';
 import 'package:dream/app/viewmodels/pray_reply_view_model.dart';
 import 'package:flutter/material.dart';
@@ -31,10 +32,10 @@ class _PrayCommentState extends State<PrayComment> {
   PrayReplyViewModel replyViewModel = Get.find<PrayReplyViewModel>();
 
   void pageToReply() {
-    // Get.to(NoticeReplyScreen(
-    //   commentId: widget.commentModel!.id,
-    //   noticeId: widget.noticeId,
-    // ));
+    Get.to(PrayReplyScreen(
+      commentId: widget.commentModel!.id!,
+      prayId: widget.id!,
+    ));
   }
 
   @override
