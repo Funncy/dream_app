@@ -56,7 +56,7 @@ class _SignUpScreenState extends State<SignUpScreen>
           password: _pwController.text,
           name: _nameController.text,
           group: _groupName);
-      if (_authViewModel.loginState is Loaded) Get.back();
+      if (_authViewModel.signUpState is Loaded) Get.back();
     }
   }
 
