@@ -42,14 +42,20 @@ class _ProfileScreenState extends State<ProfileScreen> with AlertMixin {
   }
 
   _imgFromCamera() async {
-    final pickedFile =
-        await picker.getImage(source: ImageSource.camera, imageQuality: 50);
+    final pickedFile = await picker.getImage(
+        source: ImageSource.camera,
+        imageQuality: 50,
+        maxHeight: 240,
+        maxWidth: 240);
     await setProfileImage(pickedFile);
   }
 
   _imgFromGallery() async {
-    final pickedFile =
-        await picker.getImage(source: ImageSource.gallery, imageQuality: 50);
+    final pickedFile = await picker.getImage(
+        source: ImageSource.gallery,
+        imageQuality: 50,
+        maxHeight: 240,
+        maxWidth: 240);
     await setProfileImage(pickedFile);
   }
 
