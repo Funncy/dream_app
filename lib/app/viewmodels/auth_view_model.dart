@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dartz/dartz.dart';
 import 'package:dream/app/core/error/failure.dart';
 import 'package:dream/app/core/state/view_state.dart';

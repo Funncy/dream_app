@@ -21,9 +21,9 @@ class RootScreen extends StatelessWidget {
         ),
       ),
       builder: (_) {
-        var fireauthStatus = Get.find<AuthViewModel>().fireauthState;
+        var fireauthState = Get.find<AuthViewModel>().fireauthState;
 
-        switch (fireauthStatus) {
+        switch (fireauthState) {
           case FireAuthState.signin:
             return MainScreen();
           case FireAuthState.signout:
