@@ -1,7 +1,9 @@
 import 'package:dream/app/core/constants/constants.dart';
 import 'package:dream/app/core/utils/time_util.dart';
 import 'package:dream/app/data/models/pray.dart';
+import 'package:dream/app/viewmodels/pray_comment_view_model.dart';
 import 'package:dream/app/viewmodels/pray_list_view_model.dart';
+import 'package:dream/app/viewmodels/pray_reply_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -12,6 +14,9 @@ class PrayCard extends StatelessWidget {
   final String userId = '123';
   final bool isCommentScreen;
   final PrayListViewModel _prayListViewModel = Get.find<PrayListViewModel>();
+  final PrayCommentViewModel _commentViewModel =
+      Get.find<PrayCommentViewModel>();
+  final PrayReplyViewModel _replyViewModel = Get.find<PrayReplyViewModel>();
 
   PrayCard({Key? key, required this.prayModel, this.isCommentScreen = false})
       : super(key: key);
@@ -61,9 +66,11 @@ class PrayCard extends StatelessWidget {
               child: Row(
                 children: [
                   GestureDetector(
-                    onTap: () {
-                      _prayListViewModel.togglePrayFavorite(
+                    onTap: () async {
+                      await _prayListViewModel.togglePrayFavorite(
                           prayId: prayModel.id!, userId: userId);
+                      _commentViewModel.refresh();
+                      _replyViewModel.refresh();
                     },
                     behavior: HitTestBehavior.opaque,
                     child: Row(
