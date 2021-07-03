@@ -27,7 +27,7 @@ class PrayCard extends StatelessWidget {
         TimeUtil.getDateString(prayModel.updatedAt ?? prayModel.createdAt!);
 
     String content = prayModel.content!;
-    if (isCommentScreen) if (content.length > 80) {
+    if (!isCommentScreen) if (content.length > 80) {
       content = content.substring(0, 80);
       content += "....";
     }
