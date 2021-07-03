@@ -1,5 +1,5 @@
 import 'package:dream/app/core/state/view_state.dart';
-import 'package:dream/app/pages/common/alert_mixin.dart';
+import 'package:dream/app/pages/common_mixin/alert_mixin.dart';
 import 'package:dream/app/viewmodels/pray_send_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

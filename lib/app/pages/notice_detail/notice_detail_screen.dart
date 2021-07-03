@@ -8,7 +8,7 @@ import 'package:dream/app/data/models/reply.dart';
 import 'package:dream/app/pages/common/error_message_widget.dart';
 import 'package:dream/app/pages/common/loading_widget.dart';
 import 'package:dream/app/pages/common/view_model_builder.dart';
-import 'package:dream/app/pages/common/alert_mixin.dart';
+import 'package:dream/app/pages/common_mixin/alert_mixin.dart';
 import 'package:dream/app/pages/notice/components/notice_card.dart';
 import 'package:dream/app/pages/notice_detail/components/bottom_input_bar.dart';
 import 'package:dream/app/pages/notice_detail/components/notice_comment.dart';

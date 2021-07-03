@@ -5,7 +5,7 @@ import 'package:dream/app/pages/common/error_message_widget.dart';
 import 'package:dream/app/pages/common/loading_widget.dart';
 import 'package:dream/app/pages/common/profile_app_bar.dart';
 import 'package:dream/app/pages/common/view_model_builder.dart';
-import 'package:dream/app/pages/common/alert_mixin.dart';
+import 'package:dream/app/pages/common_mixin/alert_mixin.dart';
 import 'package:dream/app/pages/notice/components/notice_card.dart';
 import 'package:dream/app/viewmodels/auth_view_model.dart';
 import 'package:dream/app/viewmodels/notice_view_model.dart';

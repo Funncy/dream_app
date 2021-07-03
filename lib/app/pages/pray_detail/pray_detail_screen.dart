@@ -3,7 +3,7 @@ import 'package:dream/app/core/state/view_state.dart';
 import 'package:dream/app/data/models/comment.dart';
 import 'package:dream/app/data/models/pray.dart';
 import 'package:dream/app/data/models/reply.dart';
-import 'package:dream/app/pages/common/alert_mixin.dart';
+import 'package:dream/app/pages/common_mixin/alert_mixin.dart';
 import 'package:dream/app/pages/common/error_message_widget.dart';
 import 'package:dream/app/pages/common/loading_widget.dart';
 import 'package:dream/app/pages/common/view_model_builder.dart';
