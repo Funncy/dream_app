@@ -126,6 +126,30 @@ void main() {
       expect(noticeViewModel.noticeList.first.favoriteUserList, equals([]));
       expect(noticeViewModel.noticeState, isInstanceOf<Error>());
     });
+
+    test('공지사항 추가 게시글 가져오기 - 성공', () async {
+      //arrange
+      when(() => mockNoticeRepository.getMoreNoticeList(any()))
+          .thenAnswer((_) async => Right(noticeList));
+      //act
+      await noticeViewModel.getMoreNoticeList();
+      //assert
+      expect(noticeViewModel.noticeList, [...noticeList, ...noticeList]);
+      expect(noticeViewModel.noticeState, isInstanceOf<Loaded>());
+      verify(() => mockNoticeRepository.getMoreNoticeList(any())).called(1);
+    });
+
+    test('공지사항 추가 게시글 가져오기 - 실패', () async {
+      //arrange
+      when(() => mockNoticeRepository.getMoreNoticeList(any()))
+          .thenAnswer((_) async => Left(failure));
+      //act
+      await noticeViewModel.getMoreNoticeList();
+      //assert
+      expect(noticeViewModel.noticeList, noticeList);
+      expect(noticeViewModel.noticeState, isInstanceOf<Error>());
+      verify(() => mockNoticeRepository.getMoreNoticeList(any())).called(1);
+    });
   });
 
   // group('댓글', () {
