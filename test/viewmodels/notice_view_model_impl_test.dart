@@ -1,5 +1,7 @@
 import 'dart:async';
-
+import 'package:dream/app/core/error/default_failure.dart';
+import 'package:dream/app/core/error/server_failure.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dream/app/core/error/failure.dart';
 import 'package:dream/app/core/state/view_state.dart';
@@ -7,7 +9,6 @@ import 'package:dream/app/data/models/notice.dart';
 import 'package:dream/app/repositories/notice_repository_impl.dart';
 import 'package:dream/app/viewmodels/notice_view_model.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 
 class MockNoticeRepository extends Mock implements NoticeRepositoryImpl {}
 
@@ -42,6 +43,8 @@ void main() {
         documentReference: null));
   });
 
+  var failure = DefaultFailure(code: 'error');
+
   tearDown(() {
     noticeStateSubscription.cancel();
   });
@@ -67,71 +70,62 @@ void main() {
   group('공지사항', () {
     test('공지사항 가져오기 - 성공', () async {
       //arrange
-      when<Future<Either<Failure, List<NoticeModel>>>>(
-              mockNoticeRepository.getNoticeList())
+      when(() => mockNoticeRepository.getNoticeList())
           .thenAnswer((_) async => Right(noticeList));
       //act
       await noticeViewModel.getNoticeList();
       //assert
       expect(noticeViewModel.noticeList, noticeList);
       expect(noticeViewModel.noticeState, isInstanceOf<Loaded>());
-      // expect(StateList, [Loading(), Loaded()]);
-      verify(mockNoticeRepository.getNoticeList()).called(1);
+      verify(() => mockNoticeRepository.getNoticeList()).called(1);
     });
 
-    // test('공지사항 가져오기 - 에러', () async {
-    //   //arrange
-    //   noticeViewModel.noticeList.clear();
-    //   when(mockNoticeRepository.getNoticeList())
-    //       .thenAnswer((_) async => Left(ErrorModel(message: 'Firebase Error')));
-    //   //act
-    //   await noticeViewModel.getNoticeList();
-    //   //assert
-    //   expect(noticeViewModel.noticeList.length, 0);
-    //   expect(StateList, [State.loading, State.error]);
-    //   verify(mockNoticeRepository.getNoticeList()).called(1);
-    // });
-    // test('공지사항 가져오기 - Empty', () async {
-    //   //arrange
-    //   when(mockNoticeRepository.getNoticeList())
-    //       .thenAnswer((_) async => Right([]));
-    //   //act
-    //   await noticeViewModel.getNoticeList();
-    //   //assert
-    //   expect(noticeViewModel.noticeList.length, 0);
-    //   expect(StateList, [State.loading, State.empty]);
-    //   verify(mockNoticeRepository.getNoticeList()).called(1);
-    // });
+    test('공지사항 가져오기 - 에러', () async {
+      //arrange
+      noticeViewModel.noticeList.clear();
+      when(() => mockNoticeRepository.getNoticeList())
+          .thenAnswer((_) async => Left(failure));
+      //act
+      await noticeViewModel.getNoticeList();
+      //assert
+      expect(noticeViewModel.noticeList.length, 0);
+      expect(noticeViewModel.noticeState, isInstanceOf<Error>());
+      verify(() => mockNoticeRepository.getNoticeList()).called(1);
+    });
 
-    // test('공지사항 댓글 좋아요 - 성공', () async {
-    //   //arrange
-    //   when(mockNoticeRepository.toggleNoticeFavorite(
-    //           noticeId: '123', userId: '123', isDelete: false))
-    //       .thenAnswer((_) async => Right(null));
-    //   when(mockNoticeRepository.toggleNoticeFavorite(
-    //           noticeId: '123', userId: '123', isDelete: true))
-    //       .thenAnswer((_) async => Right(null));
-    //   //act
-    //   await noticeViewModel.toggleNoticeFavorite(
-    //       noticeId: '123', userId: '123');
-    //   //assert
-    //   expect(
-    //       noticeViewModel.noticeList.first.favoriteUserList, equals(['123']));
-    // });
-    // test('공지사항 댓글 좋아요 - 실패', () async {
-    //   //arrange
-    //   when(mockNoticeRepository.toggleNoticeFavorite(
-    //           noticeId: '123', userId: '123', isDelete: false))
-    //       .thenAnswer((_) async => Left(ErrorModel(message: 'firebase error')));
-    //   when(mockNoticeRepository.toggleNoticeFavorite(
-    //           noticeId: '123', userId: '123', isDelete: true))
-    //       .thenAnswer((_) async => Left(ErrorModel(message: 'firebase error')));
-    //   //act
-    //   await noticeViewModel.toggleNoticeFavorite(
-    //       noticeId: '123', userId: '123');
-    //   //assert
-    //   expect(noticeViewModel.noticeList.first.favoriteUserList, equals([]));
-    // });
+    test('공지사항 댓글 좋아요 - 성공', () async {
+      //arrange
+      when(() => mockNoticeRepository.toggleNoticeFavorite(
+          noticeId: '123',
+          userId: '123',
+          isDelete: false)).thenAnswer((_) async => Right(null));
+      when(() => mockNoticeRepository.toggleNoticeFavorite(
+          noticeId: '123',
+          userId: '123',
+          isDelete: true)).thenAnswer((_) async => Right(null));
+      //act
+      await noticeViewModel.toggleNoticeFavorite(
+          noticeId: '123', userId: '123');
+      //assert
+      expect(
+          noticeViewModel.noticeList.first.favoriteUserList, equals(['123']));
+      expect(noticeViewModel.noticeState, isInstanceOf<Loaded>());
+    });
+    test('공지사항 댓글 좋아요 - 실패', () async {
+      //arrange
+      when(() => mockNoticeRepository.toggleNoticeFavorite(
+              noticeId: '123', userId: '123', isDelete: false))
+          .thenAnswer((_) async => Left(ServerFailure(code: 'firebase error')));
+      when(() => mockNoticeRepository.toggleNoticeFavorite(
+              noticeId: '123', userId: '123', isDelete: true))
+          .thenAnswer((_) async => Left(ServerFailure(code: 'firebase error')));
+      //act
+      await noticeViewModel.toggleNoticeFavorite(
+          noticeId: '123', userId: '123');
+      //assert
+      expect(noticeViewModel.noticeList.first.favoriteUserList, equals([]));
+      expect(noticeViewModel.noticeState, isInstanceOf<Error>());
+    });
   });
 
   // group('댓글', () {
