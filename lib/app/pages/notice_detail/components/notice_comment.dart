@@ -1,4 +1,5 @@
 import 'package:dream/app/data/models/comment.dart';
+import 'package:dream/app/data/models/user.dart';
 import 'package:dream/app/pages/notice_detail/components/notice_reply.dart';
 import 'package:dream/app/pages/notice_reply/notice_reply_screen.dart';
 import 'package:dream/app/core/utils/time_util.dart';
@@ -14,7 +15,7 @@ class NoticeComment extends StatefulWidget {
   final bool? isReplyScreen;
   final Function? deleteComment;
   final Function? deleteReply;
-  final String userId;
+  final UserModel user;
   const NoticeComment({
     Key? key,
     this.noticeCommentModel,
@@ -22,7 +23,7 @@ class NoticeComment extends StatefulWidget {
     this.noticeId,
     this.deleteComment,
     this.deleteReply,
-    required this.userId,
+    required this.user,
   }) : super(key: key);
 
   @override
@@ -58,6 +59,7 @@ class _NoticeCommentState extends State<NoticeComment> {
               child: Container(
                 width: 30.w,
                 child: CircleAvatar(
+                  // TODO: 댓글 남긴 유저 썸네일 띄워야함
                   backgroundImage: AssetImage('assets/images/test-img.jpeg'),
                 ),
               ),
@@ -94,15 +96,18 @@ class _NoticeCommentState extends State<NoticeComment> {
                         ),
                       ),
                       //TODO: 유저 아이디가 내 아이디일때만 띄움 (삭제를 위함)
-                      GestureDetector(
-                        onTap: () {
-                          widget.deleteComment!(widget.noticeCommentModel!.id);
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: InkWell(child: Icon(Icons.more_vert_rounded)),
+                      if (widget.noticeCommentModel!.userId == widget.user.id)
+                        GestureDetector(
+                          onTap: () {
+                            widget
+                                .deleteComment!(widget.noticeCommentModel!.id);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child:
+                                InkWell(child: Icon(Icons.more_vert_rounded)),
+                          ),
                         ),
-                      ),
                     ],
                   ),
                   Padding(
@@ -125,7 +130,7 @@ class _NoticeCommentState extends State<NoticeComment> {
                               commentViewModel.toggleCommentFavorite(
                                   noticeId: widget.noticeId,
                                   commentId: widget.noticeCommentModel!.id,
-                                  userId: widget.userId);
+                                  userId: widget.user.id);
                             },
                             child: Text(
                               "공감하기",
@@ -152,7 +157,7 @@ class _NoticeCommentState extends State<NoticeComment> {
                           commentViewModel.toggleCommentFavorite(
                               noticeId: widget.noticeId,
                               commentId: widget.noticeCommentModel!.id,
-                              userId: widget.userId);
+                              userId: widget.user.id);
                           if (widget.isReplyScreen == true) {
                             replyViewModel.refresh();
                           }
@@ -161,6 +166,7 @@ class _NoticeCommentState extends State<NoticeComment> {
                           children: [
                             //TODO: 가짜 유저 아이디 실제 유저 아이디로 변경 필요
                             if (widget.noticeCommentModel!.favoriteUserList!
+                                .where((u) => u == widget.user.id)
                                 .isNotEmpty)
                               Icon(Icons.favorite)
                             else
@@ -183,7 +189,7 @@ class _NoticeCommentState extends State<NoticeComment> {
                               commentId: widget.noticeCommentModel!.id,
                               replyModel: model,
                               deleteReply: widget.deleteReply,
-                              userId: widget.userId,
+                              user: widget.user,
                             ))
                         .toList()),
                   if (widget.noticeCommentModel!.replyList.length > 0 &&

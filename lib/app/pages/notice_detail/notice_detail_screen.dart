@@ -5,6 +5,7 @@ import 'package:dream/app/core/state/view_state.dart';
 import 'package:dream/app/data/models/comment.dart';
 import 'package:dream/app/data/models/notice.dart';
 import 'package:dream/app/data/models/reply.dart';
+import 'package:dream/app/data/models/user.dart';
 import 'package:dream/app/pages/common/error_message_widget.dart';
 import 'package:dream/app/pages/common/loading_widget.dart';
 import 'package:dream/app/pages/common/view_model_builder.dart';
@@ -31,7 +32,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
   final TextEditingController _textEditingController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   late StreamSubscription alertSubscription;
-  var userId = Get.find<AuthViewModel>().user?.id ?? "";
+  final UserModel user = Get.find<AuthViewModel>().user!;
   var notice = Get.arguments as NoticeModel?;
 
   bool isScrollDown = false;
@@ -65,7 +66,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
     isScrollDown = true;
     commentViewModel.writeComment(
         noticeModel: notice!,
-        userId: userId,
+        userId: user.id,
         content: _textEditingController.text);
     _textEditingController.text = '';
   }
@@ -181,7 +182,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
             noticeId: notice!.id,
             deleteComment: deleteComment,
             deleteReply: deleteReply,
-            userId: userId,
+            user: user,
           );
         });
   }

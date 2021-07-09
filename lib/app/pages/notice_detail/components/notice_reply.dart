@@ -1,5 +1,6 @@
 import 'package:dream/app/core/utils/time_util.dart';
 import 'package:dream/app/data/models/reply.dart';
+import 'package:dream/app/data/models/user.dart';
 import 'package:dream/app/viewmodels/comment_view_model.dart';
 import 'package:dream/app/viewmodels/reply_view_model.dart';
 import 'package:flutter/material.dart';
@@ -13,12 +14,14 @@ class NoticeReply extends StatelessWidget {
   final Function? deleteReply;
   final ReplyViewModel replyViewModel = Get.find<ReplyViewModel>();
   final CommentViewModel commentViewModel = Get.find<CommentViewModel>();
+  final UserModel user;
   NoticeReply({
     Key? key,
     required this.noticeId,
     required this.commentId,
     required this.replyModel,
     required this.deleteReply,
+    required this.user,
   }) : super(key: key);
 
   @override
@@ -72,14 +75,15 @@ class NoticeReply extends StatelessWidget {
                             ),
                           ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: InkWell(
-                              onTap: () {
-                                deleteReply!(commentId, replyModel);
-                              },
-                              child: Icon(Icons.more_vert)),
-                        ),
+                        if (replyModel.userId == user.id)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: InkWell(
+                                onTap: () {
+                                  deleteReply!(commentId, replyModel);
+                                },
+                                child: Icon(Icons.more_vert)),
+                          ),
                       ],
                     ),
                   ),
@@ -103,7 +107,7 @@ class NoticeReply extends StatelessWidget {
                               noticeId: noticeId,
                               commentId: commentId,
                               replyId: replyModel.id,
-                              userId: '123');
+                              userId: user.id);
                         },
                         child: Text(
                           "공감하기",
@@ -117,7 +121,7 @@ class NoticeReply extends StatelessWidget {
                               noticeId: noticeId,
                               commentId: commentId,
                               replyId: replyModel.id,
-                              userId: '123');
+                              userId: user.id);
                           //답글의 좋아요 버튼을 눌러도 댓글화면에도 바로 반영하기 위함.
                           commentViewModel.refresh();
                         },
@@ -125,7 +129,7 @@ class NoticeReply extends StatelessWidget {
                           children: [
                             //TODO: 가짜 유저 아이디 실제 유저 아이디로 변경 필요
                             if (replyModel.favoriteUserList!
-                                .where((userId) => userId == '123')
+                                .where((userId) => userId == user.id)
                                 .isNotEmpty)
                               Icon(Icons.favorite)
                             else
