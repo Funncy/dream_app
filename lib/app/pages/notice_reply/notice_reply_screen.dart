@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dream/app/core/state/view_state.dart';
 import 'package:dream/app/data/models/comment.dart';
 import 'package:dream/app/data/models/reply.dart';
+import 'package:dream/app/data/models/user.dart';
 import 'package:dream/app/pages/common/empty_widget.dart';
 import 'package:dream/app/pages/common/error_message_widget.dart';
 import 'package:dream/app/pages/common/loading_widget.dart';
@@ -10,6 +11,7 @@ import 'package:dream/app/pages/common_mixin/alert_mixin.dart';
 import 'package:dream/app/pages/common/view_model_builder.dart';
 import 'package:dream/app/pages/notice_detail/components/bottom_input_bar.dart';
 import 'package:dream/app/pages/notice_detail/components/notice_comment.dart';
+import 'package:dream/app/viewmodels/auth_view_model.dart';
 import 'package:dream/app/viewmodels/comment_view_model.dart';
 import 'package:dream/app/viewmodels/reply_view_model.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +32,7 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> with AlertMixin {
   CommentViewModel commentViewModel = Get.find<CommentViewModel>();
   final TextEditingController _textEditingController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final UserModel user = Get.find<AuthViewModel>().user!;
   @override
   void initState() {
     super.initState();
@@ -53,11 +56,10 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> with AlertMixin {
   }
 
   void writeReply() async {
-    //TODO: uid 실제 유저로 바꿔야함.
     await replyViewModel.writeReply(
         noticeId: widget.noticeId,
         commentId: widget.commentId,
-        userId: '123',
+        userId: user.id,
         content: _textEditingController.text);
     _textEditingController.text = '';
     //뒤로 갈 경우 화면 적용시키기 위함
@@ -154,6 +156,7 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> with AlertMixin {
       isReplyScreen: true,
       noticeId: widget.noticeId,
       deleteReply: deleteReply,
+      user: user,
     );
   }
 }
