@@ -12,6 +12,7 @@ import 'package:dream/app/pages/common_mixin/alert_mixin.dart';
 import 'package:dream/app/pages/notice/components/notice_card.dart';
 import 'package:dream/app/pages/notice_detail/components/bottom_input_bar.dart';
 import 'package:dream/app/pages/notice_detail/components/notice_comment.dart';
+import 'package:dream/app/viewmodels/auth_view_model.dart';
 import 'package:dream/app/viewmodels/comment_view_model.dart';
 import 'package:dream/app/viewmodels/reply_view_model.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
   final TextEditingController _textEditingController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   late StreamSubscription alertSubscription;
+  var userId = Get.find<AuthViewModel>().user?.id ?? "";
   var notice = Get.arguments as NoticeModel?;
 
   bool isScrollDown = false;
@@ -63,7 +65,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
     isScrollDown = true;
     commentViewModel.writeComment(
         noticeModel: notice!,
-        userId: '123',
+        userId: userId,
         content: _textEditingController.text);
     _textEditingController.text = '';
   }
@@ -179,6 +181,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
             noticeId: notice!.id,
             deleteComment: deleteComment,
             deleteReply: deleteReply,
+            userId: userId,
           );
         });
   }
