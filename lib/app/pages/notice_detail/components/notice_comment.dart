@@ -14,14 +14,16 @@ class NoticeComment extends StatefulWidget {
   final bool? isReplyScreen;
   final Function? deleteComment;
   final Function? deleteReply;
-  const NoticeComment(
-      {Key? key,
-      this.noticeCommentModel,
-      this.isReplyScreen,
-      this.noticeId,
-      this.deleteComment,
-      this.deleteReply})
-      : super(key: key);
+  final String userId;
+  const NoticeComment({
+    Key? key,
+    this.noticeCommentModel,
+    this.isReplyScreen,
+    this.noticeId,
+    this.deleteComment,
+    this.deleteReply,
+    required this.userId,
+  }) : super(key: key);
 
   @override
   _NoticeCommentState createState() => _NoticeCommentState();
@@ -120,11 +122,10 @@ class _NoticeCommentState extends State<NoticeComment> {
                         children: [
                           InkWell(
                             onTap: () {
-                              //TODO: 댓글 좋아요 => userId 수정해야함.
                               commentViewModel.toggleCommentFavorite(
                                   noticeId: widget.noticeId,
                                   commentId: widget.noticeCommentModel!.id,
-                                  userId: '123');
+                                  userId: widget.userId);
                             },
                             child: Text(
                               "공감하기",
@@ -148,11 +149,10 @@ class _NoticeCommentState extends State<NoticeComment> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          //TODO: 댓글 좋아요 => userId 수정해야함.
                           commentViewModel.toggleCommentFavorite(
                               noticeId: widget.noticeId,
                               commentId: widget.noticeCommentModel!.id,
-                              userId: '123');
+                              userId: widget.userId);
                           if (widget.isReplyScreen == true) {
                             replyViewModel.refresh();
                           }
@@ -161,7 +161,6 @@ class _NoticeCommentState extends State<NoticeComment> {
                           children: [
                             //TODO: 가짜 유저 아이디 실제 유저 아이디로 변경 필요
                             if (widget.noticeCommentModel!.favoriteUserList!
-                                .where((userId) => userId == '123')
                                 .isNotEmpty)
                               Icon(Icons.favorite)
                             else
@@ -184,6 +183,7 @@ class _NoticeCommentState extends State<NoticeComment> {
                               commentId: widget.noticeCommentModel!.id,
                               replyModel: model,
                               deleteReply: widget.deleteReply,
+                              userId: widget.userId,
                             ))
                         .toList()),
                   if (widget.noticeCommentModel!.replyList.length > 0 &&
