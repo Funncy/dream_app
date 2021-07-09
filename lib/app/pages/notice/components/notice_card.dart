@@ -2,6 +2,7 @@ import 'package:dream/app/core/constants/constants.dart';
 import 'package:dream/app/data/models/notice.dart';
 import 'package:dream/app/pages/image_slider/image_slider_screen.dart';
 import 'package:dream/app/core/utils/time_util.dart';
+import 'package:dream/app/viewmodels/auth_view_model.dart';
 import 'package:dream/app/viewmodels/comment_view_model.dart';
 import 'package:dream/app/viewmodels/notice_view_model.dart';
 import 'package:flutter/material.dart';
@@ -14,10 +15,9 @@ class NoticeCard extends StatelessWidget {
   final NoticeModel? notice;
   final bool isCommentScreen;
   //TODO: 실제 유저 아이디로 변경해야함.
-  final String userId = '123';
+  final String userId = Get.find<AuthViewModel>().user?.id ?? "";
 
-  const NoticeCard(
-      {Key? key, required this.notice, this.isCommentScreen = false})
+  NoticeCard({Key? key, required this.notice, this.isCommentScreen = false})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
