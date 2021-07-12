@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'package:dream/app/core/error/failure.dart';
 import 'package:dream/app/core/error/server_failure.dart';
 import 'package:dream/app/data/models/reply.dart';
+import 'package:dream/app/data/models/user.dart';
 import 'package:dream/app/repositories/reply_repository.dart';
 
 import 'package:dream/app/core/constants/constants.dart';
@@ -20,13 +21,15 @@ class ReplyRepositoryImpl extends ReplyRepository {
       {required String? noticeId,
       required String? commentId,
       required String replyIndex,
-      required String userId,
+      required UserModel user,
       required String content}) async {
     try {
       //TODO: Notice Reference 혹은 comment Reference 필요
       var replyModel = ReplyModel(
           id: replyIndex,
-          userId: userId,
+          userId: user.id,
+          nickName: user.name,
+          profileImage: user.profileImageUrl ?? "",
           content: content,
           favoriteUserList: []);
       await _firebaseFirestore
