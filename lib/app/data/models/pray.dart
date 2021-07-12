@@ -4,6 +4,8 @@ import 'core.dart';
 class PrayModel extends Core {
   String? id;
   String? userId;
+  final String nickName;
+  final String profileImage;
   String? title;
   String? content;
   List<String> prayUserList;
@@ -14,6 +16,8 @@ class PrayModel extends Core {
       {required this.userId,
       required this.title,
       required this.content,
+      required this.nickName,
+      required this.profileImage,
       this.commentCount = 0,
       this.prayUserList = const []})
       : super(DateTime.now(), DateTime.now());
@@ -23,6 +27,8 @@ class PrayModel extends Core {
     var model = PrayModel(
       userId: json['user_id'],
       title: json['title'],
+      nickName: json['nick_name'],
+      profileImage: json['profile_image'],
       content: json['content'],
       commentCount: json['comment_count'],
       prayUserList: json['pray_user_list']?.cast<String>()?.toList(),
@@ -38,6 +44,8 @@ class PrayModel extends Core {
         'user_id': userId,
         'title': title,
         'content': content,
+        'nick_name': nickName,
+        'profile_image': profileImage,
         'pray_user_list': prayUserList,
         'comment_count': commentCount,
         'created_at': createdAt,

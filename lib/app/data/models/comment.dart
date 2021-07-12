@@ -7,6 +7,8 @@ import 'core.dart';
 class CommentModel extends Core with EquatableMixin {
   final String? id;
   final String? userId;
+  final String nickName;
+  final String profileImage;
   final String? content;
   List<ReplyModel> replyList;
   int? replyIndex;
@@ -19,6 +21,8 @@ class CommentModel extends Core with EquatableMixin {
       required this.content,
       required this.replyList,
       required this.replyIndex,
+      required this.nickName,
+      required this.profileImage,
       required this.favoriteUserList,
       required this.documentReference})
       : super(DateTime.now(), DateTime.now());
@@ -46,6 +50,8 @@ class CommentModel extends Core with EquatableMixin {
       id: doc.id,
       userId: json['user_id'],
       content: json['content'],
+      nickName: json['nick_name'],
+      profileImage: json['profile_image'],
       replyIndex: json['reply_index'],
       replyList: replyList,
       favoriteUserList: json['favorite_user_list']?.cast<String>()?.toList(),
@@ -61,6 +67,8 @@ class CommentModel extends Core with EquatableMixin {
         'user_id': userId,
         'content': content,
         'reply_index': replyIndex,
+        'nick_name': nickName,
+        'profile_image': profileImage,
         'reply_list': replyList.map((e) => e.toJson()).toList(),
         'favorite_user_list': favoriteUserList,
         'created_at': createdAt,
