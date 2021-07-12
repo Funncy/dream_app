@@ -51,17 +51,23 @@ class NoticeRepositoryImpl extends NoticeRepository {
       CommentModel(
           id: null,
           userId: '123',
+          nickName: 'test user',
+          profileImage: '',
           content: 'comment 01',
           replyIndex: 2,
           replyList: [
             ReplyModel(
                 id: '0',
                 userId: '123',
+                nickName: 'test user',
+                profileImage: '',
                 content: 'reply 01',
                 favoriteUserList: []),
             ReplyModel(
                 id: '1',
                 userId: '123',
+                nickName: 'test user',
+                profileImage: '',
                 content: 'reply 02',
                 favoriteUserList: []),
           ],
@@ -70,12 +76,16 @@ class NoticeRepositoryImpl extends NoticeRepository {
       CommentModel(
           id: null,
           userId: '123',
+          nickName: 'test user',
+          profileImage: '',
           content: 'comment 01',
           replyIndex: 1,
           replyList: [
             ReplyModel(
                 id: '0',
                 userId: '123',
+                nickName: 'test user',
+                profileImage: '',
                 content: 'reply 01',
                 favoriteUserList: []),
           ],
