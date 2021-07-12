@@ -4,6 +4,7 @@ import 'package:dream/app/core/constants/constants.dart';
 import 'package:dream/app/core/error/failure.dart';
 import 'package:dream/app/core/error/server_failure.dart';
 import 'package:dream/app/data/models/pray.dart';
+import 'package:dream/app/data/models/user.dart';
 import 'package:dream/app/repositories/pray_repository.dart';
 
 class PrayRepositoryImpl extends PrayRepository {
@@ -70,9 +71,14 @@ class PrayRepositoryImpl extends PrayRepository {
 
   @override
   Future<Either<Failure, void>> sendPray(
-      String userId, String title, String content, bool? isPublic) async {
+      UserModel user, String title, String content, bool? isPublic) async {
     try {
-      var model = PrayModel(userId: userId, title: title, content: content);
+      var model = PrayModel(
+          userId: user.id,
+          nickName: user.name,
+          profileImage: user.profileImageUrl ?? "",
+          title: title,
+          content: content);
       CollectionReference collectionReference;
       if (isPublic!) {
         collectionReference =
