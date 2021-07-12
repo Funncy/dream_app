@@ -4,6 +4,7 @@ import 'package:dream/app/core/constants/constants.dart';
 import 'package:dream/app/core/error/failure.dart';
 import 'package:dream/app/core/error/server_failure.dart';
 import 'package:dream/app/data/models/comment.dart';
+import 'package:dream/app/data/models/user.dart';
 import 'package:dream/app/repositories/pray_comment_repository.dart';
 
 class PrayCommentRepositoryImpl implements PrayCommentRepository {
@@ -69,12 +70,14 @@ class PrayCommentRepositoryImpl implements PrayCommentRepository {
   @override
   Future<Either<Failure, void>> writeComment(
       {required String prayId,
-      required String userId,
+      required UserModel user,
       required String content}) async {
     try {
       var commentModel = CommentModel(
           id: null,
-          userId: userId,
+          userId: user.id,
+          nickName: user.name,
+          profileImage: user.profileImageUrl ?? "",
           content: content,
           replyIndex: 0,
           replyList: [],
