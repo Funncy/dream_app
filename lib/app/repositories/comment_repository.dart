@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:dream/app/core/error/failure.dart';
 import 'package:dream/app/data/models/comment.dart';
+import 'package:dream/app/data/models/user.dart';
 
 abstract class CommentRepository {
   Future<Either<Failure, List<CommentModel>>> getCommentList(
@@ -14,7 +15,7 @@ abstract class CommentRepository {
 
   Future<Either<Failure, void>> writeComment(
       {required String? noticeId,
-      required String userId,
+      required UserModel user,
       required String content});
 
   Future<Either<Failure, void>> deleteComment(
