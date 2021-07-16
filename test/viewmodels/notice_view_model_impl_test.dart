@@ -93,7 +93,7 @@ void main() {
       verify(() => mockNoticeRepository.getNoticeList()).called(1);
     });
 
-    test('공지사항 댓글 좋아요 - 성공', () async {
+    test('공지사항 좋아요 - 성공', () async {
       //arrange
       when(() => mockNoticeRepository.toggleNoticeFavorite(
           noticeId: '123',
@@ -111,7 +111,7 @@ void main() {
           noticeViewModel.noticeList.first.favoriteUserList, equals(['123']));
       expect(noticeViewModel.noticeState, isInstanceOf<Loaded>());
     });
-    test('공지사항 댓글 좋아요 - 실패', () async {
+    test('공지사항 좋아요 - 실패', () async {
       //arrange
       when(() => mockNoticeRepository.toggleNoticeFavorite(
               noticeId: '123', userId: '123', isDelete: false))
