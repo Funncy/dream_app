@@ -1,5 +1,7 @@
 import 'package:dream/app/core/state/view_state.dart';
+import 'package:dream/app/data/models/user.dart';
 import 'package:dream/app/pages/common_mixin/alert_mixin.dart';
+import 'package:dream/app/viewmodels/auth_view_model.dart';
 import 'package:dream/app/viewmodels/pray_send_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,7 +17,7 @@ class _PraySendScreenState extends State<PraySendScreen> with AlertMixin {
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
   PraySendViewModel prayViewModel = Get.find<PraySendViewModel>();
-
+  final UserModel user = Get.find<AuthViewModel>().user!;
   @override
   void initState() {
     super.initState();
@@ -23,7 +25,7 @@ class _PraySendScreenState extends State<PraySendScreen> with AlertMixin {
 
   void sendPray() async {
     await prayViewModel.sendPray(
-        userId: '123',
+        user: user,
         title: titleController.text,
         content: contentController.text,
         isPublic: isPublic);

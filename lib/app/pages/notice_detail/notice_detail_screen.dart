@@ -65,9 +65,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
     //TODO: uid 연동해야함.
     isScrollDown = true;
     commentViewModel.writeComment(
-        noticeModel: notice!,
-        userId: user.id,
-        content: _textEditingController.text);
+        noticeModel: notice!, user: user, content: _textEditingController.text);
     _textEditingController.text = '';
   }
 

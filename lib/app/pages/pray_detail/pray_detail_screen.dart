@@ -3,11 +3,13 @@ import 'package:dream/app/core/state/view_state.dart';
 import 'package:dream/app/data/models/comment.dart';
 import 'package:dream/app/data/models/pray.dart';
 import 'package:dream/app/data/models/reply.dart';
+import 'package:dream/app/data/models/user.dart';
 import 'package:dream/app/pages/common_mixin/alert_mixin.dart';
 import 'package:dream/app/pages/common/error_message_widget.dart';
 import 'package:dream/app/pages/common/loading_widget.dart';
 import 'package:dream/app/pages/common/view_model_builder.dart';
 import 'package:dream/app/pages/pray/components/pray_card.dart';
+import 'package:dream/app/viewmodels/auth_view_model.dart';
 import 'package:dream/app/viewmodels/pray_comment_view_model.dart';
 import 'package:dream/app/viewmodels/pray_reply_view_model.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +32,7 @@ class _PrayDetailScreenState extends State<PrayDetailScreen> with AlertMixin {
   final PrayReplyViewModel replyViewModel = Get.find<PrayReplyViewModel>();
   final TextEditingController _textEditingController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final UserModel user = Get.find<AuthViewModel>().user!;
   var pray = Get.arguments as PrayModel?;
 
   @override
@@ -57,7 +60,7 @@ class _PrayDetailScreenState extends State<PrayDetailScreen> with AlertMixin {
   void inputComment() {
     //TODO: uid 연동해야함.
     commentViewModel.writeComment(
-        prayModel: pray!, userId: '123', content: _textEditingController.text);
+        prayModel: pray!, user: user, content: _textEditingController.text);
     _textEditingController.text = '';
   }
 

@@ -59,7 +59,7 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> with AlertMixin {
     await replyViewModel.writeReply(
         noticeId: widget.noticeId,
         commentId: widget.commentId,
-        userId: user.id,
+        user: user,
         content: _textEditingController.text);
     _textEditingController.text = '';
     //뒤로 갈 경우 화면 적용시키기 위함

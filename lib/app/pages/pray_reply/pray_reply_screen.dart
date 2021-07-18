@@ -1,6 +1,7 @@
 import 'package:dream/app/core/state/view_state.dart';
 import 'package:dream/app/data/models/comment.dart';
 import 'package:dream/app/data/models/reply.dart';
+import 'package:dream/app/data/models/user.dart';
 import 'package:dream/app/pages/common_mixin/alert_mixin.dart';
 import 'package:dream/app/pages/common/empty_widget.dart';
 import 'package:dream/app/pages/common/error_message_widget.dart';
@@ -8,6 +9,7 @@ import 'package:dream/app/pages/common/loading_widget.dart';
 import 'package:dream/app/pages/common/view_model_builder.dart';
 import 'package:dream/app/pages/notice_detail/components/bottom_input_bar.dart';
 import 'package:dream/app/pages/pray_detail/components/pray_comment.dart';
+import 'package:dream/app/viewmodels/auth_view_model.dart';
 import 'package:dream/app/viewmodels/pray_comment_view_model.dart';
 import 'package:dream/app/viewmodels/pray_reply_view_model.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +31,8 @@ class _PrayReplyScreenState extends State<PrayReplyScreen> with AlertMixin {
   PrayCommentViewModel commentViewModel = Get.find<PrayCommentViewModel>();
   final TextEditingController _textEditingController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final UserModel user = Get.find<AuthViewModel>().user!;
+
   @override
   void initState() {
     super.initState();
@@ -51,7 +55,7 @@ class _PrayReplyScreenState extends State<PrayReplyScreen> with AlertMixin {
     await replyViewModel.writeReply(
         prayId: widget.prayId,
         commentId: widget.commentId,
-        userId: '123',
+        user: user,
         content: _textEditingController.text);
     _textEditingController.text = '';
     //뒤로 갈 경우 화면 적용시키기 위함
