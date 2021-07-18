@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:dream/app/core/error/failure.dart';
 import 'package:dream/app/core/state/view_state.dart';
+import 'package:dream/app/data/models/user.dart';
 import 'package:dream/app/repositories/pray_repository.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
@@ -16,13 +17,13 @@ class PraySendViewModel extends GetxController {
   }
 
   Future<void> sendPray(
-      {required String userId,
+      {required UserModel user,
       required String title,
       required String content,
       required bool? isPublic}) async {
     _setState(Loading());
     Either<Failure, void> either =
-        await _prayRepository.sendPray(userId, title, content, isPublic);
+        await _prayRepository.sendPray(user, title, content, isPublic);
     either.fold((l) {
       _setState(Error(l));
     }, (r) => r);
