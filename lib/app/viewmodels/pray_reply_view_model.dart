@@ -4,6 +4,7 @@ import 'package:dream/app/core/error/failure.dart';
 import 'package:dream/app/core/state/view_state.dart';
 import 'package:dream/app/data/models/comment.dart';
 import 'package:dream/app/data/models/reply.dart';
+import 'package:dream/app/data/models/user.dart';
 import 'package:dream/app/repositories/pray_comment_repository.dart';
 import 'package:dream/app/repositories/pray_reply_repository.dart';
 import 'package:dream/app/repositories/pray_repository.dart';
@@ -54,7 +55,7 @@ class PrayReplyViewModel extends GetxController {
   Future<void> writeReply(
       {required String? prayId,
       required String? commentId,
-      required String userId,
+      required UserModel user,
       required String content}) async {
     _setState(Loading());
     //모델 찾아오기
@@ -86,7 +87,7 @@ class PrayReplyViewModel extends GetxController {
         prayId: prayId,
         commentId: commentId,
         replyIndex: replyIndex.toString(),
-        userId: userId,
+        user: user,
         content: content);
     either.fold((l) {
       _setState(Error(l));
