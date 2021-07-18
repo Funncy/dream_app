@@ -4,6 +4,7 @@ import 'package:dream/app/core/error/failure.dart';
 import 'package:dream/app/core/state/view_state.dart';
 import 'package:dream/app/data/models/comment.dart';
 import 'package:dream/app/data/models/reply.dart';
+import 'package:dream/app/data/models/user.dart';
 import 'package:dream/app/repositories/comment_repository.dart';
 import 'package:dream/app/repositories/notice_repository.dart';
 import 'package:dream/app/repositories/reply_repository.dart';
@@ -54,7 +55,7 @@ class ReplyViewModel extends GetxController {
   Future<void> writeReply(
       {required String? noticeId,
       required String? commentId,
-      required String userId,
+      required UserModel user,
       required String content}) async {
     _setState(Loading());
     //모델 찾아오기
@@ -85,7 +86,7 @@ class ReplyViewModel extends GetxController {
         noticeId: noticeId,
         commentId: commentId,
         replyIndex: replyIndex.toString(),
-        userId: userId,
+        user: user,
         content: content);
     either.fold((l) {
       _setState(Error(l));
