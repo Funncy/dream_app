@@ -4,6 +4,7 @@ import 'package:dream/app/core/error/failure.dart';
 import 'package:dream/app/core/state/view_state.dart';
 import 'package:dream/app/data/models/comment.dart';
 import 'package:dream/app/data/models/notice.dart';
+import 'package:dream/app/data/models/user.dart';
 import 'package:dream/app/repositories/comment_repository.dart';
 import 'package:dream/app/repositories/notice_repository.dart';
 import 'package:get/get.dart';
@@ -31,12 +32,12 @@ class CommentViewModel extends GetxController {
 
   Future<void> writeComment(
       {required NoticeModel noticeModel,
-      required String userId,
+      required UserModel user,
       required String content}) async {
     _setState(Loading());
     //댓글 작성
     Either<Failure, void> either = await _commentRepository.writeComment(
-        noticeId: noticeModel.id, userId: userId, content: content);
+        noticeId: noticeModel.id, user: user, content: content);
     either.fold((l) {
       _setState(Error(l));
     }, (r) => r);
