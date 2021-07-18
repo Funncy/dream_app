@@ -31,7 +31,6 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
   final ReplyViewModel replyViewModel = Get.find<ReplyViewModel>();
   final TextEditingController _textEditingController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  late StreamSubscription alertSubscription;
   final UserModel user = Get.find<AuthViewModel>().user!;
   var notice = Get.arguments as NoticeModel?;
 
@@ -57,7 +56,6 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
 
   @override
   void dispose() {
-    alertSubscription.cancel();
     super.dispose();
   }
 

@@ -60,6 +60,9 @@ class _NoticeCommentState extends State<NoticeComment> {
                 width: 30.w,
                 child: CircleAvatar(
                   // TODO: 댓글 남긴 유저 썸네일 띄워야함
+                  if(widget.noticeCommentModel!.profileImage != null) 
+                  backgroundImage: CachedNetworkImageProvider(widget.noticeCommentModel!.profileImage)
+                  else
                   backgroundImage: AssetImage('assets/images/test-img.jpeg'),
                 ),
               ),
@@ -81,7 +84,7 @@ class _NoticeCommentState extends State<NoticeComment> {
                               padding: const EdgeInsets.symmetric(vertical: 5),
                               child: Text(
                                 //TODO: 추후 유저 아이디가 아닌 닉네임으로 수정해야함.
-                                widget.noticeCommentModel!.userId!,
+                                widget.noticeCommentModel!.nickName!,
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                             ),
