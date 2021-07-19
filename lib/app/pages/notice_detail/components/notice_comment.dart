@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dream/app/data/models/comment.dart';
 import 'package:dream/app/data/models/user.dart';
 import 'package:dream/app/pages/notice_detail/components/notice_reply.dart';
@@ -33,6 +34,14 @@ class NoticeComment extends StatefulWidget {
 class _NoticeCommentState extends State<NoticeComment> {
   CommentViewModel commentViewModel = Get.find<CommentViewModel>();
   ReplyViewModel replyViewModel = Get.find<ReplyViewModel>();
+  late ImageProvider profileWidget;
+
+  @override
+  void initState() {
+    profileWidget =
+        CachedNetworkImageProvider(widget.noticeCommentModel!.profileImage);
+    super.initState();
+  }
 
   void pageToReply() {
     Get.to(NoticeReplyScreen(
@@ -59,11 +68,7 @@ class _NoticeCommentState extends State<NoticeComment> {
               child: Container(
                 width: 30.w,
                 child: CircleAvatar(
-                  // TODO: 댓글 남긴 유저 썸네일 띄워야함
-                  if(widget.noticeCommentModel!.profileImage != null) 
-                  backgroundImage: CachedNetworkImageProvider(widget.noticeCommentModel!.profileImage)
-                  else
-                  backgroundImage: AssetImage('assets/images/test-img.jpeg'),
+                  backgroundImage: profileWidget,
                 ),
               ),
             ),
@@ -83,8 +88,7 @@ class _NoticeCommentState extends State<NoticeComment> {
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 5),
                               child: Text(
-                                //TODO: 추후 유저 아이디가 아닌 닉네임으로 수정해야함.
-                                widget.noticeCommentModel!.nickName!,
+                                widget.noticeCommentModel!.nickName,
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -98,7 +102,6 @@ class _NoticeCommentState extends State<NoticeComment> {
                           ],
                         ),
                       ),
-                      //TODO: 유저 아이디가 내 아이디일때만 띄움 (삭제를 위함)
                       if (widget.noticeCommentModel!.userId == widget.user.id)
                         GestureDetector(
                           onTap: () {
@@ -167,7 +170,6 @@ class _NoticeCommentState extends State<NoticeComment> {
                         },
                         child: Row(
                           children: [
-                            //TODO: 가짜 유저 아이디 실제 유저 아이디로 변경 필요
                             if (widget.noticeCommentModel!.favoriteUserList!
                                 .where((u) => u == widget.user.id)
                                 .isNotEmpty)
