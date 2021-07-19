@@ -14,8 +14,10 @@ import 'image_spliter.dart';
 class NoticeCard extends StatelessWidget {
   final NoticeModel? notice;
   final bool isCommentScreen;
-  //TODO: 실제 유저 아이디로 변경해야함.
+  //실제 유저 모델 가져오기
   final String userId = Get.find<AuthViewModel>().user?.id ?? "";
+  //ViewModel 연결
+  final NoticeViewModel noticeViewModel = Get.find<NoticeViewModel>();
 
   NoticeCard({Key? key, required this.notice, this.isCommentScreen = false})
       : super(key: key);
@@ -24,7 +26,6 @@ class NoticeCard extends StatelessWidget {
     var size = MediaQuery.of(context).size;
     //시간 로드
     var date = TimeUtil.getDateString(notice!.updatedAt ?? notice!.createdAt!);
-    NoticeViewModel noticeViewModel = Get.find<NoticeViewModel>();
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 0.0),
@@ -115,7 +116,6 @@ class NoticeCard extends StatelessWidget {
                         width: 5.w,
                       ),
                       Text(
-                          //TODO: NULL처리 해줘야함.
                           '댓글 ${notice!.commentCount! < 1 ? '쓰기' : notice!.commentCount}',
                           style: Theme.of(context).textTheme.bodyText2)
                     ],

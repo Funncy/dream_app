@@ -17,7 +17,6 @@ class ImageSpliter extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         );
-        break;
       case 2:
         return Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -37,11 +36,9 @@ class ImageSpliter extends StatelessWidget {
             ))
           ],
         );
-        break;
       case 3:
       default:
         return ThreeDivisionImages(images: images);
-        break;
     }
   }
 }
