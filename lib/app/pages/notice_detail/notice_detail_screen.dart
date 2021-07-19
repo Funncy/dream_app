@@ -44,6 +44,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
   }
 
   ViewState? scrollAnimatorByStatus(ViewState? preStatus, ViewState? status) {
+    //스크롤
     if (preStatus is Loading && status is Loaded && isScrollDown) {
       isScrollDown = false;
       WidgetsBinding.instance!.addPostFrameCallback((_) {
@@ -60,7 +61,6 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen>
   }
 
   void inputComment() {
-    //TODO: uid 연동해야함.
     isScrollDown = true;
     commentViewModel.writeComment(
         noticeModel: notice!, user: user, content: _textEditingController.text);
