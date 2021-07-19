@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dream/app/core/state/view_state.dart';
 import 'package:dream/app/data/models/comment.dart';
 import 'package:dream/app/data/models/reply.dart';
@@ -33,6 +34,7 @@ class _NoticeReplyScreenState extends State<NoticeReplyScreen> with AlertMixin {
   final TextEditingController _textEditingController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final UserModel user = Get.find<AuthViewModel>().user!;
+
   @override
   void initState() {
     super.initState();

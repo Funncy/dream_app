@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dream/app/core/utils/time_util.dart';
 import 'package:dream/app/data/models/reply.dart';
 import 'package:dream/app/data/models/user.dart';
@@ -15,6 +16,7 @@ class NoticeReply extends StatelessWidget {
   final ReplyViewModel replyViewModel = Get.find<ReplyViewModel>();
   final CommentViewModel commentViewModel = Get.find<CommentViewModel>();
   final UserModel user;
+  late final ImageProvider profileImage;
   NoticeReply({
     Key? key,
     required this.noticeId,
@@ -42,7 +44,8 @@ class NoticeReply extends StatelessWidget {
               child: Container(
                 width: 30.w,
                 child: CircleAvatar(
-                  backgroundImage: AssetImage('assets/images/test-img.jpeg'),
+                  backgroundImage:
+                      CachedNetworkImageProvider(replyModel.profileImage),
                 ),
               ),
             ),
@@ -61,8 +64,7 @@ class NoticeReply extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 5),
                               child: Text(
-                                //TODO: 추후에 닉네임으로 변경해야함.
-                                replyModel.userId!,
+                                replyModel.nickName,
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -116,7 +118,6 @@ class NoticeReply extends StatelessWidget {
                       ),
                       GestureDetector(
                         onTap: () async {
-                          //TODO: userID바꿔야함
                           await replyViewModel.toggleReplyFavorite(
                               noticeId: noticeId,
                               commentId: commentId,
@@ -127,7 +128,6 @@ class NoticeReply extends StatelessWidget {
                         },
                         child: Row(
                           children: [
-                            //TODO: 가짜 유저 아이디 실제 유저 아이디로 변경 필요
                             if (replyModel.favoriteUserList!
                                 .where((userId) => userId == user.id)
                                 .isNotEmpty)
